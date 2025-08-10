@@ -1,5 +1,8 @@
-import { type User, type InsertUser, type Conversation, type InsertConversation, type Message, type InsertMessage } from "@shared/schema";
+import { type User, type InsertUser, type Conversation, type InsertConversation, type Message, type InsertMessage, users, conversations, messages } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -161,6 +164,7 @@ export class MemStorage implements IStorage {
       ...insertMessage,
       id,
       createdAt: new Date(),
+      metadata: insertMessage.metadata ?? null,
     };
     this.messages.set(id, message);
     return message;
@@ -176,4 +180,89 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database storage implementation using Supabase
+export class DatabaseStorage implements IStorage {
+  private db;
+
+  constructor() {
+    if (!process.env.DATABASE_URL) {
+      throw new Error("DATABASE_URL environment variable is required");
+    }
+    
+    const client = postgres(process.env.DATABASE_URL);
+    this.db = drizzle(client);
+  }
+
+  async getUser(id: string): Promise<User | undefined> {
+    const result = await this.db.select().from(users).where(eq(users.id, id));
+    return result[0];
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const result = await this.db.select().from(users).where(eq(users.username, username));
+    return result[0];
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const result = await this.db.insert(users).values(insertUser).returning();
+    return result[0];
+  }
+
+  async getConversation(id: string): Promise<Conversation | undefined> {
+    const result = await this.db.select().from(conversations).where(eq(conversations.id, id));
+    return result[0];
+  }
+
+  async getConversationsByUserId(userId: string): Promise<Conversation[]> {
+    const result = await this.db
+      .select()
+      .from(conversations)
+      .where(eq(conversations.userId, userId))
+      .orderBy(desc(conversations.updatedAt));
+    return result;
+  }
+
+  async createConversation(insertConversation: InsertConversation): Promise<Conversation> {
+    const result = await this.db.insert(conversations).values(insertConversation).returning();
+    return result[0];
+  }
+
+  async updateConversation(id: string, updates: Partial<Conversation>): Promise<Conversation | undefined> {
+    const result = await this.db
+      .update(conversations)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(conversations.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteConversation(id: string): Promise<boolean> {
+    // First delete all messages in the conversation
+    await this.deleteMessagesByConversationId(id);
+    
+    // Then delete the conversation
+    const result = await this.db.delete(conversations).where(eq(conversations.id, id));
+    return result.length > 0;
+  }
+
+  async getMessagesByConversationId(conversationId: string): Promise<Message[]> {
+    const result = await this.db
+      .select()
+      .from(messages)
+      .where(eq(messages.conversationId, conversationId))
+      .orderBy(messages.createdAt);
+    return result;
+  }
+
+  async createMessage(insertMessage: InsertMessage): Promise<Message> {
+    const result = await this.db.insert(messages).values(insertMessage).returning();
+    return result[0];
+  }
+
+  async deleteMessagesByConversationId(conversationId: string): Promise<void> {
+    await this.db.delete(messages).where(eq(messages.conversationId, conversationId));
+  }
+}
+
+// Use DatabaseStorage for production, MemStorage for development/testing
+export const storage = process.env.DATABASE_URL ? new DatabaseStorage() : new MemStorage();

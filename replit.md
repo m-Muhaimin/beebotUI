@@ -35,15 +35,15 @@ The server architecture is modular with separate files for routes (`routes.ts`) 
 
 ## Data Storage Solutions
 
-The application uses a **PostgreSQL** database with **Drizzle ORM**:
+The application uses a **Supabase PostgreSQL** database with **Drizzle ORM**:
 
-- **Database**: PostgreSQL as the primary database (configured for Neon serverless)
+- **Database**: Supabase PostgreSQL as the primary database (serverless PostgreSQL platform)
 - **ORM**: Drizzle ORM for type-safe database operations and schema management
 - **Migrations**: Drizzle Kit for database schema migrations stored in `/migrations`
 - **Schema**: Centralized schema definitions in `/shared/schema.ts` with Zod validation
-- **Connection**: Neon serverless driver for PostgreSQL connections
+- **Connection**: Direct PostgreSQL connection via Drizzle with Supabase connection string
 
-Currently implements a basic user schema with username/password fields and UUID primary keys.
+Implements conversation and message schemas for AI chat functionality with UUID primary keys and proper relationships.
 
 ## Authentication and Authorization
 
@@ -66,7 +66,7 @@ The authentication system is designed to be extensible for future JWT or session
 # External Dependencies
 
 ## Database Services
-- **Neon Database**: Serverless PostgreSQL database platform for cloud-hosted database instances
+- **Supabase**: Serverless PostgreSQL database platform with real-time capabilities and built-in authentication
 - **Drizzle ORM**: Modern TypeScript ORM for database operations and schema management
 
 ## UI and Component Libraries
