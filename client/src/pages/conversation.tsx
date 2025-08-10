@@ -257,7 +257,7 @@ export default function ConversationPage() {
                   className="max-w-3xl p-4 rounded-xl ml-[8px] mr-[8px] bg-[#2563eb45] text-[#424242] pt-[10px] pb-[10px] mt-[-3px] mb-[-3px] pl-[25px] pr-[25px]"
                 >
                   <div className="prose prose-sm max-w-none">
-                    <p className="whitespace-pre-wrap text-[#ffffff]">{msg.content}</p>
+                    <p className="whitespace-pre-wrap text-[#000000]">{msg.content}</p>
                   </div>
                 </div>
                 {msg.role === 'user' && (
