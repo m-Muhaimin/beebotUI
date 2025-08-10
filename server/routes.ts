@@ -183,7 +183,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Create new conversation with initial message (simple, fast response)
   app.post('/api/chat/new', isAuthenticated, async (req, res) => {
-    console.log('POST /api/chat/new called with body:', req.body);
     try {
       const { message } = req.body;
       const userId = req.session?.userId;
