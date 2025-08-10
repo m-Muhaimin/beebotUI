@@ -34,9 +34,7 @@ export default function ConversationPage() {
 
   const deleteConversationMutation = useMutation({
     mutationFn: async (id: string) => {
-      return apiRequest(`/api/conversations/${id}`, {
-        method: 'DELETE',
-      });
+      return apiRequest(`/api/conversations/${id}`, 'DELETE');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/conversations'] });

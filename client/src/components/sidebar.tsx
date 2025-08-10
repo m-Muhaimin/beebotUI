@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { Search, Home, Compass, Library, Clock, MoreHorizontal } from "lucide-react";
+import { Search, Home, Compass, Library, Clock, MoreHorizontal, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
+import { useAuth, useLogout } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import ConversationHistory from "./conversation-history";
 
 interface SidebarProps {
@@ -12,6 +15,9 @@ interface SidebarProps {
 export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [, setLocation] = useLocation();
+  const { user } = useAuth();
+  const logoutMutation = useLogout();
+  const { toast } = useToast();
 
   const navItems = [
     { id: "home", label: "Home", icon: Home, path: "/" },
@@ -87,23 +93,45 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
         <ConversationHistory />
       </nav>
 
-      {/* User Profile */}
+      {/* User Profile & Logout */}
       <div className="p-4 border-t border-slate-200">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center">
-            <span className="text-sm font-medium text-white" data-testid="text-user-initials">JM</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <span className="text-sm font-medium text-blue-600">
+                {user?.firstName?.[0] || user?.username?.[0] || 'U'}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-slate-900 truncate">
+                {user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user?.username}
+              </p>
+              <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-800 truncate" data-testid="text-username">
-              Judha Mayapetiya
-            </p>
-            <p className="text-xs text-slate-500 truncate" data-testid="text-user-email">
-              judha.designer@email.com
-            </p>
-          </div>
-          <button className="text-slate-400 hover:text-slate-600 transition-colors duration-150" aria-label="User menu" data-testid="button-user-menu">
-            <MoreHorizontal className="w-5 h-5" />
-          </button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={async () => {
+              try {
+                await logoutMutation.mutateAsync();
+                toast({
+                  title: "Logged out",
+                  description: "You have been logged out successfully.",
+                });
+              } catch (error) {
+                toast({
+                  title: "Error",
+                  description: "Failed to log out. Please try again.",
+                  variant: "destructive",
+                });
+              }
+            }}
+            disabled={logoutMutation.isPending}
+            className="text-slate-500 hover:text-slate-700"
+          >
+            <LogOut className="w-4 h-4" />
+          </Button>
         </div>
       </div>
     </aside>

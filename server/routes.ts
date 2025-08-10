@@ -2,8 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { MCPChatClient } from "./mcp-client";
-import { insertConversationSchema, insertMessageSchema } from "@shared/schema";
+import { insertConversationSchema, insertMessageSchema, signupSchema, loginSchema } from "@shared/schema";
 import { z } from "zod";
+import { getSession, isAuthenticated, hashPassword, verifyPassword } from "./auth";
 
 // Initialize MCP client with environment variable or fallback
 const mcpClient = new MCPChatClient(
@@ -14,10 +15,109 @@ const mcpClient = new MCPChatClient(
 const DEMO_USER_ID = "demo-user";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Get all conversations for a user
-  app.get('/api/conversations', async (req, res) => {
+  // Setup session middleware
+  app.use(getSession());
+
+  // Authentication routes
+  app.post('/api/auth/signup', async (req, res) => {
     try {
-      const conversations = await storage.getConversationsByUserId(DEMO_USER_ID);
+      const validatedData = signupSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(validatedData.email);
+      if (existingUser) {
+        return res.status(400).json({ error: 'User with this email already exists' });
+      }
+
+      // Hash password
+      const hashedPassword = await hashPassword(validatedData.password);
+      
+      // Create user
+      const user = await storage.createUser({
+        ...validatedData,
+        password: hashedPassword,
+      });
+
+      // Create session
+      if (req.session) {
+        req.session.userId = user.id;
+        req.session.user = user;
+      }
+
+      // Return user without password
+      const { password, ...userWithoutPassword } = user;
+      res.status(201).json({ user: userWithoutPassword });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Validation failed', details: error.errors });
+      }
+      console.error('Signup error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  app.post('/api/auth/login', async (req, res) => {
+    try {
+      const validatedData = loginSchema.parse(req.body);
+      
+      // Find user by email
+      const user = await storage.getUserByEmail(validatedData.email);
+      if (!user) {
+        return res.status(401).json({ error: 'Invalid email or password' });
+      }
+
+      // Verify password
+      const isValidPassword = await verifyPassword(validatedData.password, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ error: 'Invalid email or password' });
+      }
+
+      // Create session
+      if (req.session) {
+        req.session.userId = user.id;
+        req.session.user = user;
+      }
+
+      // Return user without password
+      const { password, ...userWithoutPassword } = user;
+      res.json({ user: userWithoutPassword });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Validation failed', details: error.errors });
+      }
+      console.error('Login error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  app.post('/api/auth/logout', (req, res) => {
+    if (req.session) {
+      req.session.destroy((err) => {
+        if (err) {
+          return res.status(500).json({ error: 'Could not log out' });
+        }
+        res.json({ message: 'Logged out successfully' });
+      });
+    } else {
+      res.json({ message: 'Logged out successfully' });
+    }
+  });
+
+  app.get('/api/auth/me', isAuthenticated, (req, res) => {
+    if (req.session && req.session.user) {
+      const { password, ...userWithoutPassword } = req.session.user;
+      res.json({ user: userWithoutPassword });
+    } else {
+      res.status(401).json({ error: 'Not authenticated' });
+    }
+  });
+
+  // Protected routes - require authentication
+  // Get all conversations for a user
+  app.get('/api/conversations', isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.session!.userId;
+      const conversations = await storage.getConversationsByUserId(userId);
       res.json(conversations);
     } catch (error) {
       res.status(500).json({ error: 'Failed to fetch conversations' });
@@ -25,7 +125,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get a specific conversation with messages
-  app.get('/api/conversations/:id', async (req, res) => {
+  app.get('/api/conversations/:id', isAuthenticated, async (req, res) => {
     try {
       const conversation = await storage.getConversation(req.params.id);
       if (!conversation) {
@@ -40,11 +140,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create a new conversation
-  app.post('/api/conversations', async (req, res) => {
+  app.post('/api/conversations', isAuthenticated, async (req, res) => {
     try {
+      const userId = req.session!.userId;
       const validatedData = insertConversationSchema.parse({
         ...req.body,
-        userId: DEMO_USER_ID
+        userId
       });
       
       const conversation = await storage.createConversation(validatedData);
@@ -58,7 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete a conversation
-  app.delete('/api/conversations/:id', async (req, res) => {
+  app.delete('/api/conversations/:id', isAuthenticated, async (req, res) => {
     try {
       const deleted = await storage.deleteConversation(req.params.id);
       if (!deleted) {
@@ -71,10 +172,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create new chat (creates conversation and sends first message) - MUST come before /api/chat/:conversationId
-  app.post('/api/chat/new', async (req, res) => {
+  app.post('/api/chat/new', isAuthenticated, async (req, res) => {
     console.log('POST /api/chat/new called with body:', req.body);
     try {
       const { message } = req.body;
+      const userId = req.session!.userId;
       
       if (!message || !message.trim()) {
         return res.status(400).json({ error: 'Message is required' });
@@ -85,7 +187,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create new conversation
       const conversation = await storage.createConversation({
-        userId: DEMO_USER_ID,
+        userId,
         title
       });
 
@@ -151,7 +253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Chat endpoint for streaming responses
-  app.post('/api/chat/:conversationId', async (req, res) => {
+  app.post('/api/chat/:conversationId', isAuthenticated, async (req, res) => {
     try {
       const { message } = req.body;
       const conversationId = req.params.conversationId;
