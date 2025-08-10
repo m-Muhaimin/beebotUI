@@ -200,7 +200,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create new conversation with initial message (simple, fast response)
   app.post('/api/chat/new', isAuthenticated, async (req, res) => {
     try {
-      const { message } = req.body;
+      const { message, selectedTool } = req.body;
       const userId = req.session?.userId;
       if (!userId) {
         return res.status(401).json({ error: 'User not authenticated' });
@@ -241,7 +241,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Chat endpoint for streaming responses
   app.post('/api/chat/:conversationId', isAuthenticated, async (req, res) => {
     try {
-      const { message, skipSaveMessage = false } = req.body;
+      const { message, skipSaveMessage = false, selectedTool } = req.body;
       const conversationId = req.params.conversationId;
       
       // Validate conversation exists
@@ -278,8 +278,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let assistantResponse = '';
 
       try {
-        // Stream response from MCP client
-        for await (const chunk of mcpClient.chatStream(chatMessages)) {
+        // Stream response from MCP client with tool selection
+        for await (const chunk of mcpClient.chatStream(chatMessages, selectedTool)) {
           if (chunk.error) {
             res.write(`data: ${JSON.stringify({ error: chunk.error })}\n\n`);
             break;

@@ -445,10 +445,31 @@ if __name__ == "__main__":
     }
   }
 
-  async *chatStream(messages: ChatMessage[]): AsyncGenerator<StreamChunk> {
+  async *chatStream(messages: ChatMessage[], selectedTool?: string | null): AsyncGenerator<StreamChunk> {
     try {
+      // Filter tools based on manual selection
+      let toolsToUse = this.availableTools;
+      
+      if (selectedTool) {
+        switch (selectedTool) {
+          case 'web-search':
+            toolsToUse = this.availableTools.filter(tool => tool.name === 'web_search');
+            break;
+          case 'deep-research':
+            toolsToUse = this.availableTools.filter(tool => tool.name === 'deep_research');
+            break;
+          case 'reasoning':
+            // For reasoning mode, disable all tools to force pure reasoning
+            toolsToUse = [];
+            break;
+          default:
+            // If selectedTool is not recognized, use all tools (fallback to auto mode)
+            toolsToUse = this.availableTools;
+        }
+      }
+      
       // Convert tools to OpenAI format
-      const tools = this.availableTools.map(tool => ({
+      const tools = toolsToUse.map(tool => ({
         type: 'function' as const,
         function: {
           name: tool.name,
@@ -587,8 +608,8 @@ if __name__ == "__main__":
                     }))
                   ];
 
-                  // Recursive call to continue the conversation
-                  for await (const chunk of this.chatStream(followUpMessages)) {
+                  // Recursive call to continue the conversation (preserve tool selection)
+                  for await (const chunk of this.chatStream(followUpMessages, selectedTool)) {
                     yield chunk;
                   }
                   return;
@@ -611,10 +632,10 @@ if __name__ == "__main__":
     }
   }
 
-  async chat(messages: ChatMessage[]): Promise<string> {
+  async chat(messages: ChatMessage[], selectedTool?: string | null): Promise<string> {
     const chunks: string[] = [];
     
-    for await (const chunk of this.chatStream(messages)) {
+    for await (const chunk of this.chatStream(messages, selectedTool)) {
       if (chunk.error) {
         throw new Error(chunk.error);
       }

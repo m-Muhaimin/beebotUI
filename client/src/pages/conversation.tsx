@@ -20,6 +20,7 @@ export default function ConversationPage() {
   const [, setLocation] = useLocation();
   const [activeNav, setActiveNav] = useState("home");
   const [message, setMessage] = useState("");
+  const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [streamingMessage, setStreamingMessage] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -194,7 +195,10 @@ export default function ConversationPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: messageToSend }),
+        body: JSON.stringify({ 
+          message: messageToSend,
+          selectedTool: selectedTool 
+        }),
       });
 
       if (!response.ok) {
@@ -416,6 +420,8 @@ export default function ConversationPage() {
           onMessageChange={setMessage}
           onSendMessage={handleSendMessage}
           onQuickAction={handleQuickAction}
+          selectedTool={selectedTool}
+          onToolChange={setSelectedTool}
         />
       </main>
     </div>

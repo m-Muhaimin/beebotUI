@@ -11,6 +11,7 @@ export default function Home() {
   const [activeNav, setActiveNav] = useState("home");
   const [message, setMessage] = useState("");
   const [isStartingChat, setIsStartingChat] = useState(false);
+  const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -33,7 +34,10 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: initialMessage }),
+        body: JSON.stringify({ 
+          message: initialMessage,
+          selectedTool: selectedTool 
+        }),
       });
 
       if (!response.ok) {
@@ -187,6 +191,8 @@ export default function Home() {
           onSendMessage={handleSendMessage}
           onQuickAction={handleQuickAction}
           disabled={isStartingChat}
+          selectedTool={selectedTool}
+          onToolChange={setSelectedTool}
         />
       </main>
     </div>

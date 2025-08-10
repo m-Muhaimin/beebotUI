@@ -9,6 +9,8 @@ interface InputSectionProps {
   onSendMessage: () => void;
   onQuickAction: (action: string) => void;
   disabled?: boolean;
+  selectedTool?: string | null;
+  onToolChange?: (tool: string | null) => void;
 }
 
 export default function InputSection({ 
@@ -16,9 +18,11 @@ export default function InputSection({
   onMessageChange, 
   onSendMessage, 
   onQuickAction,
-  disabled = false
+  disabled = false,
+  selectedTool = null,
+  onToolChange
 }: InputSectionProps) {
-  const [selectedTool, setSelectedTool] = useState<string | null>(null);
+  const [localSelectedTool, setLocalSelectedTool] = useState<string | null>(selectedTool);
   
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -39,12 +43,9 @@ export default function InputSection({
   ];
 
   const handleToolSelect = (toolId: string) => {
-    if (selectedTool === toolId) {
-      setSelectedTool(null);
-    } else {
-      setSelectedTool(toolId);
-    }
-    // Call onQuickAction to notify parent but don't change the input text
+    const newTool = localSelectedTool === toolId ? null : toolId;
+    setLocalSelectedTool(newTool);
+    onToolChange?.(newTool);
     onQuickAction(toolId);
   };
 
@@ -66,7 +67,7 @@ export default function InputSection({
           <div className="absolute bottom-3 left-4 flex items-center space-x-2">
             {tools.map((tool) => {
               const Icon = tool.icon;
-              const isSelected = selectedTool === tool.id;
+              const isSelected = (onToolChange ? localSelectedTool : selectedTool) === tool.id;
               return (
                 <Button
                   key={tool.id}

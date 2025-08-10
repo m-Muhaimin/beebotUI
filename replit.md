@@ -19,10 +19,13 @@ BeeBot is an AI assistant platform built as a modern full-stack web application 
 - **Bug Fixes (August 10, 2025)**: Fixed critical authentication session persistence, MCP server initialization, type safety issues, and API key integration for DeepSeek and Exa services
 - **Tool Integration**: Successfully implemented weather forecasting and web search/research capabilities through MCP servers
 - **Session Management**: Enhanced session handling with forced session saves to prevent authentication failures
+- **Manual Tool Selection**: Implemented user-controlled tool selection with Reasoning, Web Search, and Deep Research modes instead of automatic AI decision-making
 
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
+
+Tool Control: Manual tool selection preferred over automatic AI decision-making. Users want to explicitly control when tools like Web Search, Deep Research, or pure Reasoning are used.
 
 # System Architecture
 
