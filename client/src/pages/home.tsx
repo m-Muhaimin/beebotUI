@@ -166,7 +166,7 @@ export default function Home() {
       <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
       <main className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 px-8 py-6 pt-[7px] pb-[7px]">
+        <header className="bg-white border-b border-slate-200 px-8 py-6 pt-[6px] pb-[6px]">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div>
