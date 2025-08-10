@@ -32,9 +32,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Hash password
       const hashedPassword = await hashPassword(validatedData.password);
       
+      // Generate username from email
+      const username = validatedData.email.split('@')[0];
+      
       // Create user
       const user = await storage.createUser({
         ...validatedData,
+        username,
         password: hashedPassword,
       });
 

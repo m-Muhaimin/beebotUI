@@ -17,7 +17,7 @@ export const sessions = pgTable(
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email").unique(),
-  username: text("username").notNull().unique(),
+  username: text("username").unique(),
   password: text("password").notNull(),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
@@ -49,7 +49,7 @@ export const insertUserSchema = createInsertSchema(users).omit({
   updatedAt: true,
 });
 
-export const signupSchema = insertUserSchema.extend({
+export const signupSchema = insertUserSchema.omit({ username: true }).extend({
   password: z.string().min(8, "Password must be at least 8 characters"),
   email: z.string().email("Invalid email address"),
 });

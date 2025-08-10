@@ -39,7 +39,6 @@ export default function AuthPage() {
       email: '',
       password: '',
       confirmPassword: '',
-      username: '',
       firstName: '',
       lastName: '',
     },
@@ -174,20 +173,7 @@ export default function AuthPage() {
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="username" className="text-sm text-gray-700">Username</Label>
-                  <Input
-                    id="username"
-                    placeholder="Choose a username"
-                    {...signupForm.register('username')}
-                    className="mt-1 border-gray-300"
-                  />
-                  {signupForm.formState.errors.username && (
-                    <p className="text-sm text-red-600 mt-1">
-                      {signupForm.formState.errors.username.message}
-                    </p>
-                  )}
-                </div>
+
 
                 <div>
                   <Label htmlFor="password" className="text-sm text-gray-700">Create Password</Label>
