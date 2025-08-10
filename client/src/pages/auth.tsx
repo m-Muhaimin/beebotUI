@@ -108,26 +108,7 @@ export default function AuthPage() {
           </svg>
         </div>
         
-        <div className="relative z-10 flex flex-col justify-center p-16 text-white">
-          <div className="mb-16">
-            <h1 className="text-5xl font-bold mb-4">Welcome to BeeBot</h1>
-            <p className="text-xl opacity-90">Your Gateway to Effortless AI Conversations.</p>
-          </div>
-          
-          <div className="mb-8">
-            <h2 className="text-3xl font-semibold mb-4">Seamless Collaboration</h2>
-            <p className="text-lg opacity-90">
-              Effortlessly work together with your AI assistant in real-time.
-            </p>
-          </div>
-          
-          {/* Progress indicators */}
-          <div className="flex space-x-2">
-            <div className="w-8 h-2 bg-white rounded-full"></div>
-            <div className="w-2 h-2 bg-white/50 rounded-full"></div>
-            <div className="w-2 h-2 bg-white/30 rounded-full"></div>
-          </div>
-        </div>
+
       </div>
 
       {/* Right side - Auth form */}
