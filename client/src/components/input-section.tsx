@@ -100,7 +100,7 @@ export default function InputSection({
         </div>
 
         {/* Keyboard Shortcut Hint */}
-        <div className="flex justify-end mt-[3px] mb-[3px] pt-[2px] pb-[2px]">
+        <div className="flex justify-end mt-[3px] mb-[3px] pt-[5px] pb-[5px]">
           <div className="text-xs text-slate-500">
             Press <kbd className="px-2 py-1 bg-slate-100 rounded text-slate-600">⌘</kbd> + <kbd className="px-2 py-1 bg-slate-100 rounded text-slate-600">Enter</kbd> to send
           </div>
