@@ -56,7 +56,11 @@ export default function ConversationPage() {
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ message: lastMessage.content, skipSaveMessage: true }),
+              body: JSON.stringify({ 
+                message: lastMessage.content, 
+                skipSaveMessage: true,
+                selectedTool: null // Don't auto-select tools for initial responses
+              }),
             });
 
             if (!response.ok) {

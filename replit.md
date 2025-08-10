@@ -20,12 +20,15 @@ BeeBot is an AI assistant platform built as a modern full-stack web application 
 - **Tool Integration**: Successfully implemented weather forecasting and web search/research capabilities through MCP servers
 - **Session Management**: Enhanced session handling with forced session saves to prevent authentication failures
 - **Manual Tool Selection**: Implemented user-controlled tool selection with Reasoning, Web Search, and Deep Research modes instead of automatic AI decision-making
+- **Response Control**: Fixed issue where AI generated multiple sequential responses automatically; now provides single, focused responses that wait for user input
 
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
 
 Tool Control: Manual tool selection preferred over automatic AI decision-making. Users want to explicitly control when tools like Web Search, Deep Research, or pure Reasoning are used.
+
+Response Behavior: Single-response conversations preferred. AI should provide one focused response and wait for user input, not generate multiple sequential responses automatically.
 
 # System Architecture
 

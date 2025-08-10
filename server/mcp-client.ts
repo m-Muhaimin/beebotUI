@@ -489,7 +489,9 @@ if __name__ == "__main__":
           messages: messages,
           stream: true,
           tools: tools.length > 0 ? tools : undefined,
-          tool_choice: 'auto'
+          tool_choice: tools.length > 0 ? 'auto' : 'none',
+          max_tokens: 2000, // Limit response length to prevent rambling
+          temperature: 0.7
         }),
       });
 
@@ -588,31 +590,10 @@ if __name__ == "__main__":
                   }
                 }
 
-                // If there were search tool results, send them back to the model
+                // For search tools, we already streamed the results - no need for follow-up
                 if (pendingToolResults.length > 0) {
-                  const followUpMessages = [
-                    ...messages,
-                    {
-                      role: 'assistant' as const,
-                      content: null,
-                      tool_calls: toolCalls.map(tc => ({
-                        id: tc.id,
-                        type: tc.type,
-                        function: tc.function
-                      }))
-                    },
-                    ...toolCalls.map((tc, index) => ({
-                      role: 'tool' as const,
-                      tool_call_id: tc.id,
-                      content: pendingToolResults[index] || 'No result'
-                    }))
-                  ];
-
-                  // Recursive call to continue the conversation (preserve tool selection)
-                  for await (const chunk of this.chatStream(followUpMessages, selectedTool)) {
-                    yield chunk;
-                  }
-                  return;
+                  // Search results were already streamed, just end here
+                  break;
                 }
               }
 
