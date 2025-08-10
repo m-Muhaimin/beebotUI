@@ -34,13 +34,9 @@ export default function ConversationPage() {
 
   const deleteConversationMutation = useMutation({
     mutationFn: async (id: string) => {
-<<<<<<< HEAD
       return apiRequest(`/api/conversations/${id}`, {
         method: 'DELETE',
       });
-=======
-      return apiRequest(`/api/conversations/${id}`, 'DELETE');
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/conversations'] });
@@ -155,13 +151,8 @@ export default function ConversationPage() {
       case "reasoning":
         prompt = "Help me reason through: ";
         break;
-<<<<<<< HEAD
-      case "create-image":
-        prompt = "Create an image of: ";
-=======
       case "web-search":
         prompt = "Search the web for: ";
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
         break;
       case "deep-research":
         prompt = "Research in detail: ";

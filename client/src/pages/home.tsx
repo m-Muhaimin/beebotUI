@@ -108,13 +108,8 @@ export default function Home() {
       case "reasoning":
         prompt = "Help me reason through: ";
         break;
-<<<<<<< HEAD
-      case "create-image":
-        prompt = "Create an image of: ";
-=======
       case "web-search":
         prompt = "Search the web for: ";
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
         break;
       case "deep-research":
         prompt = "Research in detail: ";
@@ -167,25 +162,6 @@ export default function Home() {
   return (
     <div className="flex h-screen" data-testid="home-page">
       <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
-<<<<<<< HEAD
-      
-      <main className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <header className="bg-white border-b border-slate-200 px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div>
-                <h1 className="text-2xl font-semibold text-slate-800" data-testid="greeting">
-                  {getGreeting()}, Judha
-                </h1>
-                <p className="text-lg text-brand-blue font-medium mt-1">
-                  How Can I Assist You Today?
-                </p>
-              </div>
-            </div>
-            <Button 
-              className="bg-slate-800 hover:bg-slate-700 text-white"
-=======
       <main className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <header className="bg-white border-b border-slate-200 px-8 py-6 pt-[15px] pb-[15px]">
@@ -199,7 +175,6 @@ export default function Home() {
             </div>
             <Button 
               className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-normal text-[12px] pl-[15px] pr-[15px] pt-[8px] pb-[8px]"
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
               data-testid="button-new-chat"
             >
               <PlusIcon className="w-4 h-4 mr-2" />
@@ -218,21 +193,11 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-<<<<<<< HEAD
-              <p className="text-slate-600 text-lg max-w-md mx-auto">
-                Start a conversation by typing a message or try one of the quick actions below.
-              </p>
-            </div>
-
-            {/* Suggested Prompts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-=======
 
             </div>
 
             {/* Suggested Prompts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-[10px] mb-[10px]">
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
               {suggestedPrompts.map((prompt, index) => {
                 const Icon = prompt.icon;
                 return (
@@ -240,11 +205,7 @@ export default function Home() {
                     key={index}
                     onClick={() => handlePromptClick(prompt.description)}
                     disabled={isStartingChat}
-<<<<<<< HEAD
-                    className="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed"
-=======
                     className="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed pl-[16px] pr-[16px] pt-[16px] pb-[16px]"
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
                     data-testid={`button-prompt-${prompt.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <div className="flex items-start space-x-4">

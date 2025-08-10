@@ -2,8 +2,6 @@ version = 1
 requires-python = ">=3.11"
 
 [[package]]
-<<<<<<< HEAD
-=======
 name = "annotated-types"
 version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -13,7 +11,6 @@ wheels = [
 ]
 
 [[package]]
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
 name = "anyio"
 version = "4.10.0"
 source = { registry = "https://pypi.org/simple" }
@@ -37,8 +34,6 @@ wheels = [
 ]
 
 [[package]]
-<<<<<<< HEAD
-=======
 name = "charset-normalizer"
 version = "3.4.3"
 source = { registry = "https://pypi.org/simple" }
@@ -126,7 +121,6 @@ wheels = [
 ]
 
 [[package]]
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
 name = "h11"
 version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -173,8 +167,6 @@ wheels = [
 ]
 
 [[package]]
-<<<<<<< HEAD
-=======
 name = "jiter"
 version = "0.10.0"
 source = { registry = "https://pypi.org/simple" }
@@ -334,22 +326,15 @@ wheels = [
 ]
 
 [[package]]
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
 name = "repl-nix-workspace"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-<<<<<<< HEAD
-=======
     { name = "exa-py" },
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
     { name = "httpx" },
 ]
 
 [package.metadata]
-<<<<<<< HEAD
-requires-dist = [{ name = "httpx", specifier = ">=0.28.1" }]
-=======
 requires-dist = [
     { name = "exa-py", specifier = ">=1.14.20" },
     { name = "httpx", specifier = ">=0.28.1" },
@@ -369,7 +354,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/e1/0a/929373653770d8a0d
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7c/e4/56027c4a6b4ae70ca9de302488c5ca95ad4a39e190093d6c1a8ace08341b/requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c", size = 64847 },
 ]
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
 
 [[package]]
 name = "sniffio"
@@ -381,8 +365,6 @@ wheels = [
 ]
 
 [[package]]
-<<<<<<< HEAD
-=======
 name = "tqdm"
 version = "4.67.1"
 source = { registry = "https://pypi.org/simple" }
@@ -395,7 +377,6 @@ wheels = [
 ]
 
 [[package]]
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
 name = "typing-extensions"
 version = "4.14.1"
 source = { registry = "https://pypi.org/simple" }
@@ -403,8 +384,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/98/5a/da40306b885cc8c09
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b5/00/d631e67a838026495268c2f6884f3711a15a9a2a96cd244fdaea53b823fb/typing_extensions-4.14.1-py3-none-any.whl", hash = "sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76", size = 43906 },
 ]
-<<<<<<< HEAD
-=======
 
 [[package]]
 name = "typing-inspection"
@@ -426,4 +405,3 @@ sdist = { url = "https://files.pythonhosted.org/packages/15/22/9ee70a2574a4f4599
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a7/c2/fe1e52489ae3122415c51f387e221dd0773709bad6c6cdaa599e8a2c5185/urllib3-2.5.0-py3-none-any.whl", hash = "sha256:e6b01673c0fa6a13e374b50871808eb3bf7046c4b125b216f6bf1cc604cff0dc", size = 129795 },
 ]
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)

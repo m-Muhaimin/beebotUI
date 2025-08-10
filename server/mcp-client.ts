@@ -4,8 +4,10 @@ import { randomUUID } from 'crypto';
 import { promises as fs } from 'fs';
 
 interface ChatMessage {
-  role: 'user' | 'assistant' | 'system';
-  content: string;
+  role: 'user' | 'assistant' | 'system' | 'tool';
+  content: string | null;
+  tool_call_id?: string;
+  tool_calls?: ToolCall[];
 }
 
 interface StreamChunk {
@@ -34,10 +36,7 @@ export class MCPChatClient extends EventEmitter {
   private apiUrl: string;
   private model: string;
   private weatherServer: ChildProcess | null = null;
-<<<<<<< HEAD
-=======
   private searchServer: ChildProcess | null = null;
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
   private availableTools: MCPTool[] = [];
   private pendingRequests: Map<string, { resolve: Function; reject: Function }> = new Map();
 
@@ -48,10 +47,7 @@ export class MCPChatClient extends EventEmitter {
     this.model = model;
     
     this.initializeWeatherServer();
-<<<<<<< HEAD
-=======
     this.initializeSearchServer();
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
   }
 
   private async initializeWeatherServer() {
@@ -106,11 +102,7 @@ Instructions: {props.get('instruction', 'No specific instructions provided')}
             return "No active alerts for this state."
 
         alerts = [self.format_alert(feature) for feature in data["features"]]
-<<<<<<< HEAD
-        return "\\\\n---\\\\n".join(alerts)
-=======
         return "\\n---\\n".join(alerts)
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
 
     async def get_forecast(self, latitude: float, longitude: float) -> str:
         """Get weather forecast for a location."""
@@ -137,11 +129,7 @@ Forecast: {period['detailedForecast']}
 """
             forecasts.append(forecast)
 
-<<<<<<< HEAD
-        return "\\\\n---\\\\n".join(forecasts)
-=======
         return "\\n---\\n".join(forecasts)
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
 
     async def get_weather_by_city(self, city: str) -> str:
         """Get weather forecast for a city by name."""
@@ -293,8 +281,6 @@ if __name__ == "__main__":
     }
   }
 
-<<<<<<< HEAD
-=======
   private async initializeSearchServer() {
     try {
       // Start the search server process
@@ -311,7 +297,6 @@ if __name__ == "__main__":
     }
   }
 
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
   private setupServerCommunication() {
     if (!this.weatherServer) return;
 
@@ -343,12 +328,6 @@ if __name__ == "__main__":
     });
   }
 
-<<<<<<< HEAD
-  private async sendMCPRequest(method: string, params: any = {}): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (!this.weatherServer?.stdin) {
-        reject(new Error('Weather server not available'));
-=======
   private setupSearchServerCommunication() {
     if (!this.searchServer) return;
 
@@ -386,7 +365,6 @@ if __name__ == "__main__":
       
       if (!server?.stdin) {
         reject(new Error(`${serverType} server not available`));
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
         return;
       }
 
@@ -401,11 +379,7 @@ if __name__ == "__main__":
       this.pendingRequests.set(id, { resolve, reject });
 
       try {
-<<<<<<< HEAD
-        this.weatherServer.stdin.write(JSON.stringify(request) + '\n');
-=======
         server.stdin.write(JSON.stringify(request) + '\n');
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
       } catch (error) {
         this.pendingRequests.delete(id);
         reject(error);
@@ -415,24 +389,14 @@ if __name__ == "__main__":
       setTimeout(() => {
         if (this.pendingRequests.has(id)) {
           this.pendingRequests.delete(id);
-<<<<<<< HEAD
-          reject(new Error('MCP request timeout'));
-        }
-      }, 30000);
-=======
           reject(new Error(`${serverType} server request timeout`));
         }
       }, 45000); // Longer timeout for search operations
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
     });
   }
 
   private async listTools(): Promise<void> {
     try {
-<<<<<<< HEAD
-      const response = await this.sendMCPRequest('tools/list');
-      this.availableTools = response.tools || [];
-=======
       // Get tools from both servers
       const [weatherResponse, searchResponse] = await Promise.allSettled([
         this.sendMCPRequest('tools/list', {}, 'weather'),
@@ -448,7 +412,6 @@ if __name__ == "__main__":
       if (searchResponse.status === 'fulfilled') {
         this.availableTools.push(...(searchResponse.value.tools || []));
       }
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
     } catch (error) {
       console.error('Failed to list MCP tools:', error);
       this.availableTools = [];
@@ -457,12 +420,6 @@ if __name__ == "__main__":
 
   private async callTool(name: string, arguments_: any): Promise<string> {
     try {
-<<<<<<< HEAD
-      const response = await this.sendMCPRequest('tools/call', {
-        name,
-        arguments: arguments_
-      });
-=======
       // Determine which server to use based on tool name
       const isSearchTool = ['web_search', 'deep_research'].includes(name);
       const serverType = isSearchTool ? 'search' : 'weather';
@@ -471,7 +428,6 @@ if __name__ == "__main__":
         name,
         arguments: arguments_
       }, serverType);
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
       
       if (response.content && response.content[0]) {
         return response.content[0].text || JSON.stringify(response.content[0]);
@@ -485,9 +441,9 @@ if __name__ == "__main__":
 
   async *chatStream(messages: ChatMessage[]): AsyncGenerator<StreamChunk> {
     try {
-      // Convert tools to OpenAI function format
+      // Convert tools to OpenAI format
       const tools = this.availableTools.map(tool => ({
-        type: 'function',
+        type: 'function' as const,
         function: {
           name: tool.name,
           description: tool.description,
@@ -503,12 +459,10 @@ if __name__ == "__main__":
         },
         body: JSON.stringify({
           model: this.model,
-          messages,
+          messages: messages,
           stream: true,
-          temperature: 0.7,
-          max_tokens: 2048,
           tools: tools.length > 0 ? tools : undefined,
-          tool_choice: tools.length > 0 ? 'auto' : undefined
+          tool_choice: 'auto'
         }),
       });
 
@@ -518,19 +472,17 @@ if __name__ == "__main__":
 
       const reader = response.body?.getReader();
       if (!reader) {
-        throw new Error('No response body reader available');
+        throw new Error('No response body');
       }
 
       const decoder = new TextDecoder();
       let buffer = '';
       let toolCalls: ToolCall[] = [];
+      let pendingToolResults: string[] = [];
 
       while (true) {
         const { done, value } = await reader.read();
-        
-        if (done) {
-          break;
-        }
+        if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split('\n');
@@ -539,139 +491,114 @@ if __name__ == "__main__":
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const data = line.slice(6).trim();
-            
             if (data === '[DONE]') {
-              // Process any collected tool calls
-              if (toolCalls.length > 0) {
-<<<<<<< HEAD
-                yield { content: '\n\nGetting weather information...' };
-                
-                for (const toolCall of toolCalls) {
-                  try {
-                    const args = JSON.parse(toolCall.function.arguments);
-                    const result = await this.callTool(toolCall.function.name, args);
-                    yield { content: `\n\n**Weather Information:**\n${result}` };
-                  } catch (error) {
-                    yield { content: `\n\nError getting weather: ${error instanceof Error ? error.message : String(error)}` };
-=======
-                for (const toolCall of toolCalls) {
-                  try {
-                    const args = JSON.parse(toolCall.function.arguments);
-                    const toolName = toolCall.function.name;
-                    
-                    // Show appropriate loading message based on tool type
-                    if (toolName.includes('weather') || toolName.includes('forecast') || toolName.includes('alert')) {
-                      yield { content: '\n\nGetting weather information...' };
-                    } else if (toolName === 'web_search') {
-                      yield { content: '\n\nSearching the web...' };
-                    } else if (toolName === 'deep_research') {
-                      yield { content: '\n\nConducting deep research...' };
-                    }
-                    
-                    const result = await this.callTool(toolName, args);
-                    
-                    // Format result based on tool type
-                    if (toolName.includes('weather') || toolName.includes('forecast') || toolName.includes('alert')) {
-                      yield { content: `\n\n**Weather Information:**\n${result}` };
-                    } else if (toolName === 'web_search' || toolName === 'deep_research') {
-                      yield { content: `\n\n${result}` };
-                    } else {
-                      yield { content: `\n\n${result}` };
-                    }
-                  } catch (error) {
-                    yield { content: `\n\nError: ${error instanceof Error ? error.message : String(error)}` };
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
-                  }
-                }
-              }
-              
-              yield { finished: true };
-              return;
+              break;
             }
 
             try {
               const parsed = JSON.parse(data);
               const delta = parsed.choices?.[0]?.delta;
-              
+
               if (delta?.content) {
                 yield { content: delta.content };
               }
-              
-              // Handle tool calls
+
               if (delta?.tool_calls) {
                 for (const toolCall of delta.tool_calls) {
-                  if (toolCall.function?.name) {
-                    toolCalls.push({
-                      id: toolCall.id || randomUUID(),
+                  const index = toolCall.index || 0;
+                  if (!toolCalls[index]) {
+                    toolCalls[index] = {
+                      id: toolCall.id || `call_${Date.now()}_${index}`,
                       type: 'function',
                       function: {
-                        name: toolCall.function.name,
-                        arguments: toolCall.function.arguments || ''
+                        name: toolCall.function?.name || '',
+                        arguments: toolCall.function?.arguments || ''
                       }
-                    });
-                  } else if (toolCall.function?.arguments && toolCalls.length > 0) {
-                    // Append arguments to existing tool call
-                    toolCalls[toolCalls.length - 1].function.arguments += toolCall.function.arguments;
+                    };
+                  } else {
+                    if (toolCall.function?.name) {
+                      toolCalls[index].function.name += toolCall.function.name;
+                    }
+                    if (toolCall.function?.arguments) {
+                      toolCalls[index].function.arguments += toolCall.function.arguments;
+                    }
                   }
                 }
               }
 
-              if (parsed.choices?.[0]?.finish_reason === 'stop' || parsed.choices?.[0]?.finish_reason === 'tool_calls') {
-                // Process any collected tool calls before finishing
-                if (toolCalls.length > 0) {
-<<<<<<< HEAD
-                  yield { content: '\n\nGetting weather information...' };
+              if (parsed.choices?.[0]?.finish_reason === 'tool_calls') {
+                // Process tool calls
+                for (const toolCall of toolCalls) {
+                  const toolName = toolCall.function.name;
+                  let toolArgs;
                   
-                  for (const toolCall of toolCalls) {
-                    try {
-                      const args = JSON.parse(toolCall.function.arguments);
-                      const result = await this.callTool(toolCall.function.name, args);
-                      yield { content: `\n\n**Weather Information:**\n${result}` };
-                    } catch (error) {
-                      yield { content: `\n\nError getting weather: ${error instanceof Error ? error.message : String(error)}` };
-=======
-                  for (const toolCall of toolCalls) {
-                    try {
-                      const args = JSON.parse(toolCall.function.arguments);
-                      const toolName = toolCall.function.name;
-                      
-                      // Show appropriate loading message based on tool type
-                      if (toolName.includes('weather') || toolName.includes('forecast') || toolName.includes('alert')) {
-                        yield { content: '\n\nGetting weather information...' };
-                      } else if (toolName === 'web_search') {
-                        yield { content: '\n\nSearching the web...' };
-                      } else if (toolName === 'deep_research') {
-                        yield { content: '\n\nConducting deep research...' };
-                      }
-                      
-                      const result = await this.callTool(toolName, args);
-                      
-                      // Format result based on tool type
-                      if (toolName.includes('weather') || toolName.includes('forecast') || toolName.includes('alert')) {
-                        yield { content: `\n\n**Weather Information:**\n${result}` };
-                      } else if (toolName === 'web_search' || toolName === 'deep_research') {
-                        yield { content: `\n\n${result}` };
-                      } else {
-                        yield { content: `\n\n${result}` };
-                      }
-                    } catch (error) {
-                      yield { content: `\n\nError: ${error instanceof Error ? error.message : String(error)}` };
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
-                    }
+                  try {
+                    toolArgs = JSON.parse(toolCall.function.arguments);
+                  } catch (e) {
+                    yield { content: `\n\nError parsing tool arguments for ${toolName}: ${toolCall.function.arguments}` };
+                    continue;
+                  }
+
+                  if (toolName === 'get_forecast') {
+                    yield { content: `\n\n🌤️ Getting weather forecast for coordinates ${toolArgs.latitude}, ${toolArgs.longitude}...\n\n` };
+                  } else if (toolName === 'get_weather_by_city') {
+                    yield { content: `\n\n🌤️ Getting weather forecast for ${toolArgs.city}...\n\n` };
+                  } else if (toolName === 'get_alerts') {
+                    yield { content: `\n\n⚠️ Getting weather alerts for ${toolArgs.state}...\n\n` };
+                  } else if (toolName === 'web_search') {
+                    yield { content: `\n\n🔍 Searching the web for "${toolArgs.query}"...\n\n` };
+                  } else if (toolName === 'deep_research') {
+                    yield { content: `\n\n🔬 Conducting deep research on "${toolArgs.query}"...\n\n` };
+                  }
+
+                  const toolResult = await this.callTool(toolName, toolArgs);
+                  
+                  if (toolName === 'web_search' || toolName === 'deep_research') {
+                    yield { content: `${toolResult}\n\n` };
+                    pendingToolResults.push(toolResult);
+                  } else {
+                    yield { content: toolResult };
                   }
                 }
-                
-                yield { finished: true };
-                return;
+
+                // If there were search tool results, send them back to the model
+                if (pendingToolResults.length > 0) {
+                  const followUpMessages = [
+                    ...messages,
+                    {
+                      role: 'assistant' as const,
+                      content: null,
+                      tool_calls: toolCalls.map(tc => ({
+                        id: tc.id,
+                        type: tc.type,
+                        function: tc.function
+                      }))
+                    },
+                    ...toolCalls.map((tc, index) => ({
+                      role: 'tool' as const,
+                      tool_call_id: tc.id,
+                      content: pendingToolResults[index] || 'No result'
+                    }))
+                  ];
+
+                  // Recursive call to continue the conversation
+                  for await (const chunk of this.chatStream(followUpMessages)) {
+                    yield chunk;
+                  }
+                  return;
+                }
+              }
+
+              if (parsed.choices?.[0]?.finish_reason === 'stop' || parsed.choices?.[0]?.finish_reason === 'tool_calls') {
+                break;
               }
             } catch (e) {
-              // Skip malformed JSON
-              continue;
+              // Ignore JSON parsing errors for streaming data
             }
           }
         }
       }
-      
+
       yield { finished: true };
     } catch (error) {
       yield { error: error instanceof Error ? error.message : 'Unknown error occurred' };
@@ -698,22 +625,6 @@ if __name__ == "__main__":
 
   // Generate a title for a conversation based on the first message
   async generateTitle(firstMessage: string): Promise<string> {
-<<<<<<< HEAD
-    const messages: ChatMessage[] = [
-      {
-        role: 'system',
-        content: 'You are a helpful assistant that creates short, descriptive titles for conversations. Generate a brief title (max 6 words) that captures the essence of the user\'s message. Return only the title, no extra text.'
-      },
-      {
-        role: 'user',
-        content: firstMessage
-      }
-    ];
-
-    try {
-      const title = await this.chat(messages);
-      return title.trim().replace(/["']/g, '');
-=======
     try {
       const response = await fetch(`${this.apiUrl}/chat/completions`, {
         method: 'POST',
@@ -746,7 +657,6 @@ if __name__ == "__main__":
       const title = data.choices?.[0]?.message?.content?.trim() || '';
       
       return title.replace(/["']/g, '') || firstMessage.split(' ').slice(0, 6).join(' ');
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
     } catch (error) {
       // Fallback to first few words if AI title generation fails
       return firstMessage.split(' ').slice(0, 6).join(' ');
@@ -758,12 +668,9 @@ if __name__ == "__main__":
       this.weatherServer.kill();
       this.weatherServer = null;
     }
-<<<<<<< HEAD
-=======
     if (this.searchServer) {
       this.searchServer.kill();
       this.searchServer = null;
     }
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
   }
 }

@@ -47,11 +47,7 @@ Instructions: {props.get('instruction', 'No specific instructions provided')}
             return "No active alerts for this state."
 
         alerts = [self.format_alert(feature) for feature in data["features"]]
-<<<<<<< HEAD
-        return "\\n---\\n".join(alerts)
-=======
         return "\n---\n".join(alerts)
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
 
     async def get_forecast(self, latitude: float, longitude: float) -> str:
         """Get weather forecast for a location."""
@@ -78,11 +74,7 @@ Forecast: {period['detailedForecast']}
 """
             forecasts.append(forecast)
 
-<<<<<<< HEAD
-        return "\\n---\\n".join(forecasts)
-=======
         return "\n---\n".join(forecasts)
->>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
 
     async def get_weather_by_city(self, city: str) -> str:
         """Get weather forecast for a city by name."""
