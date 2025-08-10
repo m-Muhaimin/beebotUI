@@ -460,7 +460,7 @@ if __name__ == "__main__":
             return;
           } else if (selectedTool === 'deep-research') {
             yield { content: `🔬 Conducting deep research on "${lastMessage.content}"...\n\n` };
-            const toolResult = await this.callTool('deep_research', { query: lastMessage.content });
+            const toolResult = await this.callTool('deep_research', { topic: lastMessage.content });
             yield { content: toolResult };
             yield { finished: true };
             return;

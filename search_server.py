@@ -82,6 +82,8 @@ class MCPServer:
             tool_name = request["params"]["name"]
             arguments = request["params"]["arguments"]
             
+
+            
             if tool_name == "web_search":
                 return await self.web_search(arguments)
             elif tool_name == "deep_research":
@@ -149,6 +151,7 @@ class MCPServer:
 
     async def deep_research(self, args: Dict[str, Any]) -> Dict[str, Any]:
         try:
+
             topic = args["topic"]
             focus = args.get("focus", "general overview")
             
