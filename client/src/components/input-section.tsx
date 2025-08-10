@@ -8,13 +8,15 @@ interface InputSectionProps {
   onMessageChange: (message: string) => void;
   onSendMessage: () => void;
   onQuickAction: (action: string) => void;
+  disabled?: boolean;
 }
 
 export default function InputSection({ 
   message, 
   onMessageChange, 
   onSendMessage, 
-  onQuickAction 
+  onQuickAction,
+  disabled = false
 }: InputSectionProps) {
   
   useEffect(() => {
@@ -38,17 +40,23 @@ export default function InputSection({
             onChange={(e) => onMessageChange(e.target.value)}
             rows={3}
             placeholder="Initiate a query or send a command to the AI..."
-            className="w-full pl-4 pr-12 py-4 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent resize-none text-slate-800 placeholder-slate-500"
+            disabled={disabled}
+            className="w-full pl-4 pr-12 py-4 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent resize-none text-slate-800 placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
             data-testid="textarea-message"
           />
           <Button
             onClick={onSendMessage}
             size="sm"
-            className="absolute right-3 bottom-3 w-8 h-8 p-0 bg-brand-blue hover:bg-blue-600 text-white rounded-lg"
+            disabled={disabled || !message.trim()}
+            className="absolute right-3 bottom-3 w-8 h-8 p-0 bg-brand-blue hover:bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Send message"
             data-testid="button-send"
           >
-            <Send className="w-4 h-4" />
+            {disabled ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </Button>
         </div>
 
@@ -59,7 +67,8 @@ export default function InputSection({
               variant="secondary"
               size="sm"
               onClick={() => onQuickAction("reasoning")}
-              className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium"
+              disabled={disabled}
+              className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               data-testid="button-reasoning"
             >
               <Lightbulb className="w-4 h-4" />
@@ -69,7 +78,8 @@ export default function InputSection({
               variant="secondary"
               size="sm"
               onClick={() => onQuickAction("create-image")}
-              className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium"
+              disabled={disabled}
+              className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               data-testid="button-create-image"
             >
               <Image className="w-4 h-4" />
@@ -79,7 +89,8 @@ export default function InputSection({
               variant="secondary"
               size="sm"
               onClick={() => onQuickAction("deep-research")}
-              className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium"
+              disabled={disabled}
+              className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               data-testid="button-deep-research"
             >
               <Search className="w-4 h-4" />

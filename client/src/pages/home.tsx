@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
+import { useToast } from "@/hooks/use-toast";
 import Sidebar from "@/components/sidebar";
 import InputSection from "@/components/input-section";
 import { Button } from "@/components/ui/button";
@@ -7,6 +9,9 @@ import { PlusIcon, Lightbulb, BarChart, BookOpen, Code } from "lucide-react";
 export default function Home() {
   const [activeNav, setActiveNav] = useState("home");
   const [message, setMessage] = useState("");
+  const [isStartingChat, setIsStartingChat] = useState(false);
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -15,10 +20,84 @@ export default function Home() {
     return "Good Evening";
   };
 
+  const startNewChat = async (initialMessage: string) => {
+    if (!initialMessage.trim() || isStartingChat) return;
+
+    setIsStartingChat(true);
+
+    try {
+      const response = await fetch('/api/chat/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: initialMessage }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to start chat');
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No response reader');
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let conversationId = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (data.conversationId) {
+                conversationId = data.conversationId;
+              }
+              
+              if (data.error) {
+                toast({
+                  title: "Error",
+                  description: data.error,
+                  variant: "destructive",
+                });
+                return;
+              }
+              
+              if (data.finished && conversationId) {
+                setLocation(`/conversation/${conversationId}`);
+                return;
+              }
+            } catch (e) {
+              // Skip malformed JSON
+            }
+          }
+        }
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to start new chat",
+        variant: "destructive",
+      });
+    } finally {
+      setIsStartingChat(false);
+    }
+  };
+
   const handleSendMessage = () => {
     if (message.trim()) {
-      // TODO: Implement message sending logic
-      console.log("Sending message:", message);
+      startNewChat(message);
       setMessage("");
     }
   };
@@ -37,6 +116,10 @@ export default function Home() {
         break;
     }
     setMessage(prompt);
+  };
+
+  const handlePromptClick = (promptText: string) => {
+    startNewChat(promptText);
   };
 
   const suggestedPrompts = [
@@ -126,12 +209,18 @@ export default function Home() {
                 return (
                   <button
                     key={index}
-                    className="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group"
+                    onClick={() => handlePromptClick(prompt.description)}
+                    disabled={isStartingChat}
+                    className="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed"
                     data-testid={`button-prompt-${prompt.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <div className="flex items-start space-x-4">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-150 ${getColorClasses(prompt.color)}`}>
-                        <Icon className="w-5 h-5" />
+                        {isStartingChat ? (
+                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Icon className="w-5 h-5" />
+                        )}
                       </div>
                       <div>
                         <h3 className="font-medium text-slate-800 mb-1">{prompt.title}</h3>
@@ -150,6 +239,7 @@ export default function Home() {
           onMessageChange={setMessage}
           onSendMessage={handleSendMessage}
           onQuickAction={handleQuickAction}
+          disabled={isStartingChat}
         />
       </main>
     </div>

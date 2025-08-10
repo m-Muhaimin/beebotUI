@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Search, Home, Compass, Library, Clock, MoreHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useLocation } from "wouter";
 import ConversationHistory from "./conversation-history";
 
 interface SidebarProps {
@@ -10,13 +11,22 @@ interface SidebarProps {
 
 export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [, setLocation] = useLocation();
 
   const navItems = [
-    { id: "home", label: "Home", icon: Home },
-    { id: "explore", label: "Explore", icon: Compass },
-    { id: "library", label: "Library", icon: Library },
-    { id: "history", label: "History", icon: Clock },
+    { id: "home", label: "Home", icon: Home, path: "/" },
+    { id: "explore", label: "Explore", icon: Compass, path: "/explore" },
+    { id: "library", label: "Library", icon: Library, path: "/library" },
+    { id: "history", label: "History", icon: Clock, path: "/history" },
   ];
+
+  const handleNavClick = (item: typeof navItems[0]) => {
+    onNavChange(item.id);
+    if (item.id === "home") {
+      setLocation("/");
+    }
+    // Other navigation items can be implemented later
+  };
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col" data-testid="sidebar">
@@ -57,7 +67,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
             return (
               <li key={item.id}>
                 <button
-                  onClick={() => onNavChange(item.id)}
+                  onClick={() => handleNavClick(item)}
                   className={`flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 w-full text-left ${
                     isActive
                       ? "text-white bg-brand-blue"
