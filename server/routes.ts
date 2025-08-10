@@ -222,6 +222,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Send conversation ID first
       res.write(`data: ${JSON.stringify({ conversationId: conversation.id })}\n\n`);
+      
+      // Send immediate streaming start indicator
+      res.write(`data: ${JSON.stringify({ streaming: true })}\n\n`);
 
       let assistantResponse = '';
 

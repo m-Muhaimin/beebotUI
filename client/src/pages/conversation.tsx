@@ -35,6 +35,34 @@ export default function ConversationPage() {
     retryDelay: 500,
   });
 
+  // Check if this is a newly created conversation that might be streaming
+  useEffect(() => {
+    if (conversationId && !conversationData && !isLoading) {
+      // This might be a new conversation, show loading immediately
+      setIsStreaming(true);
+      
+      // Wait a bit for the conversation to be created, then refresh
+      const refreshTimer = setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['/api/conversations', conversationId] });
+      }, 1000);
+      
+      // Set a longer timeout to stop streaming indicator if no response
+      const timeoutTimer = setTimeout(() => {
+        setIsStreaming(false);
+        toast({
+          title: "Connection timeout",
+          description: "The AI response is taking longer than expected. Please try refreshing the page.",
+          variant: "destructive",
+        });
+      }, 30000);
+      
+      return () => {
+        clearTimeout(refreshTimer);
+        clearTimeout(timeoutTimer);
+      };
+    }
+  }, [conversationId, conversationData, isLoading, queryClient, toast]);
+
   const deleteConversationMutation = useMutation({
     mutationFn: async (id: string) => {
       return apiRequest(`/api/conversations/${id}`, 'DELETE');
@@ -298,16 +326,17 @@ export default function ConversationPage() {
             )}
 
             {/* Loading indicator for initial streaming */}
-            {isStreaming && !streamingMessage && (
+            {((isStreaming && !streamingMessage) || shouldShowInitialStreaming) && (
               <div className="flex items-start space-x-4" data-testid="loading-message">
-                <div className="w-8 h-8 bg-brand-blue rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ml-[-6px] mr-[-6px] bg-[#1f61f0] pl-[0px] pr-[0px] pt-[0px] pb-[0px]">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
-                <div className="max-w-3xl p-4 rounded-xl bg-slate-100 text-slate-800">
+                <div className="max-w-3xl p-4 rounded-xl ml-[8px] mr-[8px] text-[#424242] mt-[-3px] mb-[-3px] pl-[25px] pr-[25px] bg-[#8493ba38] pt-[20px] pb-[20px]">
                   <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-brand-blue rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                    <div className="w-2 h-2 bg-brand-blue rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                    <div className="w-2 h-2 bg-[#1f61f0] rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-[#1f61f0] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                    <div className="w-2 h-2 bg-[#1f61f0] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                    <span className="text-sm text-slate-600 ml-2">AI is thinking...</span>
                   </div>
                 </div>
               </div>
