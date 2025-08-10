@@ -96,7 +96,7 @@ export default function AuthPage() {
       <div className="w-full max-w-md p-8 bg-[#749fed14] pl-[40px] pr-[40px] pt-[40px] pb-[40px] ml-[370px] mr-[370px]">
           {/* Logo */}
           <div className="text-right mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 text-center">BeeBot</h2>
+            <h2 className="font-semibold text-gray-900 text-center text-[24px]">BeeBot</h2>
           </div>
 
           {/* Mode switcher */}
