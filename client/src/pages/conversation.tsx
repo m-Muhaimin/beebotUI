@@ -259,11 +259,6 @@ export default function ConversationPage() {
                   <div className="prose prose-sm max-w-none">
                     <p className="whitespace-pre-wrap text-[#ffffff]">{msg.content}</p>
                   </div>
-                  <p className={`text-xs mt-2 ${
-                    msg.role === 'user' ? 'text-blue-100' : 'text-slate-500'
-                  }`}>
-                    {new Date(msg.createdAt).toLocaleTimeString()}
-                  </p>
                 </div>
                 {msg.role === 'user' && (
                   <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
