@@ -254,7 +254,7 @@ export default function ConversationPage() {
                   </div>
                 )}
                 <div
-                  className="max-w-3xl p-4 rounded-xl bg-brand-blue text-white ml-auto pl-[40px] pr-[40px]"
+                  className="max-w-3xl p-4 rounded-xl ml-[8px] mr-[8px] pt-[10px] pb-[10px] pl-[35px] pr-[35px] mt-[1px] mb-[1px] bg-[#2563eb45] text-[#424242]"
                 >
                   <div className="prose prose-sm max-w-none">
                     <p className="whitespace-pre-wrap text-[#ffffff]">{msg.content}</p>
