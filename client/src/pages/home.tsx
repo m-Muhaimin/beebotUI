@@ -170,7 +170,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div>
-                <h1 className="font-semibold text-slate-800 text-[18px]" data-testid="greeting">
+                <h1 className="font-semibold text-[15px] text-[#122557]" data-testid="greeting">
                   {getGreeting()}, {user?.firstName || user?.username || 'User'}
                 </h1>
               </div>
