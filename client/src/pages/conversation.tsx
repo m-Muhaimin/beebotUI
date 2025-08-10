@@ -3,6 +3,7 @@ import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Sidebar from "@/components/sidebar";
 import InputSection from "@/components/input-section";
+import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, User, Bot, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -256,9 +257,7 @@ export default function ConversationPage() {
                 <div
                   className="max-w-3xl p-4 rounded-xl ml-[8px] mr-[8px] text-[#424242] mt-[-3px] mb-[-3px] pl-[25px] pr-[25px] bg-[#8493ba38] pt-[20px] pb-[20px]"
                 >
-                  <div className="prose prose-sm max-w-none">
-                    <p className="whitespace-pre-wrap text-[#000000]">{msg.content}</p>
-                  </div>
+                  <MarkdownRenderer content={msg.content} />
                 </div>
                 {msg.role === 'user' && (
                   <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0 ml-[6px] mr-[6px] pt-[0px] pb-[0px] mt-[6px] mb-[6px]">
@@ -275,9 +274,7 @@ export default function ConversationPage() {
                   <Bot className="w-5 h-5 text-white" />
                 </div>
                 <div className="max-w-3xl p-4 rounded-xl bg-slate-100 text-slate-800">
-                  <div className="prose prose-sm max-w-none">
-                    <p className="whitespace-pre-wrap">{streamingMessage}</p>
-                  </div>
+                  <MarkdownRenderer content={streamingMessage} />
                   <div className="flex items-center space-x-2 mt-2">
                     <div className="w-2 h-2 bg-brand-blue rounded-full animate-pulse" />
                     <p className="text-xs text-slate-500">AI is typing...</p>
