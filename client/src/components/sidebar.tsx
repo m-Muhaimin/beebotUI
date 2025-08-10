@@ -65,7 +65,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
         </div>
 
         {/* Navigation Items */}
-        <ul className="space-y-1">
+        <ul className="space-y-1 mt-[-11px] mb-[-11px]">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeNav === item.id;
