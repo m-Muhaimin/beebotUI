@@ -126,7 +126,7 @@ export default function AuthPage() {
           {/* Form */}
           <div className="space-y-4">
             {mode === 'signup' ? (
-              <form onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-4">
+              <form onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-4 pt-[11px] pb-[11px] text-[14px]">
                 <div>
                   <Label htmlFor="email" className="text-sm text-gray-700">Email Id</Label>
                   <Input
