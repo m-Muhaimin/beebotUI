@@ -231,16 +231,6 @@ export default function AuthPage() {
                       {signupForm.formState.errors.password.message}
                     </p>
                   )}
-                  
-                  {/* Password strength indicator */}
-                  <div className="mt-2 space-y-1 text-xs text-gray-600 dark:text-gray-400">
-                    <div className="text-sm font-medium">Password Strength: Weak</div>
-                    <div className="space-y-1">
-                      <div>Cannot contain your name or email address</div>
-                      <div>At least 8 Characters</div>
-                      <div>Contains a number or symbol</div>
-                    </div>
-                  </div>
                 </div>
 
                 <div>
