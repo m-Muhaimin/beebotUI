@@ -58,7 +58,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 text-sm border-slate-200 focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+              className="flex h-10 w-full rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-10 text-sm border-slate-200 focus:ring-2 focus:ring-brand-blue focus:border-transparent pt-[0px] pb-[0px] mt-[5px] mb-[5px]"
               data-testid="input-search"
             />
           </div>
