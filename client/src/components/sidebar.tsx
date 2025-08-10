@@ -48,7 +48,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
         </div>
       </div>
       {/* Navigation */}
-      <nav className="flex-1 p-4 pt-[5px] pb-[5px]">
+      <nav className="flex-1 p-4 pt-[15px] pb-[15px]">
         {/* Search */}
         <div className="mb-6">
           <div className="relative">
