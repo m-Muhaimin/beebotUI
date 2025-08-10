@@ -97,13 +97,13 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
       {/* User Profile & Logout */}
       <div className="p-4 border-t border-slate-200 pt-[8px] pb-[8px]">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+          <div className="flex items-center space-x-2 flex-1 min-w-0 mr-2">
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-sm font-medium text-blue-600">
                 {user?.firstName?.[0] || user?.username?.[0] || 'U'}
               </span>
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 overflow-hidden">
               <p className="truncate font-semibold text-[12px] text-[#374661] pt-[0px] pb-[0px] mt-[0px] mb-[0px]">
                 {user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user?.username}
               </p>
