@@ -249,7 +249,7 @@ export default function ConversationPage() {
                 data-testid={`message-${msg.role}-${msg.id}`}
               >
                 {msg.role === 'assistant' && (
-                  <div className="w-8 h-8 bg-brand-blue rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ml-[-6px] mr-[-6px] bg-[#1f61f0] pl-[0px] pr-[0px] pt-[0px] pb-[0px]">
                     <Bot className="w-5 h-5 text-white" />
                   </div>
                 )}
