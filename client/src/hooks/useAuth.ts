@@ -26,8 +26,7 @@ export function useSignup() {
   
   return useMutation({
     mutationFn: async (userData: SignupUser): Promise<AuthResponse> => {
-      const result = await apiRequest('/api/auth/signup', 'POST', userData);
-      return result;
+      return await apiRequest('/api/auth/signup', 'POST', userData);
     },
     onSuccess: (data) => {
       queryClient.setQueryData(['/api/auth/me'], data);
@@ -40,8 +39,7 @@ export function useLogin() {
   
   return useMutation({
     mutationFn: async (credentials: LoginUser): Promise<AuthResponse> => {
-      const result = await apiRequest('/api/auth/login', 'POST', credentials);
-      return result;
+      return await apiRequest('/api/auth/login', 'POST', credentials);
     },
     onSuccess: (data) => {
       queryClient.setQueryData(['/api/auth/me'], data);
@@ -54,7 +52,7 @@ export function useLogout() {
   
   return useMutation({
     mutationFn: async () => {
-      return apiRequest('/api/auth/logout', 'POST');
+      return await apiRequest('/api/auth/logout', 'POST');
     },
     onSuccess: () => {
       queryClient.setQueryData(['/api/auth/me'], null);
