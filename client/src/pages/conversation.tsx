@@ -205,10 +205,10 @@ export default function ConversationPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div>
-                <h1 className="text-2xl font-semibold text-slate-800" data-testid="conversation-title">
+                <h1 className="font-semibold text-slate-800 text-[16px]" data-testid="conversation-title">
                   {conversation.title}
                 </h1>
-                <p className="text-sm text-slate-500">
+                <p className="text-slate-500 text-[13px]">
                   Started {new Date(conversation.createdAt).toLocaleDateString()}
                 </p>
               </div>
