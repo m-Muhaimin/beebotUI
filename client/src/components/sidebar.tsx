@@ -47,9 +47,8 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
           <span className="text-lg font-semibold text-slate-800" data-testid="text-logo">BeeBot</span>
         </div>
       </div>
-
       {/* Navigation */}
-      <nav className="flex-1 p-4">
+      <nav className="flex-1 p-4 pt-[5px] pb-[5px]">
         {/* Search */}
         <div className="mb-6">
           <div className="relative">
@@ -92,7 +91,6 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
 
         <ConversationHistory />
       </nav>
-
       {/* User Profile & Logout */}
       <div className="p-4 border-t border-slate-200">
         <div className="flex items-center justify-between">
