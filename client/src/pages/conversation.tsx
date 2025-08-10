@@ -31,6 +31,8 @@ export default function ConversationPage() {
   const { data: conversationData, isLoading } = useQuery<ConversationData>({
     queryKey: ['/api/conversations', conversationId],
     enabled: !!conversationId,
+    retry: 3,
+    retryDelay: 500,
   });
 
   const deleteConversationMutation = useMutation({
@@ -58,6 +60,9 @@ export default function ConversationPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Show streaming when we're in a new conversation that might be loading
+  const shouldShowInitialStreaming = isLoading && !conversationData && !isStreaming;
+
   useEffect(() => {
     scrollToBottom();
   }, [conversationData?.messages, streamingMessage]);
@@ -69,6 +74,26 @@ export default function ConversationPage() {
     setMessage("");
     setIsStreaming(true);
     setStreamingMessage("");
+
+    // Optimistically add user message to the UI immediately
+    queryClient.setQueryData(['/api/conversations', conversationId], (oldData: ConversationData | undefined) => {
+      if (!oldData) return oldData;
+      
+      const newMessage = {
+        id: `temp-${Date.now()}`,
+        conversationId,
+        role: 'user' as const,
+        content: messageToSend,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        metadata: null
+      };
+      
+      return {
+        ...oldData,
+        messages: [...oldData.messages, newMessage]
+      };
+    });
 
     try {
       const response = await fetch(`/api/chat/${conversationId}`, {

@@ -65,6 +65,9 @@ export default function Home() {
               
               if (data.conversationId) {
                 conversationId = data.conversationId;
+                // Navigate immediately when we get the conversation ID
+                setLocation(`/conversation/${conversationId}`);
+                return;
               }
               
               if (data.error) {
@@ -73,11 +76,6 @@ export default function Home() {
                   description: data.error,
                   variant: "destructive",
                 });
-                return;
-              }
-              
-              if (data.finished && conversationId) {
-                setLocation(`/conversation/${conversationId}`);
                 return;
               }
             } catch (e) {
