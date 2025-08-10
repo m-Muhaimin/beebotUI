@@ -93,14 +93,14 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       {/* Auth form */}
-      <div className="w-full max-w-md p-8 bg-[#749fed14] pl-[40px] pr-[40px] pt-[40px] pb-[40px] ml-[370px] mr-[370px]">
+      <div className="w-full max-w-md p-8">
           {/* Logo */}
           <div className="text-right mb-8">
-            <h2 className="font-semibold text-gray-900 text-center text-[24px]">BeeBot</h2>
+            <h2 className="text-xl font-semibold text-gray-900 text-center">BeeBot</h2>
           </div>
 
           {/* Mode switcher */}
-          <div className="flex mb-6 ml-[0px] mr-[0px] pl-[59px] pr-[59px]">
+          <div className="flex mb-6">
             <button
               onClick={() => setMode('signup')}
               className={`px-6 py-2 text-sm font-medium rounded-l-lg border transition-colors ${
@@ -126,12 +126,44 @@ export default function AuthPage() {
           {/* Form */}
           <div className="space-y-4">
             {mode === 'signup' ? (
-              <form onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-4 pt-[11px] pb-[11px] text-[14px]">
+              <form onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="firstName" className="text-sm text-gray-700">First Name</Label>
+                    <Input
+                      id="firstName"
+                      placeholder="First name"
+                      {...signupForm.register('firstName')}
+                      className="mt-1 border-gray-300"
+                    />
+                    {signupForm.formState.errors.firstName && (
+                      <p className="text-sm text-red-600 mt-1">
+                        {signupForm.formState.errors.firstName.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName" className="text-sm text-gray-700">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      placeholder="Last name"
+                      {...signupForm.register('lastName')}
+                      className="mt-1 border-gray-300"
+                    />
+                    {signupForm.formState.errors.lastName && (
+                      <p className="text-sm text-red-600 mt-1">
+                        {signupForm.formState.errors.lastName.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
                 <div>
-                  <Label htmlFor="email" className="text-sm text-gray-700">Email Id</Label>
+                  <Label htmlFor="email" className="text-sm text-gray-700">Email</Label>
                   <Input
                     id="email"
                     type="email"
+                    placeholder="Enter your email"
                     {...signupForm.register('email')}
                     className="mt-1 border-gray-300"
                   />
@@ -142,23 +174,49 @@ export default function AuthPage() {
                   )}
                 </div>
 
-                <div className="mt-[5px] mb-[5px]">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-sm text-gray-700">Password</Label>
-                    <button type="button" className="text-sm text-blue-600 hover:text-blue-500">
-                      Forget Password?
-                    </button>
-                  </div>
+                <div>
+                  <Label htmlFor="username" className="text-sm text-gray-700">Username</Label>
+                  <Input
+                    id="username"
+                    placeholder="Choose a username"
+                    {...signupForm.register('username')}
+                    className="mt-1 border-gray-300"
+                  />
+                  {signupForm.formState.errors.username && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {signupForm.formState.errors.username.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="password" className="text-sm text-gray-700">Create Password</Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Enter Password"
+                    placeholder="Create password"
                     {...signupForm.register('password')}
                     className="mt-1 border-gray-300"
                   />
                   {signupForm.formState.errors.password && (
                     <p className="text-sm text-red-600 mt-1">
                       {signupForm.formState.errors.password.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="confirmPassword" className="text-sm text-gray-700">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm password"
+                    {...signupForm.register('confirmPassword')}
+                    className="mt-1 border-gray-300"
+                  />
+                  {signupForm.formState.errors.confirmPassword && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {signupForm.formState.errors.confirmPassword.message}
                     </p>
                   )}
                 </div>

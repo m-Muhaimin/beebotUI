@@ -116,7 +116,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all conversations for a user
   app.get('/api/conversations', isAuthenticated, async (req, res) => {
     try {
-      const userId = req.session!.userId;
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: 'User not authenticated' });
+      }
       const conversations = await storage.getConversationsByUserId(userId);
       res.json(conversations);
     } catch (error) {
@@ -142,7 +145,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new conversation
   app.post('/api/conversations', isAuthenticated, async (req, res) => {
     try {
-      const userId = req.session!.userId;
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: 'User not authenticated' });
+      }
       const validatedData = insertConversationSchema.parse({
         ...req.body,
         userId
@@ -176,7 +182,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log('POST /api/chat/new called with body:', req.body);
     try {
       const { message } = req.body;
-      const userId = req.session!.userId;
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: 'User not authenticated' });
+      }
       
       if (!message || !message.trim()) {
         return res.status(400).json({ error: 'Message is required' });
