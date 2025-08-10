@@ -1,0 +1,400 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeBot - AI Assistant Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-blue': '#3B82F6',
+                        'brand-purple': '#8B5CF6',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/heroicons@2.0.16/24/outline/index.js" type="module"></script>
+    <script src="https://unpkg.com/heroicons@2.0.16/24/solid/index.js" type="module"></script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 overflow-hidden">
+    <!-- @COMPONENT: AppLayout -->
+    <div class="flex h-screen">
+        <!-- @COMPONENT: Sidebar -->
+        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col">
+            <!-- Logo Section -->
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-brand-blue to-brand-purple rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-lg font-semibold text-slate-800">BeeBot</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 p-4">
+                <!-- Search -->
+                <div class="mb-6">
+                    <div class="relative">
+                        <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input 
+                            type="text" 
+                            placeholder="Search" 
+                            class="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                            data-mock="true"
+                        />
+                    </div>
+                </div>
+
+                <!-- Navigation Items -->
+                <ul class="space-y-1">
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-white bg-brand-blue rounded-lg transition-colors duration-150" data-nav="home" aria-label="Home">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors duration-150" data-nav="explore" aria-label="Explore">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                            </svg>
+                            <span>Explore</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors duration-150" data-nav="library" aria-label="Library">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+                            </svg>
+                            <span>Library</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors duration-150" data-nav="history" aria-label="History">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>History</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Conversation History -->
+                <div class="mt-8">
+                    <!-- @COMPONENT: HistorySection -->
+                    <div class="mb-6">
+                        <button class="flex items-center justify-between w-full text-left text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 hover:text-slate-700 transition-colors duration-150" data-toggle="tomorrow-section">
+                            <span>Tomorrow</span>
+                            <svg class="w-4 h-4 transform transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="space-y-2" id="tomorrow-section">
+                            <button class="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200" data-mock="true">
+                                What's something you've learned recently?
+                            </button>
+                            <button class="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200" data-mock="true">
+                                If you could teleport anywhere right now...
+                            </button>
+                            <button class="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200" data-mock="true">
+                                What's one goal you want to achieve?
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <button class="flex items-center justify-between w-full text-left text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 hover:text-slate-700 transition-colors duration-150" data-toggle="week-section">
+                            <span>7 Days Ago</span>
+                            <svg class="w-4 h-4 transform transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="space-y-2" id="week-section">
+                            <button class="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200" data-mock="true">
+                                Ask me anything weird or random
+                            </button>
+                            <button class="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200" data-mock="true">
+                                How are you feeling today, really?
+                            </button>
+                            <button class="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200" data-mock="true">
+                                What's one habit you wish you had?
+                            </button>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: HistorySection -->
+                </div>
+            </nav>
+
+            <!-- User Profile -->
+            <div class="p-4 border-t border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center">
+                        <span class="text-sm font-medium text-white" data-bind="user.initials">JM</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-slate-800 truncate" data-bind="user.name" data-mock="true">Judha Mayapetiya</p>
+                        <p class="text-xs text-slate-500 truncate" data-bind="user.email" data-mock="true">judha.designer@email.com</p>
+                    </div>
+                    <button class="text-slate-400 hover:text-slate-600 transition-colors duration-150" aria-label="User menu">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- @COMPONENT: MainContent -->
+        <main class="flex-1 flex flex-col min-w-0">
+            <!-- Header -->
+            <header class="bg-white border-b border-slate-200 px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div>
+                            <h1 class="text-2xl font-semibold text-slate-800" data-bind="greeting" data-mock="true">Good Morning, Judha</h1>
+                            <p class="text-lg text-brand-blue font-medium mt-1">How Can I Assist You Today?</p>
+                        </div>
+                    </div>
+                    <button class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 flex items-center space-x-2" data-event="click:newChat">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>New Chat</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 px-8 py-8 overflow-y-auto">
+                <!-- Welcome Message -->
+                <div class="max-w-3xl mx-auto">
+                    <div class="text-center mb-12">
+                        <div class="w-20 h-20 bg-gradient-to-br from-brand-blue/10 to-brand-purple/10 rounded-full mx-auto mb-6 flex items-center justify-center">
+                            <svg class="w-10 h-10 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-slate-600 text-lg max-w-md mx-auto">Start a conversation by typing a message or try one of the quick actions below.</p>
+                    </div>
+
+                    <!-- Suggested Prompts -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <button class="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group" data-mock="true">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-150">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-slate-800 mb-1">Creative Writing</h3>
+                                    <p class="text-sm text-slate-600">Help me write a story, poem, or creative content</p>
+                                </div>
+                            </div>
+                        </button>
+
+                        <button class="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group" data-mock="true">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center group-hover:bg-green-100 transition-colors duration-150">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-slate-800 mb-1">Data Analysis</h3>
+                                    <p class="text-sm text-slate-600">Analyze data, create charts, or explain trends</p>
+                                </div>
+                            </div>
+                        </button>
+
+                        <button class="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group" data-mock="true">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center group-hover:bg-purple-100 transition-colors duration-150">
+                                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-slate-800 mb-1">Learning & Research</h3>
+                                    <p class="text-sm text-slate-600">Explain concepts, research topics, or help study</p>
+                                </div>
+                            </div>
+                        </button>
+
+                        <button class="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group" data-mock="true">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center group-hover:bg-orange-100 transition-colors duration-150">
+                                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-slate-800 mb-1">Code & Programming</h3>
+                                    <p class="text-sm text-slate-600">Write code, debug issues, or explain programming</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- @COMPONENT: InputSection -->
+            <div class="bg-white border-t border-slate-200 p-6">
+                <div class="max-w-4xl mx-auto">
+                    <div class="relative">
+                        <textarea 
+                            rows="3"
+                            placeholder="Initiate a query or send a command to the AI..."
+                            class="w-full pl-4 pr-12 py-4 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent resize-none text-slate-800 placeholder-slate-500"
+                            data-mock="true"
+                            data-implementation="Should handle input submission and display loading states"
+                        ></textarea>
+                        <button class="absolute right-3 bottom-3 w-8 h-8 bg-brand-blue hover:bg-blue-600 text-white rounded-lg flex items-center justify-center transition-colors duration-150" data-event="click:sendMessage" aria-label="Send message">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Quick Action Buttons -->
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="flex items-center space-x-3">
+                            <button class="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium transition-colors duration-150" data-action="reasoning">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                                <span>Reasoning</span>
+                            </button>
+                            <button class="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium transition-colors duration-150" data-action="create-image">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span>Create Image</span>
+                            </button>
+                            <button class="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium transition-colors duration-150" data-action="deep-research">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                <span>Deep Research</span>
+                            </button>
+                        </div>
+                        <div class="text-xs text-slate-500">
+                            Press <kbd class="px-2 py-1 bg-slate-100 rounded text-slate-600">⌘</kbd> + <kbd class="px-2 py-1 bg-slate-100 rounded text-slate-600">Enter</kbd> to send
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: InputSection -->
+        </main>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+    <!-- @END_COMPONENT: AppLayout -->
+
+    <script>
+        (function() {
+            // TODO: Implement proper React state management and business logic
+            
+            // Navigation highlighting
+            document.querySelectorAll('[data-nav]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Remove active class from all nav items
+                    document.querySelectorAll('[data-nav]').forEach(item => {
+                        item.classList.remove('bg-brand-blue', 'text-white');
+                        item.classList.add('text-slate-600', 'hover:text-slate-800', 'hover:bg-slate-100');
+                    });
+                    // Add active class to clicked item
+                    this.classList.remove('text-slate-600', 'hover:text-slate-800', 'hover:bg-slate-100');
+                    this.classList.add('bg-brand-blue', 'text-white');
+                });
+            });
+
+            // Collapsible sections
+            document.querySelectorAll('[data-toggle]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-toggle');
+                    const target = document.getElementById(targetId);
+                    const icon = this.querySelector('svg');
+                    
+                    if (target.style.display === 'none') {
+                        target.style.display = 'block';
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        target.style.display = 'none';
+                        icon.style.transform = 'rotate(-90deg)';
+                    }
+                });
+            });
+
+            // Quick action button handlers
+            document.querySelectorAll('[data-action]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const textarea = document.querySelector('textarea');
+                    
+                    switch(action) {
+                        case 'reasoning':
+                            textarea.value = 'Help me reason through: ';
+                            break;
+                        case 'create-image':
+                            textarea.value = 'Create an image of: ';
+                            break;
+                        case 'deep-research':
+                            textarea.value = 'Research in detail: ';
+                            break;
+                    }
+                    textarea.focus();
+                    // Move cursor to end
+                    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+                });
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    // TODO: Implement message sending logic
+                    console.log('Send message triggered');
+                }
+            });
+
+            // Dynamic greeting based on time
+            function updateGreeting() {
+                const hour = new Date().getHours();
+                let greeting = 'Good Evening';
+                
+                if (hour < 12) {
+                    greeting = 'Good Morning';
+                } else if (hour < 18) {
+                    greeting = 'Good Afternoon';
+                }
+                
+                const greetingElement = document.querySelector('[data-bind="greeting"]');
+                if (greetingElement) {
+                    greetingElement.textContent = `${greeting}, Judha`;
+                }
+            }
+
+            // Initialize greeting
+            updateGreeting();
+        })();
+    </script>
+</body>
+</html>
