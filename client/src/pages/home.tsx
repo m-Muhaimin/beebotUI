@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import Sidebar from "@/components/sidebar";
 import InputSection from "@/components/input-section";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ export default function Home() {
   const [isStartingChat, setIsStartingChat] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -169,7 +171,7 @@ export default function Home() {
             <div className="flex items-center space-x-4">
               <div>
                 <h1 className="font-semibold text-slate-800 text-[18px]" data-testid="greeting">
-                  {getGreeting()}, Judha
+                  {getGreeting()}, {user?.firstName || user?.username || 'User'}
                 </h1>
               </div>
             </div>

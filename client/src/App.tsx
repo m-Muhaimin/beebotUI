@@ -23,14 +23,11 @@ function Router() {
     );
   }
 
-  if (!isAuthenticated) {
-    return <AuthPage />;
-  }
-
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/conversation/:id" component={ConversationPage} />
+      <Route path="/login" component={AuthPage} />
+      <Route path="/" component={isAuthenticated ? Home : AuthPage} />
+      <Route path="/conversation/:id" component={isAuthenticated ? ConversationPage : AuthPage} />
       <Route component={NotFound} />
     </Switch>
   );

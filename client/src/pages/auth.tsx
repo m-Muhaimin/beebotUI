@@ -92,7 +92,7 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       {/* Auth form */}
-      <div className="w-full max-w-md p-8">
+      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-sm border border-gray-200" style={{ backgroundColor: '#5239cc12' }}>
           {/* Logo */}
           <div className="text-right mb-8">
             <h2 className="text-xl font-semibold text-gray-900 text-center">BeeBot</h2>
