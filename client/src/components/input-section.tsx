@@ -48,7 +48,7 @@ export default function InputSection({
   };
 
   return (
-    <div className="bg-white border-t border-slate-200 p-6 pt-[8px] pb-[8px]" data-testid="input-section">
+    <div className="bg-white border-t border-slate-200 p-6 pt-[16px] pb-[16px]" data-testid="input-section">
       <div className="max-w-4xl mx-auto">
         <div className="relative">
           <Textarea
