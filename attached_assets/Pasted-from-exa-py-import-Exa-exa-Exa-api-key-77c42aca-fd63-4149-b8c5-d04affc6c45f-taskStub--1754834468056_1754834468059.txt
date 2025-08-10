@@ -1,0 +1,77 @@
+from exa_py import Exa
+
+exa = Exa(api_key = "77c42aca-fd63-4149-b8c5-d04affc6c45f")
+
+taskStub = exa.research.create_task(
+  instructions = "Provide scientific information about ants including taxonomy, average lifespan, and notable behaviors",
+  model = "exa-research",
+  output_schema = {
+    "description": "Schema describing a generic structured output",
+    "type": "object",
+    "required": ["data", "metadata"],
+    "additionalProperties": false,
+    "properties": {
+      "data": {
+        "type": "object",
+        "description": "The main content or payload of the output",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the data"
+          },
+          "value": {
+            "type": ["string", "number", "boolean", "object", "array", "null"],
+            "description": "The actual data value in any format"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "When the data was generated or recorded"
+          }
+        },
+        "required": ["id", "value"],
+        "additionalProperties": false
+      },
+      "metadata": {
+        "type": "object",
+        "description": "Additional information about the data",
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Origin of the data"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version information"
+          }
+        },
+        "required": ["source"],
+        "additionalProperties": false
+      }
+    }
+  },
+  
+  output_infer_schema = False
+)
+task = exa.research.poll_task(taskStub.id)
+
+# Research can also be used (without an output schema)
+# directly inside chat completions
+from openai import OpenAI
+
+client = OpenAI(
+    base_url = "https://api.exa.ai",
+    api_key = "77c42aca-fd63-4149-b8c5-d04affc6c45f",
+)
+
+completion = client.chat.completions.create(
+    model = "exa-research",
+    messages = [
+        {"role": "user", "content": "Provide scientific information about ants including taxonomy, average lifespan, and notable behaviors"}
+    ],
+    stream = True,
+)
+
+for chunk in completion:
+    if chunk.choices and chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end = "", flush = True)
+

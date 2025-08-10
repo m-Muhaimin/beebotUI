@@ -1,7 +1,11 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+<<<<<<< HEAD
 import { Lightbulb, Image, Search, Send } from "lucide-react";
+=======
+import { Lightbulb, Search, Send } from "lucide-react";
+>>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
 
 interface InputSectionProps {
   message: string;
@@ -77,6 +81,7 @@ export default function InputSection({
             <Button
               variant="secondary"
               size="sm"
+<<<<<<< HEAD
               onClick={() => onQuickAction("create-image")}
               disabled={disabled}
               className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
@@ -84,6 +89,15 @@ export default function InputSection({
             >
               <Image className="w-4 h-4" />
               <span>Create Image</span>
+=======
+              onClick={() => onQuickAction("web-search")}
+              disabled={disabled}
+              className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              data-testid="button-web-search"
+            >
+              <Search className="w-4 h-4" />
+              <span>Web Search</span>
+>>>>>>> 715dfa8 (Feature: Deep Search | Web Search)
             </Button>
             <Button
               variant="secondary"

@@ -1,0 +1,87 @@
+from exa_py import Exa
+
+exa = Exa(api_key = "77c42aca-fd63-4149-b8c5-d04affc6c45f")
+
+result = exa.search_and_contents(
+  "blog post about AI",
+  type = "auto",
+  num_results = 5,
+  start_published_date = "2024-12-31T18:00:00.000Z",
+  end_published_date = "2025-08-10T17:59:59.999Z",
+  livecrawl = "preferred",
+  summary = {
+    "query": "Generate concise summary with all important informations, key takeaways, etc"
+  },
+  extras = {
+    "links": 1,
+    "image_links": 0
+  }
+)
+from exa_py import Exa
+
+exa = Exa(api_key = "77c42aca-fd63-4149-b8c5-d04affc6c45f")
+
+taskStub = exa.research.create_task(
+  instructions = "from exa_py import Exa
+
+exa = Exa(api_key = "77c42aca-fd63-4149-b8c5-d04affc6c45f")
+
+result = exa.search_and_contents(
+  "blog post about AI",
+  type = "auto",
+  num_results = 5,
+  start_published_date = "2024-12-31T18:00:00.000Z",
+  end_published_date = "2025-08-10T17:59:59.999Z",
+  livecrawl = "preferred",
+  summary = {
+    "query": "Generate concise summary with all important informations, key takeaways, etc"
+  },
+  extras = {
+    "links": 1,
+    "image_links": 0
+  }
+)",
+  model = "exa-research",
+  output_infer_schema = True
+)
+task = exa.research.poll_task(taskStub.id)
+
+# Research can also be used (without an output schema)
+# directly inside chat completions
+from openai import OpenAI
+
+client = OpenAI(
+    base_url = "https://api.exa.ai",
+    api_key = "77c42aca-fd63-4149-b8c5-d04affc6c45f",
+)
+
+completion = client.chat.completions.create(
+    model = "exa-research",
+    messages = [
+        {"role": "user", "content": "from exa_py import Exa
+
+exa = Exa(api_key = "77c42aca-fd63-4149-b8c5-d04affc6c45f")
+
+result = exa.search_and_contents(
+  "blog post about AI",
+  type = "auto",
+  num_results = 5,
+  start_published_date = "2024-12-31T18:00:00.000Z",
+  end_published_date = "2025-08-10T17:59:59.999Z",
+  livecrawl = "preferred",
+  summary = {
+    "query": "Generate concise summary with all important informations, key takeaways, etc"
+  },
+  extras = {
+    "links": 1,
+    "image_links": 0
+  }
+)"}
+    ],
+    stream = True,
+)
+
+for chunk in completion:
+    if chunk.choices and chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end = "", flush = True)
+
