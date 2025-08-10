@@ -6,9 +6,9 @@ import { insertConversationSchema, insertMessageSchema, signupSchema, loginSchem
 import { z } from "zod";
 import { getSession, isAuthenticated, hashPassword, verifyPassword } from "./auth";
 
-// Initialize MCP client with environment variable or fallback
+// Initialize MCP client with environment variable
 const mcpClient = new MCPChatClient(
-  process.env.DEEPSEEK_API_KEY || "sk-1414609620f448b6966346842d3b64db"
+  process.env.DEEPSEEK_API_KEY!
 );
 
 // For demo purposes, we'll use a hardcoded user ID
@@ -46,6 +46,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (req.session) {
         req.session.userId = user.id;
         req.session.user = user;
+        
+        // Force session save to ensure persistence
+        await new Promise<void>((resolve, reject) => {
+          req.session!.save((err) => {
+            if (err) reject(err);
+            else resolve();
+          });
+        });
       }
 
       // Return user without password
@@ -80,6 +88,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (req.session) {
         req.session.userId = user.id;
         req.session.user = user;
+        
+        // Force session save to ensure persistence
+        await new Promise<void>((resolve, reject) => {
+          req.session!.save((err) => {
+            if (err) reject(err);
+            else resolve();
+          });
+        });
       }
 
       // Return user without password

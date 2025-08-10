@@ -272,8 +272,8 @@ if __name__ == "__main__":
       // Set up communication handlers
       this.setupServerCommunication();
       
-      // Initialize tools list
-      await this.listTools();
+      // Initialize tools list with delay
+      setTimeout(() => this.listTools(), 1000);
       
       console.log('Weather MCP server initialized successfully');
     } catch (error) {
@@ -283,6 +283,9 @@ if __name__ == "__main__":
 
   private async initializeSearchServer() {
     try {
+      // Wait a bit for the Python packages to be available
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       // Start the search server process
       this.searchServer = spawn('python3', ['search_server.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
@@ -290,6 +293,9 @@ if __name__ == "__main__":
 
       // Set up communication handlers for search server
       this.setupSearchServerCommunication();
+      
+      // Initialize search tools list
+      setTimeout(() => this.listTools(), 3000);
       
       console.log('Search MCP server initialized successfully');
     } catch (error) {

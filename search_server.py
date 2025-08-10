@@ -5,7 +5,11 @@ import sys
 import asyncio
 import os
 from typing import Dict, Any, Optional
-from exa_py import Exa
+try:
+    from exa_py import Exa
+except ImportError:
+    print("exa_py package not found. Please install it with: pip install exa-py", file=sys.stderr)
+    sys.exit(1)
 from datetime import datetime, timedelta
 
 class MCPServer:
