@@ -82,7 +82,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
                   aria-label={item.label}
                 >
                   <Icon className="w-5 h-5" />
-                  <span>{item.label}</span>
+                  <span className="font-normal ml-[7px] mr-[7px]">{item.label}</span>
                 </button>
               </li>
             );
