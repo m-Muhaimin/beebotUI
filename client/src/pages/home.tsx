@@ -220,7 +220,7 @@ export default function Home() {
                       </div>
                       <div>
                         <h3 className="text-slate-800 text-[14px] font-semibold mt-[2px] mb-[2px]">{prompt.title}</h3>
-                        <p className="text-sm text-slate-600">{prompt.description}</p>
+                        <p className="text-slate-600 text-[13px]">{prompt.description}</p>
                       </div>
                     </div>
                   </button>
