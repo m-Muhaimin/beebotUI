@@ -87,7 +87,7 @@ export default function InputSection({
             onClick={onSendMessage}
             size="sm"
             disabled={disabled || !message.trim()}
-            className="absolute right-3 bottom-3 w-8 h-8 p-0 bg-brand-blue hover:bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 absolute right-3 bottom-3 w-8 h-8 p-0 bg-brand-blue hover:bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed pl-[25px] pr-[25px] pt-[20px] pb-[20px]"
             aria-label="Send message"
             data-testid="button-send"
           >
