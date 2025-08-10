@@ -88,7 +88,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
         <ConversationHistory />
       </nav>
       {/* User Profile & Logout */}
-      <div className="p-4 border-t border-slate-200">
+      <div className="p-4 border-t border-slate-200 pt-[8px] pb-[8px]">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
