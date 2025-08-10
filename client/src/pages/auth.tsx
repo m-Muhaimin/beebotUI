@@ -91,49 +91,9 @@ export default function AuthPage() {
   const isLoading = signupMutation.isPending || loginMutation.isPending;
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      {/* Left side - Hero section */}
-      <div className="hidden lg:flex lg:w-1/2 p-8">
-        <div className="w-full bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-3xl relative overflow-hidden flex flex-col justify-between p-12 text-white">
-          {/* Decorative wave pattern */}
-          <div className="absolute inset-0 opacity-20">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <defs>
-                <pattern id="wave" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                  <path d="M0,50 Q25,30 50,50 T100,50 L100,100 L0,100 Z" fill="white" opacity="0.1"/>
-                  <path d="M0,60 Q25,40 50,60 T100,60 L100,100 L0,100 Z" fill="white" opacity="0.05"/>
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#wave)" />
-            </svg>
-          </div>
-          
-          {/* Hero content */}
-          <div className="relative z-10">
-            <h1 className="text-4xl font-bold mb-4">Welcome to SimpleFlow</h1>
-            <p className="text-lg opacity-90">Your Gateway to Effortless Management.</p>
-          </div>
-          
-          {/* Bottom content */}
-          <div className="relative z-10">
-            <h2 className="text-2xl font-semibold mb-4">Seamless Collaboration</h2>
-            <p className="text-base opacity-90 mb-8">
-              Effortlessly work together with your team in real-time.
-            </p>
-            
-            {/* Progress indicators */}
-            <div className="flex space-x-2">
-              <div className="w-8 h-2 bg-white rounded-full"></div>
-              <div className="w-2 h-2 bg-white/50 rounded-full"></div>
-              <div className="w-2 h-2 bg-white/30 rounded-full"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Right side - Auth form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      {/* Auth form */}
+      <div className="w-full max-w-md p-8">
           {/* Logo */}
           <div className="text-right mb-8">
             <h2 className="text-xl font-semibold text-gray-900">SimpleFlow</h2>
@@ -292,7 +252,6 @@ export default function AuthPage() {
               </button>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
