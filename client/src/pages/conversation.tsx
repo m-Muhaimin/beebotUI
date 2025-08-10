@@ -257,7 +257,7 @@ export default function ConversationPage() {
                   className="max-w-3xl p-4 rounded-xl bg-brand-blue text-white ml-auto pl-[40px] pr-[40px]"
                 >
                   <div className="prose prose-sm max-w-none">
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
+                    <p className="whitespace-pre-wrap text-[#ffffff]">{msg.content}</p>
                   </div>
                   <p className={`text-xs mt-2 ${
                     msg.role === 'user' ? 'text-blue-100' : 'text-slate-500'
