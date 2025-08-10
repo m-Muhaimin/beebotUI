@@ -100,7 +100,7 @@ export default function AuthPage() {
           </div>
 
           {/* Mode switcher */}
-          <div className="flex mb-6">
+          <div className="flex mb-6 pl-[93px] pr-[93px]">
             <button
               onClick={() => setMode('signup')}
               className={`px-6 py-2 text-sm font-medium rounded-l-lg border transition-colors ${
