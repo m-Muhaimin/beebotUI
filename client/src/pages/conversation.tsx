@@ -261,7 +261,7 @@ export default function ConversationPage() {
                   </div>
                 </div>
                 {msg.role === 'user' && (
-                  <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0 ml-[6px] mr-[6px] pt-[0px] pb-[0px] mt-[6px] mb-[6px]">
                     <User className="w-5 h-5 text-white" />
                   </div>
                 )}
