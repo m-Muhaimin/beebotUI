@@ -77,7 +77,7 @@ export default function InputSection({
                   data-testid={`tool-${tool.id}`}
                 >
                   <Icon className="w-3 h-3" />
-                  <span>{tool.label}</span>
+                  <span className="ml-[-3px] mr-[-3px]">{tool.label}</span>
                   {isSelected && <X className="w-3 h-3 ml-1" />}
                 </Button>
               );
