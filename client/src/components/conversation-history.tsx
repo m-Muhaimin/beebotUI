@@ -95,7 +95,7 @@ export default function ConversationHistory({ onSelectConversation }: Conversati
                 <button
                   key={conversation.id}
                   onClick={() => handleConversationClick(conversation.id)}
-                  className="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200"
+                  className="w-full text-left p-3 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200 text-[12px] pt-[5px] pb-[5px]"
                   data-testid={`button-history-conversation-${conversation.id}`}
                 >
                   {conversation.title}
@@ -105,7 +105,6 @@ export default function ConversationHistory({ onSelectConversation }: Conversati
           )}
         </div>
       )}
-
       {/* Week Section */}
       {week.length > 0 && (
         <div className="mb-6">
@@ -137,7 +136,6 @@ export default function ConversationHistory({ onSelectConversation }: Conversati
           )}
         </div>
       )}
-
       {/* Empty state */}
       {conversations.length === 0 && !isLoading && (
         <div className="mt-8 text-center">

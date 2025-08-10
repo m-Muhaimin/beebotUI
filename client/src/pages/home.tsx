@@ -40,49 +40,13 @@ export default function Home() {
         throw new Error('Failed to start chat');
       }
 
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('No response reader');
-      }
-
-      const decoder = new TextDecoder();
-      let buffer = '';
-      let conversationId = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6));
-              
-              if (data.conversationId) {
-                conversationId = data.conversationId;
-                // Navigate immediately when we get the conversation ID
-                setLocation(`/conversation/${conversationId}`);
-                return;
-              }
-              
-              if (data.error) {
-                toast({
-                  title: "Error",
-                  description: data.error,
-                  variant: "destructive",
-                });
-                return;
-              }
-            } catch (e) {
-              // Skip malformed JSON
-            }
-          }
-        }
+      const data = await response.json();
+      
+      if (data.conversationId) {
+        // Navigate immediately to the conversation page
+        setLocation(`/conversation/${data.conversationId}`);
+      } else {
+        throw new Error('No conversation ID received');
       }
     } catch (error) {
       toast({

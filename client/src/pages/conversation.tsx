@@ -35,33 +35,98 @@ export default function ConversationPage() {
     retryDelay: 500,
   });
 
-  // Check if this is a newly created conversation that might be streaming
+  // Auto-trigger AI response for new conversations
   useEffect(() => {
-    if (conversationId && !conversationData && !isLoading) {
-      // This might be a new conversation, show loading immediately
-      setIsStreaming(true);
+    if (conversationData?.messages && conversationData.messages.length > 0 && !isStreaming) {
+      const messages = conversationData.messages;
+      const lastMessage = messages[messages.length - 1];
       
-      // Wait a bit for the conversation to be created, then refresh
-      const refreshTimer = setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['/api/conversations', conversationId] });
-      }, 1000);
-      
-      // Set a longer timeout to stop streaming indicator if no response
-      const timeoutTimer = setTimeout(() => {
-        setIsStreaming(false);
-        toast({
-          title: "Connection timeout",
-          description: "The AI response is taking longer than expected. Please try refreshing the page.",
-          variant: "destructive",
-        });
-      }, 30000);
-      
-      return () => {
-        clearTimeout(refreshTimer);
-        clearTimeout(timeoutTimer);
-      };
+      // If the last message is from user and there's no assistant response, trigger AI response
+      if (lastMessage.role === 'user' && messages.length === 1 && !streamingMessage) {
+        // This is a new conversation with only the user's message - start AI response
+        setIsStreaming(true);
+        setStreamingMessage("");
+        
+        // Start the AI response immediately
+        const triggerAIResponse = async () => {
+          try {
+            const response = await fetch(`/api/chat/${conversationId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ message: lastMessage.content, skipSaveMessage: true }),
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to get AI response');
+            }
+
+            const reader = response.body?.getReader();
+            if (!reader) {
+              throw new Error('No response reader');
+            }
+
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            while (true) {
+              const { done, value } = await reader.read();
+              
+              if (done) break;
+
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split('\n');
+              buffer = lines.pop() || '';
+
+              for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                  try {
+                    const data = JSON.parse(line.slice(6));
+                    
+                    if (data.content) {
+                      setStreamingMessage(prev => prev + data.content);
+                    }
+                    
+                    if (data.error) {
+                      toast({
+                        title: "Error",
+                        description: data.error,
+                        variant: "destructive",
+                      });
+                      break;
+                    }
+                    
+                    if (data.finished) {
+                      setStreamingMessage("");
+                      setIsStreaming(false);
+                      queryClient.invalidateQueries({ queryKey: ['/api/conversations', conversationId] });
+                      queryClient.invalidateQueries({ queryKey: ['/api/conversations'] });
+                      break;
+                    }
+                  } catch (e) {
+                    // Skip malformed JSON
+                  }
+                }
+              }
+            }
+          } catch (error) {
+            toast({
+              title: "Error",
+              description: "Failed to get AI response",
+              variant: "destructive",
+            });
+          } finally {
+            setIsStreaming(false);
+            setStreamingMessage("");
+          }
+        };
+        
+        // Start the AI response
+        triggerAIResponse();
+      }
     }
-  }, [conversationId, conversationData, isLoading, queryClient, toast]);
+  }, [conversationData, conversationId, isStreaming, queryClient, toast]);
 
   const deleteConversationMutation = useMutation({
     mutationFn: async (id: string) => {

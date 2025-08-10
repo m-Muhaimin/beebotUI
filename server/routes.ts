@@ -181,7 +181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create new chat (creates conversation and sends first message) - MUST come before /api/chat/:conversationId
+  // Create new conversation with initial message (simple, fast response)
   app.post('/api/chat/new', isAuthenticated, async (req, res) => {
     console.log('POST /api/chat/new called with body:', req.body);
     try {
@@ -195,7 +195,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Message is required' });
       }
       
-      // Generate title for the conversation
+      // Generate title for the conversation (quick operation)
       const title = await mcpClient.generateTitle(message);
       
       // Create new conversation
@@ -212,56 +212,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         metadata: null
       });
 
-      // Set up SSE headers
-      res.writeHead(200, {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'Access-Control-Allow-Origin': '*',
+      // Return conversation ID immediately - no streaming here
+      res.json({ 
+        conversationId: conversation.id,
+        success: true 
       });
-
-      // Send conversation ID first
-      res.write(`data: ${JSON.stringify({ conversationId: conversation.id })}\n\n`);
-      
-      // Send immediate streaming start indicator
-      res.write(`data: ${JSON.stringify({ streaming: true })}\n\n`);
-
-      let assistantResponse = '';
-
-      try {
-        // Stream response from MCP client
-        for await (const chunk of mcpClient.chatStream([{ role: 'user', content: message }])) {
-          if (chunk.error) {
-            res.write(`data: ${JSON.stringify({ error: chunk.error })}\n\n`);
-            break;
-          }
-          
-          if (chunk.content) {
-            assistantResponse += chunk.content;
-            res.write(`data: ${JSON.stringify({ content: chunk.content })}\n\n`);
-          }
-          
-          if (chunk.finished) {
-            res.write(`data: ${JSON.stringify({ finished: true })}\n\n`);
-            break;
-          }
-        }
-
-        // Save assistant response
-        if (assistantResponse) {
-          await storage.createMessage({
-            conversationId: conversation.id,
-            role: 'assistant',
-            content: assistantResponse,
-            metadata: null
-          });
-        }
-
-      } catch (error) {
-        res.write(`data: ${JSON.stringify({ error: 'Failed to get AI response' })}\n\n`);
-      }
-
-      res.end();
     } catch (error) {
       console.error('Error in /api/chat/new:', error);
       res.status(500).json({ error: 'Failed to create new chat' });
@@ -271,7 +226,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Chat endpoint for streaming responses
   app.post('/api/chat/:conversationId', isAuthenticated, async (req, res) => {
     try {
-      const { message } = req.body;
+      const { message, skipSaveMessage = false } = req.body;
       const conversationId = req.params.conversationId;
       
       // Validate conversation exists
@@ -280,13 +235,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: 'Conversation not found' });
       }
 
-      // Save user message
-      await storage.createMessage({
-        conversationId,
-        role: 'user',
-        content: message,
-        metadata: null
-      });
+      // Save user message (unless we're continuing from an already saved message)
+      if (!skipSaveMessage && message && message.trim()) {
+        await storage.createMessage({
+          conversationId,
+          role: 'user',
+          content: message,
+          metadata: null
+        });
+      }
 
       // Get conversation history for context
       const messages = await storage.getMessagesByConversationId(conversationId);
