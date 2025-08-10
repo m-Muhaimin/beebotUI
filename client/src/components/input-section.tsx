@@ -43,8 +43,9 @@ export default function InputSection({
       setSelectedTool(null);
     } else {
       setSelectedTool(toolId);
-      onQuickAction(toolId);
     }
+    // Call onQuickAction to notify parent but don't change the input text
+    onQuickAction(toolId);
   };
 
   return (

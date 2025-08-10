@@ -105,19 +105,8 @@ export default function Home() {
   };
 
   const handleQuickAction = (action: string) => {
-    let prompt = "";
-    switch (action) {
-      case "reasoning":
-        prompt = "Help me reason through: ";
-        break;
-      case "web-search":
-        prompt = "Search the web for: ";
-        break;
-      case "deep-research":
-        prompt = "Research in detail: ";
-        break;
-    }
-    setMessage(prompt);
+    // Tools are activated but don't modify the input field text
+    // The tool selection will be handled visually through the UI state
   };
 
   const handlePromptClick = (promptText: string) => {
