@@ -447,7 +447,28 @@ if __name__ == "__main__":
 
   async *chatStream(messages: ChatMessage[], selectedTool?: string | null): AsyncGenerator<StreamChunk> {
     try {
-      // Filter tools based on manual selection
+      // Handle manual tool selection with immediate execution
+      if (selectedTool && selectedTool !== 'reasoning') {
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage && lastMessage.role === 'user') {
+          // Directly call the selected tool with the user's query
+          if (selectedTool === 'web-search') {
+            yield { content: `🔍 Searching the web for "${lastMessage.content}"...\n\n` };
+            const toolResult = await this.callTool('web_search', { query: lastMessage.content });
+            yield { content: toolResult };
+            yield { finished: true };
+            return;
+          } else if (selectedTool === 'deep-research') {
+            yield { content: `🔬 Conducting deep research on "${lastMessage.content}"...\n\n` };
+            const toolResult = await this.callTool('deep_research', { query: lastMessage.content });
+            yield { content: toolResult };
+            yield { finished: true };
+            return;
+          }
+        }
+      }
+      
+      // Filter tools based on manual selection (for reasoning mode or fallback)
       let toolsToUse = this.availableTools;
       
       if (selectedTool) {
