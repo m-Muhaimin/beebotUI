@@ -97,7 +97,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900 truncate">
+              <p className="text-slate-900 truncate text-[13px] font-semibold">
                 {user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user?.username}
               </p>
               <p className="text-xs text-slate-500 truncate">{user?.email}</p>
