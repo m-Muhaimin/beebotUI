@@ -1,7 +1,14 @@
 import { useState } from "react";
-import { Search, Home, Compass, Library, Clock, MoreHorizontal, LogOut } from "lucide-react";
+import { Search, Home, Compass, Library, Clock, MoreHorizontal, LogOut, MoreVertical, Settings, UserCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { useLocation } from "wouter";
 import { useAuth, useLogout } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -103,29 +110,50 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
               <p className="text-xs text-slate-500 truncate">{user?.email}</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={async () => {
-              try {
-                await logoutMutation.mutateAsync();
-                toast({
-                  title: "Logged out",
-                  description: "You have been logged out successfully.",
-                });
-              } catch (error) {
-                toast({
-                  title: "Error",
-                  description: "Failed to log out. Please try again.",
-                  variant: "destructive",
-                });
-              }
-            }}
-            disabled={logoutMutation.isPending}
-            className="text-slate-500 hover:text-slate-700"
-          >
-            <LogOut className="w-4 h-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-slate-500 hover:text-slate-700"
+              >
+                <MoreVertical className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem className="cursor-pointer">
+                <UserCircle className="w-4 h-4 mr-2" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className="cursor-pointer text-red-600 focus:text-red-600"
+                onClick={async () => {
+                  try {
+                    await logoutMutation.mutateAsync();
+                    toast({
+                      title: "Logged out",
+                      description: "You have been logged out successfully.",
+                    });
+                  } catch (error) {
+                    toast({
+                      title: "Error",
+                      description: "Failed to log out. Please try again.",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+                disabled={logoutMutation.isPending}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </aside>
