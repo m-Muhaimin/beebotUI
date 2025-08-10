@@ -37,7 +37,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col" data-testid="sidebar">
       {/* Logo Section */}
-      <div className="p-6 border-b border-slate-200">
+      <div className="p-6 border-b border-slate-200 pl-[24px] pr-[24px] pt-[10px] pb-[10px]">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 brand-gradient rounded-lg flex items-center justify-center">
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
