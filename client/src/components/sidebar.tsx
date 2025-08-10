@@ -73,11 +73,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
               <li key={item.id}>
                 <button
                   onClick={() => handleNavClick(item)}
-                  className={`flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 w-full text-left ${
-                    isActive
-                      ? "text-white bg-brand-blue"
-                      : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"
-                  }`}
+                  className="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 w-full text-left text-white bg-brand-blue pt-[9px] pb-[9px]"
                   data-testid={`button-nav-${item.id}`}
                   aria-label={item.label}
                 >
