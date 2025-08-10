@@ -73,11 +73,7 @@ export default function InputSection({
                   size="sm"
                   onClick={() => handleToolSelect(tool.id)}
                   disabled={disabled}
-                  className={`flex items-center space-x-1 px-2 py-1 text-xs rounded-md transition-colors ${
-                    isSelected
-                      ? 'bg-brand-blue text-white hover:bg-blue-600'
-                      : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
-                  }`}
+                  className="justify-center gap-2 whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-9 flex items-center space-x-1 px-2 py-1 text-xs rounded-md transition-colors text-slate-500 hover:text-slate-700 hover:bg-slate-100 font-normal bg-[#f9fafb] pt-[2px] pb-[2px] pl-[6px] pr-[6px] ml-[5px] mr-[5px] text-center"
                   data-testid={`tool-${tool.id}`}
                 >
                   <Icon className="w-3 h-3" />
