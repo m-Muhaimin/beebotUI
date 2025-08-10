@@ -57,7 +57,7 @@ export default function InputSection({
             rows={3}
             placeholder="Initiate a query or send a command to the AI..."
             disabled={disabled}
-            className="w-full pl-4 pr-12 pb-12 py-4 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent resize-none text-slate-800 placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex min-h-[80px] bg-background px-3 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm w-full py-4 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent resize-none text-slate-800 placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed pt-[30px] pb-[30px] pl-[20px] pr-[20px] mt-[0px] mb-[0px]"
             data-testid="textarea-message"
           />
           
