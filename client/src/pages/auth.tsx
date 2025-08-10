@@ -142,7 +142,7 @@ export default function AuthPage() {
                   )}
                 </div>
 
-                <div>
+                <div className="mt-[5px] mb-[5px]">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password" className="text-sm text-gray-700">Password</Label>
                     <button type="button" className="text-sm text-blue-600 hover:text-blue-500">
