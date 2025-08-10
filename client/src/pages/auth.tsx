@@ -161,14 +161,6 @@ export default function AuthPage() {
                       {signupForm.formState.errors.password.message}
                     </p>
                   )}
-                  
-                  {/* Password requirements */}
-                  <div className="mt-2 space-y-1 text-xs text-gray-500">
-                    <div>Password Strength: <span className="text-gray-700">Weak</span></div>
-                    <div>Cannot contain your name or email address</div>
-                    <div>At least 8 Characters</div>
-                    <div>Contains a number or symbol</div>
-                  </div>
                 </div>
 
                 <Button
