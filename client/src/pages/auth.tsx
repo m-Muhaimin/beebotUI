@@ -91,69 +91,89 @@ export default function AuthPage() {
   const isLoading = signupMutation.isPending || loginMutation.isPending;
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left side - Brand and illustration */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent"></div>
-        
-        {/* Decorative wave patterns */}
-        <div className="absolute inset-0 opacity-20">
-          <svg viewBox="0 0 400 300" className="w-full h-full">
-            <defs>
-              <pattern id="wave" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                <path d="M0,50 Q25,0 50,50 T100,50" stroke="white" strokeWidth="1" fill="none" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#wave)" />
-          </svg>
+    <div className="min-h-screen flex bg-gray-50">
+      {/* Left side - Hero section */}
+      <div className="hidden lg:flex lg:w-1/2 p-8">
+        <div className="w-full bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-3xl relative overflow-hidden flex flex-col justify-between p-12 text-white">
+          {/* Decorative wave pattern */}
+          <div className="absolute inset-0 opacity-20">
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <defs>
+                <pattern id="wave" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                  <path d="M0,50 Q25,30 50,50 T100,50 L100,100 L0,100 Z" fill="white" opacity="0.1"/>
+                  <path d="M0,60 Q25,40 50,60 T100,60 L100,100 L0,100 Z" fill="white" opacity="0.05"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#wave)" />
+            </svg>
+          </div>
+          
+          {/* Hero content */}
+          <div className="relative z-10">
+            <h1 className="text-4xl font-bold mb-4">Welcome to SimpleFlow</h1>
+            <p className="text-lg opacity-90">Your Gateway to Effortless Management.</p>
+          </div>
+          
+          {/* Bottom content */}
+          <div className="relative z-10">
+            <h2 className="text-2xl font-semibold mb-4">Seamless Collaboration</h2>
+            <p className="text-base opacity-90 mb-8">
+              Effortlessly work together with your team in real-time.
+            </p>
+            
+            {/* Progress indicators */}
+            <div className="flex space-x-2">
+              <div className="w-8 h-2 bg-white rounded-full"></div>
+              <div className="w-2 h-2 bg-white/50 rounded-full"></div>
+              <div className="w-2 h-2 bg-white/30 rounded-full"></div>
+            </div>
+          </div>
         </div>
-        
-
       </div>
 
       {/* Right side - Auth form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-900">
-        <div className="w-full max-w-md space-y-6">
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="w-full max-w-md">
           {/* Logo */}
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">BeeBot</h2>
+          <div className="text-right mb-8">
+            <h2 className="text-xl font-semibold text-gray-900">SimpleFlow</h2>
           </div>
 
           {/* Mode switcher */}
-          <div className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+          <div className="flex mb-6">
             <button
               onClick={() => setMode('signup')}
-              className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-6 py-2 text-sm font-medium rounded-l-lg border transition-colors ${
                 mode === 'signup'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
               }`}
             >
               Sign Up
             </button>
             <button
               onClick={() => setMode('login')}
-              className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`px-6 py-2 text-sm font-medium rounded-r-lg border-l-0 border transition-colors ${
                 mode === 'login'
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
               }`}
             >
               Sign In
             </button>
           </div>
 
-          <Card className="p-6">
+          {/* Form */}
+          <div className="space-y-4">
             {mode === 'signup' ? (
               <form onSubmit={signupForm.handleSubmit(onSignup)} className="space-y-4">
                 <div>
-                  <Label htmlFor="email">Email Id</Label>
+                  <Label htmlFor="email" className="text-sm text-gray-700">Email Id</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter your email"
                     {...signupForm.register('email')}
-                    className="mt-1"
+                    className="mt-1 border-gray-300"
                   />
                   {signupForm.formState.errors.email && (
                     <p className="text-sm text-red-600 mt-1">
@@ -162,77 +182,38 @@ export default function AuthPage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input
-                      id="firstName"
-                      placeholder="First name"
-                      {...signupForm.register('firstName')}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      placeholder="Last name"
-                      {...signupForm.register('lastName')}
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
-
                 <div>
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    placeholder="Choose a username"
-                    {...signupForm.register('username')}
-                    className="mt-1"
-                  />
-                  {signupForm.formState.errors.username && (
-                    <p className="text-sm text-red-600 mt-1">
-                      {signupForm.formState.errors.username.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="password">Password</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password" className="text-sm text-gray-700">Password</Label>
+                    <button type="button" className="text-sm text-blue-600 hover:text-blue-500">
+                      Forget Password?
+                    </button>
+                  </div>
                   <Input
                     id="password"
                     type="password"
                     placeholder="Enter Password"
                     {...signupForm.register('password')}
-                    className="mt-1"
+                    className="mt-1 border-gray-300"
                   />
                   {signupForm.formState.errors.password && (
                     <p className="text-sm text-red-600 mt-1">
                       {signupForm.formState.errors.password.message}
                     </p>
                   )}
-                </div>
-
-                <div>
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="Confirm Password"
-                    {...signupForm.register('confirmPassword')}
-                    className="mt-1"
-                  />
-                  {signupForm.formState.errors.confirmPassword && (
-                    <p className="text-sm text-red-600 mt-1">
-                      {signupForm.formState.errors.confirmPassword.message}
-                    </p>
-                  )}
+                  
+                  {/* Password requirements */}
+                  <div className="mt-2 space-y-1 text-xs text-gray-500">
+                    <div>Password Strength: <span className="text-gray-700">Weak</span></div>
+                    <div>Cannot contain your name or email address</div>
+                    <div>At least 8 Characters</div>
+                    <div>Contains a number or symbol</div>
+                  </div>
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  className="w-full bg-blue-600 hover:bg-blue-700 py-3"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Creating Account...' : 'Create Account'}
@@ -241,13 +222,12 @@ export default function AuthPage() {
             ) : (
               <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
                 <div>
-                  <Label htmlFor="email">Email Id</Label>
+                  <Label htmlFor="email" className="text-sm text-gray-700">Email Id</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter your email"
                     {...loginForm.register('email')}
-                    className="mt-1"
+                    className="mt-1 border-gray-300"
                   />
                   {loginForm.formState.errors.email && (
                     <p className="text-sm text-red-600 mt-1">
@@ -258,11 +238,8 @@ export default function AuthPage() {
 
                 <div>
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
-                    <button
-                      type="button"
-                      className="text-sm text-blue-600 hover:text-blue-500"
-                    >
+                    <Label htmlFor="password" className="text-sm text-gray-700">Password</Label>
+                    <button type="button" className="text-sm text-blue-600 hover:text-blue-500">
                       Forget Password?
                     </button>
                   </div>
@@ -271,7 +248,7 @@ export default function AuthPage() {
                     type="password"
                     placeholder="Enter Password"
                     {...loginForm.register('password')}
-                    className="mt-1"
+                    className="mt-1 border-gray-300"
                   />
                   {loginForm.formState.errors.password && (
                     <p className="text-sm text-red-600 mt-1">
@@ -282,7 +259,7 @@ export default function AuthPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  className="w-full bg-blue-600 hover:bg-blue-700 py-3"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Signing In...' : 'Sign In'}
@@ -291,34 +268,21 @@ export default function AuthPage() {
             )}
 
             {/* Social login options */}
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300 dark:border-gray-600" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-3 gap-3">
-                <Button variant="outline" className="w-full">
-                  <FaGoogle className="w-4 h-4" />
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <FaApple className="w-4 h-4" />
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <FaMicrosoft className="w-4 h-4" />
-                </Button>
-              </div>
+            <div className="mt-8 grid grid-cols-3 gap-3">
+              <Button variant="outline" className="w-full p-3 border-gray-300">
+                <FaGoogle className="w-4 h-4 text-gray-600" />
+              </Button>
+              <Button variant="outline" className="w-full p-3 border-gray-300">
+                <FaApple className="w-4 h-4 text-gray-600" />
+              </Button>
+              <Button variant="outline" className="w-full p-3 border-gray-300">
+                <FaMicrosoft className="w-4 h-4 text-gray-600" />
+              </Button>
             </div>
 
             {/* Terms */}
-            <div className="mt-6 text-center text-xs text-gray-600 dark:text-gray-400">
-              By signing up, I accept Company's{' '}
+            <div className="mt-6 text-center text-xs text-gray-500">
+              By signing up Business, I accept Company's{' '}
               <button className="text-blue-600 hover:text-blue-500">
                 Terms of use
               </button>{' '}
@@ -327,7 +291,7 @@ export default function AuthPage() {
                 Privacy Policy
               </button>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </div>
