@@ -176,7 +176,7 @@ export default function Home() {
               </div>
             </div>
             <Button 
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-normal text-[12px] pl-[15px] pr-[15px] pt-[8px] pb-[8px]"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 hover:bg-slate-700 font-normal text-[12px] pt-[8px] pb-[8px] pl-[21px] pr-[21px] bg-[#142236] text-[#fff2f2]"
               data-testid="button-new-chat"
             >
               <PlusIcon className="w-4 h-4 mr-2" />
