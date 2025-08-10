@@ -199,7 +199,6 @@ export default function ConversationPage() {
   return (
     <div className="flex h-screen" data-testid="conversation-page">
       <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
-      
       <main className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <header className="bg-white border-b border-slate-200 px-8 py-6">
@@ -255,11 +254,7 @@ export default function ConversationPage() {
                   </div>
                 )}
                 <div
-                  className={`max-w-3xl p-4 rounded-xl ${
-                    msg.role === 'user'
-                      ? 'bg-brand-blue text-white ml-auto'
-                      : 'bg-slate-100 text-slate-800'
-                  }`}
+                  className="max-w-3xl p-4 rounded-xl bg-brand-blue text-white ml-auto pl-[40px] pr-[40px]"
                 >
                   <div className="prose prose-sm max-w-none">
                     <p className="whitespace-pre-wrap">{msg.content}</p>
