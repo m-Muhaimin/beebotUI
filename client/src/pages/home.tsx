@@ -207,7 +207,7 @@ export default function Home() {
                     key={index}
                     onClick={() => handlePromptClick(prompt.description)}
                     disabled={isStartingChat}
-                    className="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed pl-[16px] pr-[16px] pt-[16px] pb-[16px]"
+                    className="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed pl-[20px] pr-[20px] pt-[18px] pb-[18px]"
                     data-testid={`button-prompt-${prompt.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <div className="flex items-start space-x-4">
