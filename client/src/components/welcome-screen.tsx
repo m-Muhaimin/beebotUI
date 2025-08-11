@@ -231,27 +231,27 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
           </div>
 
           <Card 
-            className="relative w-full max-w-sm sm:max-w-md lg:max-w-2xl mx-auto p-4 sm:p-6 lg:p-8 text-center bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-0 shadow-2xl rounded-2xl sm:rounded-3xl"
+            className="relative w-full max-w-xs sm:max-w-sm lg:max-w-lg mx-auto p-3 sm:p-4 lg:p-6 text-center bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-0 shadow-xl rounded-xl sm:rounded-2xl"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            <motion.div variants={itemVariants} className="space-y-4 sm:space-y-6 lg:space-y-8">
-              {/* Icon - Responsive */}
+            <motion.div variants={itemVariants} className="space-y-3 sm:space-y-4 lg:space-y-5">
+              {/* Icon - More Compact */}
               <motion.div 
                 variants={iconVariants}
                 className="flex justify-center"
               >
                 <div className="relative">
                   <motion.div
-                    className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-lg"
+                    className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <IconComponent className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white" />
+                    <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
                   </motion.div>
                   <motion.div
-                    className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-yellow-400 rounded-full flex items-center justify-center"
+                    className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center"
                     animate={{
                       scale: [1, 1.2, 1],
                       rotate: [0, 360]
@@ -262,54 +262,54 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
                       ease: "easeInOut"
                     }}
                   >
-                    <Sparkles className="w-2 h-2 sm:w-3 sm:h-3 text-yellow-700" />
+                    <Sparkles className="w-2 h-2 text-yellow-700" />
                   </motion.div>
                 </div>
               </motion.div>
 
-              {/* Content - Responsive Typography */}
-              <motion.div variants={textVariants} className="space-y-3 sm:space-y-4 lg:space-y-6">
-                <div className="space-y-2 sm:space-y-3 lg:space-y-4">
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
+              {/* Content - Cleaner Typography */}
+              <motion.div variants={textVariants} className="space-y-2 sm:space-y-3 lg:space-y-4">
+                <div className="space-y-1 sm:space-y-2">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white leading-tight">
                     {currentWelcome.title}
                   </h1>
-                  <p className="text-base sm:text-lg lg:text-xl font-medium text-blue-600 dark:text-blue-400">
+                  <p className="text-sm sm:text-base lg:text-lg font-medium text-blue-600 dark:text-blue-400">
                     {currentWelcome.subtitle}
                   </p>
-                  <p className="text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-300 leading-relaxed px-2 sm:px-4">
+                  <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-300 leading-relaxed px-1 sm:px-2">
                     {currentWelcome.description}
                   </p>
                 </div>
 
-                {/* Feature Tags - Mobile Responsive */}
+                {/* Feature Tags - Compact Grid */}
                 <motion.div 
-                  className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mt-4 sm:mt-6"
-                  initial={{ opacity: 0, y: 20 }}
+                  className="grid grid-cols-2 gap-1.5 sm:gap-2 mt-3 sm:mt-4"
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8, staggerChildren: 0.1 }}
+                  transition={{ delay: 0.6, staggerChildren: 0.05 }}
                 >
                   {currentWelcome.features.map((feature, index) => (
                     <motion.div
                       key={feature}
-                      className="bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/50 px-2 sm:px-3 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-700"
-                      initial={{ opacity: 0, scale: 0.8 }}
+                      className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                      initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.9 + index * 0.1 }}
-                      whileHover={{ scale: 1.05 }}
+                      transition={{ delay: 0.7 + index * 0.05 }}
+                      whileHover={{ scale: 1.02 }}
                     >
                       {feature}
                     </motion.div>
                   ))}
                 </motion.div>
 
-                {/* Progress Indicator - Touch Friendly */}
-                <div className="flex justify-center space-x-3 sm:space-x-4 py-4 sm:py-6">
+                {/* Progress Indicator - Compact */}
+                <div className="flex justify-center space-x-2 py-3 sm:py-4">
                   {welcomeSteps.map((_, index) => (
                     <motion.button
                       key={index}
-                      className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full transition-all duration-300 ${
+                      className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 ${
                         index === currentStep 
-                          ? "bg-blue-600 dark:bg-blue-400 ring-2 ring-blue-300 dark:ring-blue-600" 
+                          ? "bg-blue-600 dark:bg-blue-400" 
                           : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
                       }`}
                       initial={{ scale: 0.8 }}
@@ -330,30 +330,30 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
                 </div>
               </motion.div>
 
-              {/* Action Buttons - Mobile First Design */}
+              {/* Action Buttons - Compact Design */}
               <motion.div 
                 variants={itemVariants}
-                className="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4 pt-4 sm:pt-6"
+                className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-3 pt-2 sm:pt-3"
               >
                 {currentStep < welcomeSteps.length - 1 ? (
                   <>
                     <Button
                       onClick={handleSkip}
                       variant="ghost"
-                      size="lg"
-                      className="w-full sm:w-auto text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 min-h-[48px] sm:min-h-[auto] text-base sm:text-sm"
+                      size="sm"
+                      className="text-xs sm:text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 h-8 sm:h-9"
                       data-testid="button-skip"
                     >
-                      Skip Introduction
+                      Skip
                     </Button>
                     <Button
                       onClick={() => setCurrentStep(currentStep + 1)}
-                      size="lg"
-                      className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 sm:px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 min-h-[48px] sm:min-h-[auto] text-base sm:text-sm"
+                      size="sm"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 h-8 sm:h-9 text-xs sm:text-sm"
                       data-testid="button-next"
                     >
                       Next
-                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
                     </Button>
                   </>
                 ) : (
@@ -361,20 +361,20 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
                     <Button
                       onClick={() => setCurrentStep(0)}
                       variant="outline"
-                      size="lg"
-                      className="w-full sm:w-auto border-2 border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950 min-h-[48px] sm:min-h-[auto] text-base sm:text-sm"
+                      size="sm"
+                      className="border border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950 h-8 sm:h-9 text-xs sm:text-sm"
                       data-testid="button-replay"
                     >
-                      Replay Tour
+                      Replay
                     </Button>
                     <Button
                       onClick={handleGetStarted}
-                      size="lg"
-                      className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 sm:px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 min-h-[48px] sm:min-h-[auto] text-base sm:text-sm"
+                      size="sm"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 h-8 sm:h-9 text-xs sm:text-sm"
                       data-testid="button-get-started"
                     >
                       Get Started
-                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
                     </Button>
                   </>
                 )}

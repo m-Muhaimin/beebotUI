@@ -316,100 +316,115 @@ export default function ConversationPage() {
     <div className="flex h-screen" data-testid="conversation-page">
       <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
       <main className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <header className="bg-white border-b border-slate-200 px-8 py-6">
+        {/* Header - Responsive */}
+        <header className="bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div>
-                <h1 className="font-semibold text-slate-800 text-[16px]" data-testid="conversation-title">
+            <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
+              <div className="min-w-0">
+                <h1 className="font-semibold text-slate-800 text-sm sm:text-[16px] truncate" data-testid="conversation-title">
                   {conversation.title}
                 </h1>
-                <p className="text-slate-500 text-[13px]">
+                <p className="text-slate-500 text-xs sm:text-[13px]">
                   Started {new Date(conversation.createdAt).toLocaleDateString()}
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
               <Button 
                 variant="outline"
                 size="sm"
                 onClick={handleDeleteConversation}
                 disabled={deleteConversationMutation.isPending}
-                className="text-red-600 border-red-200 hover:bg-red-50"
+                className="text-red-600 border-red-200 hover:bg-red-50 hidden sm:flex"
                 data-testid="button-delete-conversation"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
-                Delete
+                <span className="hidden md:inline">Delete</span>
+              </Button>
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={handleDeleteConversation}
+                disabled={deleteConversationMutation.isPending}
+                className="text-red-600 border-red-200 hover:bg-red-50 sm:hidden p-2"
+                data-testid="button-delete-conversation-mobile"
+              >
+                <Trash2 className="w-4 h-4" />
               </Button>
               <Button 
                 className="bg-slate-800 hover:bg-slate-700 text-white"
                 onClick={() => setLocation('/')}
                 data-testid="button-new-chat"
+                size="sm"
               >
-                <PlusIcon className="w-4 h-4 mr-2" />
-                New Chat
+                <PlusIcon className="w-4 h-4 mr-0 sm:mr-2" />
+                <span className="hidden sm:inline">New Chat</span>
               </Button>
             </div>
           </div>
         </header>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-8 py-6">
-          <div className="max-w-4xl mx-auto space-y-6">
+        {/* Messages - Responsive */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6">
+          <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex items-start space-x-4 ${
+                className={`flex items-start space-x-3 sm:space-x-4 ${
                   msg.role === 'user' ? 'justify-end' : ''
                 }`}
                 data-testid={`message-${msg.role}-${msg.id}`}
               >
                 {msg.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ml-[-6px] mr-[-6px] bg-[#1f61f0] pl-[0px] pr-[0px] pt-[0px] pb-[0px]">
-                    <Bot className="w-5 h-5 text-white" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#1f61f0]">
+                    <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                 )}
                 <div
-                  className="max-w-3xl p-4 rounded-xl ml-[8px] mr-[8px] text-[#424242] mt-[-3px] mb-[-3px] pl-[25px] pr-[25px] bg-[#8493ba38] pt-[20px] pb-[20px]"
+                  className={`max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#424242] bg-[#8493ba38] ${
+                    msg.role === 'user' 
+                      ? 'px-4 sm:px-6 py-3 sm:py-4 bg-brand-blue text-white' 
+                      : 'px-4 sm:px-6 py-3 sm:py-4'
+                  }`}
                 >
                   <MarkdownRenderer content={msg.content} />
                 </div>
                 {msg.role === 'user' && (
-                  <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0 ml-[6px] mr-[6px] pt-[0px] pb-[0px] mt-[6px] mb-[6px]">
-                    <User className="w-5 h-5 text-white" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                 )}
               </div>
             ))}
 
-            {/* Streaming message */}
+            {/* Streaming message - Responsive */}
             {isStreaming && streamingMessage && (
-              <div className="flex items-start space-x-4" data-testid="streaming-message">
-                <div className="w-8 h-8 bg-brand-blue rounded-full flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-5 h-5 text-white" />
+              <div className="flex items-start space-x-3 sm:space-x-4" data-testid="streaming-message">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#1f61f0] rounded-full flex items-center justify-center flex-shrink-0">
+                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
-                <div className="max-w-3xl p-4 rounded-xl bg-slate-100 text-slate-800">
+                <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl bg-[#8493ba38] text-[#424242]">
                   <MarkdownRenderer content={streamingMessage} />
                   <div className="flex items-center space-x-2 mt-2">
-                    <div className="w-2 h-2 bg-brand-blue rounded-full animate-pulse" />
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-pulse" />
                     <p className="text-xs text-slate-500">AI is typing...</p>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Loading indicator for initial streaming */}
+            {/* Loading indicator - Responsive */}
             {((isStreaming && !streamingMessage) || shouldShowInitialStreaming) && (
-              <div className="flex items-start space-x-4" data-testid="loading-message">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ml-[-6px] mr-[-6px] bg-[#1f61f0] pl-[0px] pr-[0px] pt-[0px] pb-[0px]">
-                  <Bot className="w-5 h-5 text-white" />
+              <div className="flex items-start space-x-3 sm:space-x-4" data-testid="loading-message">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#1f61f0]">
+                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
-                <div className="max-w-3xl p-4 rounded-xl ml-[8px] mr-[8px] text-[#424242] mt-[-3px] mb-[-3px] pl-[25px] pr-[25px] bg-[#8493ba38] pt-[20px] pb-[20px]">
+                <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#424242] bg-[#8493ba38]">
                   <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-[#1f61f0] rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-[#1f61f0] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                    <div className="w-2 h-2 bg-[#1f61f0] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                    <span className="text-sm text-slate-600 ml-2">AI is thinking...</span>
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce" />
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                    <span className="text-xs sm:text-sm text-slate-600 ml-2">AI is thinking...</span>
                   </div>
                 </div>
               </div>

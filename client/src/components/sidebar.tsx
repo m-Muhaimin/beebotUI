@@ -42,30 +42,30 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
   };
 
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col" data-testid="sidebar">
-      {/* Logo Section */}
-      <div className="p-6 border-b border-slate-200 pl-[24px] pr-[24px] pt-[10px] pb-[10px]">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 brand-gradient rounded-lg flex items-center justify-center">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <aside className="w-60 sm:w-64 lg:w-72 xl:w-80 bg-white border-r border-slate-200 flex flex-col" data-testid="sidebar">
+      {/* Logo Section - Responsive */}
+      <div className="p-4 sm:p-6 border-b border-slate-200 pl-[16px] pr-[16px] sm:pl-[24px] sm:pr-[24px] pt-[10px] pb-[10px]">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 brand-gradient rounded-lg flex items-center justify-center">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <span className="text-lg font-semibold text-slate-800" data-testid="text-logo">BeeBot</span>
+          <span className="text-base sm:text-lg font-semibold text-slate-800" data-testid="text-logo">BeeBot</span>
         </div>
       </div>
-      {/* Navigation */}
-      <nav className="flex-1 p-4 pt-[15px] pb-[15px]">
+      {/* Navigation - Responsive */}
+      <nav className="flex-1 p-3 sm:p-4 pt-[12px] sm:pt-[15px] pb-[12px] sm:pb-[15px]">
         {/* Search */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-2.5 sm:left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
             <Input
               type="text"
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex h-10 w-full rounded-md border bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-10 text-sm border-slate-200 focus:ring-2 focus:ring-brand-blue focus:border-transparent pt-[0px] pb-[0px] mt-[5px] mb-[5px]"
+              className="h-8 sm:h-10 w-full rounded-md border bg-background px-3 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pl-8 sm:pl-10 text-xs sm:text-sm border-slate-200 focus:ring-2 focus:ring-brand-blue focus:border-transparent"
               data-testid="input-search"
             />
           </div>

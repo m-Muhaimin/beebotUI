@@ -122,8 +122,8 @@ export default function Home() {
     <div className="flex h-screen" data-testid="home-page">
       <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
       <main className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <header className="bg-white border-b border-slate-200 px-8 py-6 pt-[6px] pb-[6px]">
+        {/* Header - Responsive */}
+        <header className="bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 pt-[6px] pb-[6px]">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div>
@@ -153,12 +153,12 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <div className="flex-1 px-8 py-8 overflow-y-auto">
-          <div className="max-w-3xl mx-auto">
+        {/* Main Content Area - Responsive */}
+        <div className="flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 overflow-y-auto">
+          <div className="max-w-4xl mx-auto">
             {/* Welcome Message */}
-            <div className="text-center mb-12">
-              <div className="w-20 h-20 brand-gradient rounded-full mx-auto mb-6 flex items-center justify-center opacity-10">
+            <div className="text-center mb-6 sm:mb-8 lg:mb-12">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 brand-gradient rounded-full mx-auto mb-4 sm:mb-6 flex items-center justify-center opacity-10">
                 <svg className="w-10 h-10 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
@@ -166,8 +166,8 @@ export default function Home() {
 
             </div>
 
-            {/* Suggested Prompts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-[10px] mb-[10px]">
+            {/* Suggested Prompts - Responsive Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-4 mb-4">
               {suggestedPrompts.map((prompt, index) => {
                 const Icon = prompt.icon;
                 return (
@@ -175,20 +175,20 @@ export default function Home() {
                     key={index}
                     onClick={() => handlePromptClick(prompt.description)}
                     disabled={isStartingChat}
-                    className="text-left p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed pl-[20px] pr-[20px] pt-[18px] pb-[18px]"
+                    className="text-left p-4 sm:p-6 bg-white border border-slate-200 rounded-lg sm:rounded-xl hover:border-brand-blue hover:shadow-md transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed"
                     data-testid={`button-prompt-${prompt.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
-                    <div className="flex items-start space-x-4">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-150 ${getColorClasses(prompt.color)}`}>
+                    <div className="flex items-start space-x-3 sm:space-x-4">
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-colors duration-150 ${getColorClasses(prompt.color)}`}>
                         {isStartingChat ? (
-                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                         ) : (
-                          <Icon className="w-5 h-5" />
+                          <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                         )}
                       </div>
-                      <div>
-                        <h3 className="text-slate-800 text-[14px] font-semibold mt-[2px] mb-[2px]">{prompt.title}</h3>
-                        <p className="text-slate-600 text-[13px]">{prompt.description}</p>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-slate-800 text-sm sm:text-[14px] font-semibold mb-1">{prompt.title}</h3>
+                        <p className="text-slate-600 text-xs sm:text-[13px] leading-relaxed">{prompt.description}</p>
                       </div>
                     </div>
                   </button>
