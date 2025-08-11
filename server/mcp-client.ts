@@ -1,10 +1,10 @@
-import { EventEmitter } from 'events';
-import { spawn, ChildProcess } from 'child_process';
-import { randomUUID } from 'crypto';
-import { promises as fs } from 'fs';
+import { EventEmitter } from "events";
+import { spawn, ChildProcess } from "child_process";
+import { randomUUID } from "crypto";
+import { promises as fs } from "fs";
 
 interface ChatMessage {
-  role: 'user' | 'assistant' | 'system' | 'tool';
+  role: "user" | "assistant" | "system" | "tool";
   content: string | null;
   tool_call_id?: string;
   tool_calls?: ToolCall[];
@@ -24,7 +24,7 @@ interface MCPTool {
 
 interface ToolCall {
   id: string;
-  type: 'function';
+  type: "function";
   function: {
     name: string;
     arguments: string;
@@ -38,14 +38,21 @@ export class MCPChatClient extends EventEmitter {
   private weatherServer: ChildProcess | null = null;
   private searchServer: ChildProcess | null = null;
   private availableTools: MCPTool[] = [];
-  private pendingRequests: Map<string, { resolve: Function; reject: Function }> = new Map();
+  private pendingRequests: Map<
+    string,
+    { resolve: Function; reject: Function }
+  > = new Map();
 
-  constructor(apiKey: string, apiUrl = 'https://api.deepseek.com', model = 'deepseek-chat') {
+  constructor(
+    apiKey: string,
+    apiUrl = "https://api.deepseek.com",
+    model = "deepseek-chat",
+  ) {
     super();
     this.apiKey = apiKey;
     this.apiUrl = apiUrl;
     this.model = model;
-    
+
     this.initializeWeatherServer();
     this.initializeSearchServer();
   }
@@ -262,63 +269,66 @@ if __name__ == "__main__":
 `;
 
       // Write the weather server file
-      await fs.writeFile('weather_server.py', weatherServerCode);
+      await fs.writeFile("weather_server.py", weatherServerCode);
 
       // Start the weather server process
-      this.weatherServer = spawn('python3', ['weather_server.py'], {
-        stdio: ['pipe', 'pipe', 'pipe']
+      this.weatherServer = spawn("python3", ["weather_server.py"], {
+        stdio: ["pipe", "pipe", "pipe"],
       });
 
       // Set up communication handlers
       this.setupServerCommunication();
-      
+
       // Initialize tools list with delay
       setTimeout(() => this.listTools(), 1000);
-      
-      console.log('Weather MCP server initialized successfully');
+
+      console.log("Weather MCP server initialized successfully");
     } catch (error) {
-      console.error('Failed to initialize weather server:', error);
+      console.error("Failed to initialize weather server:", error);
     }
   }
 
   private async initializeSearchServer() {
     try {
       // Wait a bit for the Python packages to be available
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Start the search server process
-      this.searchServer = spawn('python3', ['search_server.py'], {
-        stdio: ['pipe', 'pipe', 'pipe']
+      this.searchServer = spawn("python3", ["search_server.py"], {
+        stdio: ["pipe", "pipe", "pipe"],
       });
 
       // Set up communication handlers for search server
       this.setupSearchServerCommunication();
-      
+
       // Initialize search tools list
       setTimeout(() => this.listTools(), 3000);
-      
-      console.log('Search MCP server initialized successfully');
+
+      console.log("Search MCP server initialized successfully");
     } catch (error) {
-      console.error('Failed to initialize search server:', error);
+      console.error("Failed to initialize search server:", error);
     }
   }
 
   private setupServerCommunication() {
     if (!this.weatherServer) return;
 
-    this.weatherServer.stdout?.on('data', (data) => {
-      const lines = data.toString().split('\n').filter((line: string) => line.trim());
-      
+    this.weatherServer.stdout?.on("data", (data) => {
+      const lines = data
+        .toString()
+        .split("\n")
+        .filter((line: string) => line.trim());
+
       for (const line of lines) {
         try {
           const message = JSON.parse(line);
-          
+
           if (message.id && this.pendingRequests.has(message.id)) {
             const { resolve, reject } = this.pendingRequests.get(message.id)!;
             this.pendingRequests.delete(message.id);
-            
+
             if (message.error) {
-              reject(new Error(message.error.message || 'MCP Error'));
+              reject(new Error(message.error.message || "MCP Error"));
             } else {
               resolve(message.result);
             }
@@ -329,27 +339,30 @@ if __name__ == "__main__":
       }
     });
 
-    this.weatherServer.stderr?.on('data', (data) => {
-      console.error('Weather server error:', data.toString());
+    this.weatherServer.stderr?.on("data", (data) => {
+      console.error("Weather server error:", data.toString());
     });
   }
 
   private setupSearchServerCommunication() {
     if (!this.searchServer) return;
 
-    this.searchServer.stdout?.on('data', (data) => {
-      const lines = data.toString().split('\n').filter((line: string) => line.trim());
-      
+    this.searchServer.stdout?.on("data", (data) => {
+      const lines = data
+        .toString()
+        .split("\n")
+        .filter((line: string) => line.trim());
+
       for (const line of lines) {
         try {
           const message = JSON.parse(line);
-          
+
           if (message.id && this.pendingRequests.has(message.id)) {
             const { resolve, reject } = this.pendingRequests.get(message.id)!;
             this.pendingRequests.delete(message.id);
-            
+
             if (message.error) {
-              reject(new Error(message.error.message || 'MCP Error'));
+              reject(new Error(message.error.message || "MCP Error"));
             } else {
               resolve(message.result);
             }
@@ -360,15 +373,20 @@ if __name__ == "__main__":
       }
     });
 
-    this.searchServer.stderr?.on('data', (data) => {
-      console.error('Search server error:', data.toString());
+    this.searchServer.stderr?.on("data", (data) => {
+      console.error("Search server error:", data.toString());
     });
   }
 
-  private async sendMCPRequest(method: string, params: any = {}, serverType: 'weather' | 'search' = 'weather'): Promise<any> {
+  private async sendMCPRequest(
+    method: string,
+    params: any = {},
+    serverType: "weather" | "search" = "weather",
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
-      const server = serverType === 'weather' ? this.weatherServer : this.searchServer;
-      
+      const server =
+        serverType === "weather" ? this.weatherServer : this.searchServer;
+
       if (!server?.stdin) {
         reject(new Error(`${serverType} server not available`));
         return;
@@ -376,16 +394,16 @@ if __name__ == "__main__":
 
       const id = randomUUID();
       const request = {
-        jsonrpc: '2.0',
+        jsonrpc: "2.0",
         id,
         method,
-        params
+        params,
       };
 
       this.pendingRequests.set(id, { resolve, reject });
 
       try {
-        server.stdin.write(JSON.stringify(request) + '\n');
+        server.stdin.write(JSON.stringify(request) + "\n");
       } catch (error) {
         this.pendingRequests.delete(id);
         reject(error);
@@ -405,21 +423,21 @@ if __name__ == "__main__":
     try {
       // Get tools from both servers
       const [weatherResponse, searchResponse] = await Promise.allSettled([
-        this.sendMCPRequest('tools/list', {}, 'weather'),
-        this.sendMCPRequest('tools/list', {}, 'search')
+        this.sendMCPRequest("tools/list", {}, "weather"),
+        this.sendMCPRequest("tools/list", {}, "search"),
       ]);
 
       this.availableTools = [];
-      
-      if (weatherResponse.status === 'fulfilled') {
+
+      if (weatherResponse.status === "fulfilled") {
         this.availableTools.push(...(weatherResponse.value.tools || []));
       }
-      
-      if (searchResponse.status === 'fulfilled') {
+
+      if (searchResponse.status === "fulfilled") {
         this.availableTools.push(...(searchResponse.value.tools || []));
       }
     } catch (error) {
-      console.error('Failed to list MCP tools:', error);
+      console.error("Failed to list MCP tools:", error);
       this.availableTools = [];
     }
   }
@@ -427,59 +445,93 @@ if __name__ == "__main__":
   private async callTool(name: string, arguments_: any): Promise<string> {
     try {
       // Determine which server to use based on tool name
-      const isSearchTool = ['web_search', 'deep_research'].includes(name);
-      const serverType = isSearchTool ? 'search' : 'weather';
-      
-      const response = await this.sendMCPRequest('tools/call', {
-        name,
-        arguments: arguments_
-      }, serverType);
-      
+      const isSearchTool = ["web_search", "deep_research"].includes(name);
+      const serverType = isSearchTool ? "search" : "weather";
+
+      const response = await this.sendMCPRequest(
+        "tools/call",
+        {
+          name,
+          arguments: arguments_,
+        },
+        serverType,
+      );
+
       if (response.content && response.content[0]) {
         return response.content[0].text || JSON.stringify(response.content[0]);
       }
-      
+
       return JSON.stringify(response);
     } catch (error) {
       return `Error calling tool ${name}: ${error instanceof Error ? error.message : String(error)}`;
     }
   }
 
-  async *chatStream(messages: ChatMessage[], selectedTool?: string | null): AsyncGenerator<StreamChunk> {
+  async *chatStream(
+    messages: ChatMessage[],
+    selectedTool?: string | null,
+  ): AsyncGenerator<StreamChunk> {
     try {
       // Handle manual tool selection with immediate execution
-      if (selectedTool && selectedTool !== 'reasoning') {
+
+      if (selectedTool && selectedTool !== "reasoning") {
         const lastMessage = messages[messages.length - 1];
-        if (lastMessage && lastMessage.role === 'user') {
+        if (lastMessage && lastMessage.role === "user") {
           // Directly call the selected tool with the user's query
-          if (selectedTool === 'web-search') {
-            yield { content: `🔍 Searching the web for "${lastMessage.content}"...\n\n` };
-            const toolResult = await this.callTool('web_search', { query: lastMessage.content });
+
+          if (selectedTool === "web-search") {
+            const searchText = `🔍 Searching the web for "${lastMessage.content}"`;
+
+            // Animation frames
+            const frames = [
+              `${searchText}.`,
+              `${searchText}..`,
+              `${searchText}...`,
+            ];
+
+            // Loop through frames with a small delay to simulate animation
+            for (const frame of frames) {
+              yield { content: frame + "\n\n" };
+              await new Promise((res) => setTimeout(res, 300)); // 300ms delay per frame
+            }
+
+            // Run actual search
+            const toolResult = await this.callTool("web_search", {
+              query: lastMessage.content,
+            });
             yield { content: toolResult };
             yield { finished: true };
             return;
-          } else if (selectedTool === 'deep-research') {
-            yield { content: `🔬 Conducting deep research on "${lastMessage.content}"...\n\n` };
-            const toolResult = await this.callTool('deep_research', { topic: lastMessage.content });
+          } else if (selectedTool === "deep-research") {
+            yield {
+              content: `🔬 Conducting deep research on "${lastMessage.content}"...\n\n`,
+            };
+            const toolResult = await this.callTool("deep_research", {
+              topic: lastMessage.content,
+            });
             yield { content: toolResult };
             yield { finished: true };
             return;
           }
         }
       }
-      
+
       // Filter tools based on manual selection (for reasoning mode or fallback)
       let toolsToUse = this.availableTools;
-      
+
       if (selectedTool) {
         switch (selectedTool) {
-          case 'web-search':
-            toolsToUse = this.availableTools.filter(tool => tool.name === 'web_search');
+          case "web-search":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "web_search",
+            );
             break;
-          case 'deep-research':
-            toolsToUse = this.availableTools.filter(tool => tool.name === 'deep_research');
+          case "deep-research":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "deep_research",
+            );
             break;
-          case 'reasoning':
+          case "reasoning":
             // For reasoning mode, disable all tools to force pure reasoning
             toolsToUse = [];
             break;
@@ -488,31 +540,31 @@ if __name__ == "__main__":
             toolsToUse = this.availableTools;
         }
       }
-      
+
       // Convert tools to OpenAI format
-      const tools = toolsToUse.map(tool => ({
-        type: 'function' as const,
+      const tools = toolsToUse.map((tool) => ({
+        type: "function" as const,
         function: {
           name: tool.name,
           description: tool.description,
-          parameters: tool.inputSchema
-        }
+          parameters: tool.inputSchema,
+        },
       }));
 
       const response = await fetch(`${this.apiUrl}/chat/completions`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.apiKey}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           model: this.model,
           messages: messages,
           stream: true,
           tools: tools.length > 0 ? tools : undefined,
-          tool_choice: tools.length > 0 ? 'auto' : 'none',
+          tool_choice: tools.length > 0 ? "auto" : "none",
           max_tokens: 2000, // Limit response length to prevent rambling
-          temperature: 0.7
+          temperature: 0.7,
         }),
       });
 
@@ -522,11 +574,11 @@ if __name__ == "__main__":
 
       const reader = response.body?.getReader();
       if (!reader) {
-        throw new Error('No response body');
+        throw new Error("No response body");
       }
 
       const decoder = new TextDecoder();
-      let buffer = '';
+      let buffer = "";
       let toolCalls: ToolCall[] = [];
       let pendingToolResults: string[] = [];
 
@@ -535,13 +587,13 @@ if __name__ == "__main__":
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
 
         for (const line of lines) {
-          if (line.startsWith('data: ')) {
+          if (line.startsWith("data: ")) {
             const data = line.slice(6).trim();
-            if (data === '[DONE]') {
+            if (data === "[DONE]") {
               break;
             }
 
@@ -559,51 +611,67 @@ if __name__ == "__main__":
                   if (!toolCalls[index]) {
                     toolCalls[index] = {
                       id: toolCall.id || `call_${Date.now()}_${index}`,
-                      type: 'function',
+                      type: "function",
                       function: {
-                        name: toolCall.function?.name || '',
-                        arguments: toolCall.function?.arguments || ''
-                      }
+                        name: toolCall.function?.name || "",
+                        arguments: toolCall.function?.arguments || "",
+                      },
                     };
                   } else {
                     if (toolCall.function?.name) {
                       toolCalls[index].function.name += toolCall.function.name;
                     }
                     if (toolCall.function?.arguments) {
-                      toolCalls[index].function.arguments += toolCall.function.arguments;
+                      toolCalls[index].function.arguments +=
+                        toolCall.function.arguments;
                     }
                   }
                 }
               }
 
-              if (parsed.choices?.[0]?.finish_reason === 'tool_calls') {
+              if (parsed.choices?.[0]?.finish_reason === "tool_calls") {
                 // Process tool calls
                 for (const toolCall of toolCalls) {
                   const toolName = toolCall.function.name;
                   let toolArgs;
-                  
+
                   try {
                     toolArgs = JSON.parse(toolCall.function.arguments);
                   } catch (e) {
-                    yield { content: `\n\nError parsing tool arguments for ${toolName}: ${toolCall.function.arguments}` };
+                    yield {
+                      content: `\n\nError parsing tool arguments for ${toolName}: ${toolCall.function.arguments}`,
+                    };
                     continue;
                   }
 
-                  if (toolName === 'get_forecast') {
-                    yield { content: `\n\n🌤️ Getting weather forecast for coordinates ${toolArgs.latitude}, ${toolArgs.longitude}...\n\n` };
-                  } else if (toolName === 'get_weather_by_city') {
-                    yield { content: `\n\n🌤️ Getting weather forecast for ${toolArgs.city}...\n\n` };
-                  } else if (toolName === 'get_alerts') {
-                    yield { content: `\n\n⚠️ Getting weather alerts for ${toolArgs.state}...\n\n` };
-                  } else if (toolName === 'web_search') {
-                    yield { content: `\n\n🔍 Searching the web for "${toolArgs.query}"...\n\n` };
-                  } else if (toolName === 'deep_research') {
-                    yield { content: `\n\n🔬 Conducting deep research on "${toolArgs.query}"...\n\n` };
+                  if (toolName === "get_forecast") {
+                    yield {
+                      content: `\n\n🌤️ Getting weather forecast for coordinates ${toolArgs.latitude}, ${toolArgs.longitude}...\n\n`,
+                    };
+                  } else if (toolName === "get_weather_by_city") {
+                    yield {
+                      content: `\n\n🌤️ Getting weather forecast for ${toolArgs.city}...\n\n`,
+                    };
+                  } else if (toolName === "get_alerts") {
+                    yield {
+                      content: `\n\n⚠️ Getting weather alerts for ${toolArgs.state}...\n\n`,
+                    };
+                  } else if (toolName === "web_search") {
+                    yield {
+                      content: `\n\n🔍 Searching the web for "${toolArgs.query}"...\n\n`,
+                    };
+                  } else if (toolName === "deep_research") {
+                    yield {
+                      content: `\n\n🔬 Conducting deep research on "${toolArgs.query}"...\n\n`,
+                    };
                   }
 
                   const toolResult = await this.callTool(toolName, toolArgs);
-                  
-                  if (toolName === 'web_search' || toolName === 'deep_research') {
+
+                  if (
+                    toolName === "web_search" ||
+                    toolName === "deep_research"
+                  ) {
                     yield { content: `${toolResult}\n\n` };
                     pendingToolResults.push(toolResult);
                   } else {
@@ -618,7 +686,10 @@ if __name__ == "__main__":
                 }
               }
 
-              if (parsed.choices?.[0]?.finish_reason === 'stop' || parsed.choices?.[0]?.finish_reason === 'tool_calls') {
+              if (
+                parsed.choices?.[0]?.finish_reason === "stop" ||
+                parsed.choices?.[0]?.finish_reason === "tool_calls"
+              ) {
                 break;
               }
             } catch (e) {
@@ -630,13 +701,19 @@ if __name__ == "__main__":
 
       yield { finished: true };
     } catch (error) {
-      yield { error: error instanceof Error ? error.message : 'Unknown error occurred' };
+      yield {
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      };
     }
   }
 
-  async chat(messages: ChatMessage[], selectedTool?: string | null): Promise<string> {
+  async chat(
+    messages: ChatMessage[],
+    selectedTool?: string | null,
+  ): Promise<string> {
     const chunks: string[] = [];
-    
+
     for await (const chunk of this.chatStream(messages, selectedTool)) {
       if (chunk.error) {
         throw new Error(chunk.error);
@@ -648,33 +725,34 @@ if __name__ == "__main__":
         break;
       }
     }
-    
-    return chunks.join('');
+
+    return chunks.join("");
   }
 
   // Generate a title for a conversation based on the first message
   async generateTitle(firstMessage: string): Promise<string> {
     try {
       const response = await fetch(`${this.apiUrl}/chat/completions`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.apiKey}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           model: this.model,
           messages: [
             {
-              role: 'system',
-              content: 'You are a helpful assistant that creates short, descriptive titles for conversations. Generate a brief title (max 6 words) that captures the essence of the user\'s message. Return only the title, no extra text.'
+              role: "system",
+              content:
+                "You are a helpful assistant that creates short, descriptive titles for conversations. Generate a brief title (max 6 words) that captures the essence of the user's message. Return only the title, no extra text.",
             },
             {
-              role: 'user',
-              content: firstMessage
-            }
+              role: "user",
+              content: firstMessage,
+            },
           ],
           max_tokens: 20,
-          temperature: 0.7
+          temperature: 0.7,
         }),
       });
 
@@ -683,12 +761,15 @@ if __name__ == "__main__":
       }
 
       const data = await response.json();
-      const title = data.choices?.[0]?.message?.content?.trim() || '';
-      
-      return title.replace(/["']/g, '') || firstMessage.split(' ').slice(0, 6).join(' ');
+      const title = data.choices?.[0]?.message?.content?.trim() || "";
+
+      return (
+        title.replace(/["']/g, "") ||
+        firstMessage.split(" ").slice(0, 6).join(" ")
+      );
     } catch (error) {
       // Fallback to first few words if AI title generation fails
-      return firstMessage.split(' ').slice(0, 6).join(' ');
+      return firstMessage.split(" ").slice(0, 6).join(" ");
     }
   }
 
