@@ -4,22 +4,29 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
+import { useWelcome } from "@/hooks/useWelcome";
+import WelcomeScreen from "@/components/welcome-screen";
+import LoadingScreen from "@/components/ui/loading-screen";
 import Home from "@/pages/home";
 import ConversationPage from "@/pages/conversation";
 import AuthPage from "@/pages/auth";
 import NotFound from "@/pages/not-found";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const { showWelcome, isLoading: welcomeLoading, completeWelcome } = useWelcome();
 
-  if (isLoading) {
+  if (isLoading || welcomeLoading) {
+    return <LoadingScreen />;
+  }
+
+  // Show welcome screen for authenticated users who haven't seen it
+  if (isAuthenticated && showWelcome) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
+      <WelcomeScreen 
+        onComplete={completeWelcome}
+        userName={user?.firstName || user?.username || undefined}
+      />
     );
   }
 

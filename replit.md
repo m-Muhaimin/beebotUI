@@ -23,6 +23,17 @@ BeeBot is an AI assistant platform built as a modern full-stack web application 
 - **Session Management**: Enhanced session handling with forced session saves to prevent authentication failures
 - **Manual Tool Selection**: Implemented user-controlled tool selection with Reasoning, Web Search, and Deep Research modes instead of automatic AI decision-making
 - **Response Control**: Fixed issue where AI generated multiple sequential responses automatically; now provides single, focused responses that wait for user input
+- **Animated Welcome Screen (August 11, 2025)**: Implemented comprehensive animated welcome screen with Framer Motion featuring:
+  - Native app-like experience with 5-step onboarding tour
+  - Full responsive design for mobile, tablet, and desktop devices
+  - Touch/swipe navigation support for mobile devices
+  - Keyboard navigation (arrow keys, ESC, ENTER) for desktop
+  - Interactive progress indicators and feature highlights
+  - Auto-advancing slides with manual override capability
+  - Persistent user preferences using localStorage
+  - Accessibility features with ARIA labels and keyboard focus management
+  - Help button integration for replaying welcome tour
+  - Smooth animations and transitions throughout the experience
 
 # User Preferences
 

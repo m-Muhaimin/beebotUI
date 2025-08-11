@@ -89,3 +89,29 @@
     background: linear-gradient(135deg, var(--brand-blue), var(--brand-purple));
   }
 }
+
+/* Responsive improvements for welcome screen */
+@media (max-width: 640px) {
+  .welcome-screen {
+    --spacing: 1rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .welcome-screen {
+    --spacing: 1.5rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .welcome-screen {
+    --spacing: 2rem;
+  }
+}
+
+/* Touch improvements */
+@media (hover: none) and (pointer: coarse) {
+  button {
+    min-height: 44px;
+  }
+}

@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useWelcome } from "@/hooks/useWelcome";
 import Sidebar from "@/components/sidebar";
 import InputSection from "@/components/input-section";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, Lightbulb, BarChart, BookOpen, Code } from "lucide-react";
+import { PlusIcon, Lightbulb, BarChart, BookOpen, Code, HelpCircle } from "lucide-react";
 
 export default function Home() {
   const [activeNav, setActiveNav] = useState("home");
@@ -15,6 +16,7 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { resetWelcome } = useWelcome();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -130,13 +132,24 @@ export default function Home() {
                 </h1>
               </div>
             </div>
-            <Button 
-              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 hover:bg-slate-700 font-normal text-[12px] pt-[8px] pb-[8px] pl-[21px] pr-[21px] bg-[#142236] text-[#fff2f2]"
-              data-testid="button-new-chat"
-            >
-              <PlusIcon className="w-4 h-4 mr-2" />
-              New Chat
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button 
+                onClick={resetWelcome}
+                variant="ghost"
+                size="sm"
+                className="text-gray-500 hover:text-blue-600 p-2"
+                data-testid="button-help"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </Button>
+              <Button 
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 hover:bg-slate-700 font-normal text-[12px] pt-[8px] pb-[8px] pl-[21px] pr-[21px] bg-[#142236] text-[#fff2f2]"
+                data-testid="button-new-chat"
+              >
+                <PlusIcon className="w-4 h-4 mr-2" />
+                New Chat
+              </Button>
+            </div>
           </div>
         </header>
 
