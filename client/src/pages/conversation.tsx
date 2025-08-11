@@ -30,7 +30,7 @@ export default function ConversationPage() {
   const conversationId = params.id;
 
   const { data: conversationData, isLoading } = useQuery<ConversationData>({
-    queryKey: ['/api/conversations', conversationId],
+    queryKey: ["/api/conversations", conversationId],
     enabled: !!conversationId,
     retry: 3,
     retryDelay: 500,
@@ -38,61 +38,69 @@ export default function ConversationPage() {
 
   // Auto-trigger AI response for new conversations
   useEffect(() => {
-    if (conversationData?.messages && conversationData.messages.length > 0 && !isStreaming) {
+    if (
+      conversationData?.messages &&
+      conversationData.messages.length > 0 &&
+      !isStreaming
+    ) {
       const messages = conversationData.messages;
       const lastMessage = messages[messages.length - 1];
-      
+
       // If the last message is from user and there's no assistant response, trigger AI response
-      if (lastMessage.role === 'user' && messages.length === 1 && !streamingMessage) {
+      if (
+        lastMessage.role === "user" &&
+        messages.length === 1 &&
+        !streamingMessage
+      ) {
         // This is a new conversation with only the user's message - start AI response
         setIsStreaming(true);
         setStreamingMessage("");
-        
+
         // Start the AI response immediately
         const triggerAIResponse = async () => {
           try {
             const response = await fetch(`/api/chat/${conversationId}`, {
-              method: 'POST',
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
-              body: JSON.stringify({ 
-                message: lastMessage.content, 
+              body: JSON.stringify({
+                message: lastMessage.content,
                 skipSaveMessage: true,
-                selectedTool: null // Don't auto-select tools for initial responses
+                selectedTool: selectedTool || null, // Don't auto-select tools for initial responses, but use the selected tool if it exists
               }),
             });
 
             if (!response.ok) {
-              throw new Error('Failed to get AI response');
+              throw new Error("Failed to get AI response");
             }
 
             const reader = response.body?.getReader();
             if (!reader) {
-              throw new Error('No response reader');
+              throw new Error("No response reader");
             }
 
             const decoder = new TextDecoder();
-            let buffer = '';
+            let buffer = "";
 
             while (true) {
               const { done, value } = await reader.read();
-              
+
               if (done) break;
 
               buffer += decoder.decode(value, { stream: true });
-              const lines = buffer.split('\n');
-              buffer = lines.pop() || '';
+              const lines = buffer.split("\n");
+              buffer = lines.pop() || "";
 
               for (const line of lines) {
-                if (line.startsWith('data: ')) {
+                if (line.startsWith("data: ")) {
                   try {
                     const data = JSON.parse(line.slice(6));
-                    
+
                     if (data.content) {
-                      setStreamingMessage(prev => prev + data.content);
+                      setStreamingMessage((prev) => prev + data.content);
                     }
-                    
+
                     if (data.error) {
                       toast({
                         title: "Error",
@@ -101,12 +109,16 @@ export default function ConversationPage() {
                       });
                       break;
                     }
-                    
+
                     if (data.finished) {
                       setStreamingMessage("");
                       setIsStreaming(false);
-                      queryClient.invalidateQueries({ queryKey: ['/api/conversations', conversationId] });
-                      queryClient.invalidateQueries({ queryKey: ['/api/conversations'] });
+                      queryClient.invalidateQueries({
+                        queryKey: ["/api/conversations", conversationId],
+                      });
+                      queryClient.invalidateQueries({
+                        queryKey: ["/api/conversations"],
+                      });
                       break;
                     }
                   } catch (e) {
@@ -126,7 +138,7 @@ export default function ConversationPage() {
             setStreamingMessage("");
           }
         };
-        
+
         // Start the AI response
         triggerAIResponse();
       }
@@ -135,11 +147,11 @@ export default function ConversationPage() {
 
   const deleteConversationMutation = useMutation({
     mutationFn: async (id: string) => {
-      return apiRequest(`/api/conversations/${id}`, 'DELETE');
+      return apiRequest(`/api/conversations/${id}`, "DELETE");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/conversations'] });
-      setLocation('/');
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+      setLocation("/");
       toast({
         title: "Success",
         description: "Conversation deleted successfully",
@@ -159,7 +171,8 @@ export default function ConversationPage() {
   };
 
   // Show streaming when we're in a new conversation that might be loading
-  const shouldShowInitialStreaming = isLoading && !conversationData && !isStreaming;
+  const shouldShowInitialStreaming =
+    isLoading && !conversationData && !isStreaming;
 
   useEffect(() => {
     scrollToBottom();
@@ -174,67 +187,70 @@ export default function ConversationPage() {
     setStreamingMessage("");
 
     // Optimistically add user message to the UI immediately
-    queryClient.setQueryData(['/api/conversations', conversationId], (oldData: ConversationData | undefined) => {
-      if (!oldData) return oldData;
-      
-      const newMessage = {
-        id: `temp-${Date.now()}`,
-        conversationId,
-        role: 'user' as const,
-        content: messageToSend,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        metadata: null
-      };
-      
-      return {
-        ...oldData,
-        messages: [...oldData.messages, newMessage]
-      };
-    });
+    queryClient.setQueryData(
+      ["/api/conversations", conversationId],
+      (oldData: ConversationData | undefined) => {
+        if (!oldData) return oldData;
+
+        const newMessage = {
+          id: `temp-${Date.now()}`,
+          conversationId,
+          role: "user" as const,
+          content: messageToSend,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          metadata: null,
+        };
+
+        return {
+          ...oldData,
+          messages: [...oldData.messages, newMessage],
+        };
+      },
+    );
 
     try {
       const response = await fetch(`/api/chat/${conversationId}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           message: messageToSend,
-          selectedTool: selectedTool 
+          selectedTool: selectedTool,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        throw new Error("Failed to send message");
       }
 
       const reader = response.body?.getReader();
       if (!reader) {
-        throw new Error('No response reader');
+        throw new Error("No response reader");
       }
 
       const decoder = new TextDecoder();
-      let buffer = '';
+      let buffer = "";
 
       while (true) {
         const { done, value } = await reader.read();
-        
+
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
 
         for (const line of lines) {
-          if (line.startsWith('data: ')) {
+          if (line.startsWith("data: ")) {
             try {
               const data = JSON.parse(line.slice(6));
-              
+
               if (data.content) {
-                setStreamingMessage(prev => prev + data.content);
+                setStreamingMessage((prev) => prev + data.content);
               }
-              
+
               if (data.error) {
                 toast({
                   title: "Error",
@@ -243,12 +259,16 @@ export default function ConversationPage() {
                 });
                 break;
               }
-              
+
               if (data.finished) {
                 setStreamingMessage("");
                 setIsStreaming(false);
-                queryClient.invalidateQueries({ queryKey: ['/api/conversations', conversationId] });
-                queryClient.invalidateQueries({ queryKey: ['/api/conversations'] });
+                queryClient.invalidateQueries({
+                  queryKey: ["/api/conversations", conversationId],
+                });
+                queryClient.invalidateQueries({
+                  queryKey: ["/api/conversations"],
+                });
                 break;
               }
             } catch (e) {
@@ -301,9 +321,7 @@ export default function ConversationPage() {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-slate-600 mb-4">Conversation not found</p>
-            <Button onClick={() => setLocation('/')}>
-              Go Home
-            </Button>
+            <Button onClick={() => setLocation("/")}>Go Home</Button>
           </div>
         </main>
       </div>
@@ -321,16 +339,20 @@ export default function ConversationPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
               <div className="min-w-0">
-                <h1 className="font-semibold text-slate-800 text-sm sm:text-[16px] truncate" data-testid="conversation-title">
+                <h1
+                  className="font-semibold text-slate-800 text-sm sm:text-[16px] truncate"
+                  data-testid="conversation-title"
+                >
                   {conversation.title}
                 </h1>
                 <p className="text-slate-500 text-xs sm:text-[13px]">
-                  Started {new Date(conversation.createdAt).toLocaleDateString()}
+                  Started{" "}
+                  {new Date(conversation.createdAt).toLocaleDateString()}
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-3">
-              <Button 
+              <Button
                 variant="outline"
                 size="sm"
                 onClick={handleDeleteConversation}
@@ -341,7 +363,7 @@ export default function ConversationPage() {
                 <Trash2 className="w-4 h-4 mr-2" />
                 <span className="hidden md:inline">Delete</span>
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 size="sm"
                 onClick={handleDeleteConversation}
@@ -351,9 +373,9 @@ export default function ConversationPage() {
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
-              <Button 
+              <Button
                 className="bg-slate-800 hover:bg-slate-700 text-white"
-                onClick={() => setLocation('/')}
+                onClick={() => setLocation("/")}
                 data-testid="button-new-chat"
                 size="sm"
               >
@@ -371,25 +393,25 @@ export default function ConversationPage() {
               <div
                 key={msg.id}
                 className={`flex items-start space-x-3 sm:space-x-4 ${
-                  msg.role === 'user' ? 'justify-end' : ''
+                  msg.role === "user" ? "justify-end" : ""
                 }`}
                 data-testid={`message-${msg.role}-${msg.id}`}
               >
-                {msg.role === 'assistant' && (
+                {msg.role === "assistant" && (
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#1f61f0]">
                     <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                 )}
                 <div
-                  className={`max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#424242] bg-[#8493ba38] ${
-                    msg.role === 'user' 
-                      ? 'px-4 sm:px-6 py-3 sm:py-4 bg-brand-blue text-white' 
-                      : 'px-4 sm:px-6 py-3 sm:py-4'
+                  className={`max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#ffffff] bg-[#8493ba38] ${
+                    msg.role === "user"
+                      ? "px-4 sm:px-6 py-3 sm:py-4 bg-brand-blue text-white"
+                      : "px-4 sm:px-6 py-3 sm:py-4"
                   }`}
                 >
                   <MarkdownRenderer content={msg.content} />
                 </div>
-                {msg.role === 'user' && (
+                {msg.role === "user" && (
                   <div className="w-7 h-7 sm:w-8 sm:h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
                     <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
@@ -399,7 +421,10 @@ export default function ConversationPage() {
 
             {/* Streaming message - Responsive */}
             {isStreaming && streamingMessage && (
-              <div className="flex items-start space-x-3 sm:space-x-4" data-testid="streaming-message">
+              <div
+                className="flex items-start space-x-3 sm:space-x-4"
+                data-testid="streaming-message"
+              >
                 <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#1f61f0] rounded-full flex items-center justify-center flex-shrink-0">
                   <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
@@ -407,24 +432,36 @@ export default function ConversationPage() {
                   <MarkdownRenderer content={streamingMessage} />
                   <div className="flex items-center space-x-2 mt-2">
                     <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-pulse" />
-                    <p className="text-xs text-slate-500">AI is typing...</p>
+                    <p className="text-xs text-slate-500">Typing...</p>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Loading indicator - Responsive */}
-            {((isStreaming && !streamingMessage) || shouldShowInitialStreaming) && (
-              <div className="flex items-start space-x-3 sm:space-x-4" data-testid="loading-message">
+            {((isStreaming && !streamingMessage) ||
+              shouldShowInitialStreaming) && (
+              <div
+                className="flex items-start space-x-3 sm:space-x-4"
+                data-testid="loading-message"
+              >
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#1f61f0]">
                   <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
                 <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#424242] bg-[#8493ba38]">
                   <div className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce" />
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                    <span className="text-xs sm:text-sm text-slate-600 ml-2">AI is thinking...</span>
+                    <div
+                      className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce"
+                      style={{ animationDelay: "0.1s" }}
+                    />
+                    <div
+                      className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce"
+                      style={{ animationDelay: "0.2s" }}
+                    />
+                    <span className="text-xs sm:text-sm text-slate-600 ml-2">
+                      AI is thinking...
+                    </span>
                   </div>
                 </div>
               </div>
@@ -434,7 +471,7 @@ export default function ConversationPage() {
           </div>
         </div>
 
-        <InputSection 
+        <InputSection
           message={message}
           onMessageChange={setMessage}
           onSendMessage={handleSendMessage}
