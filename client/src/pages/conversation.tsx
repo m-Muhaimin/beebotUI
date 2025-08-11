@@ -448,20 +448,25 @@ export default function ConversationPage() {
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#1f61f0]">
                   <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
-                <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#424242] bg-[#8493ba38]">
+
+                {/* Loading dots - Responsive */}
+                <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#424242] ">
+                  {" "}
+                  {/* Add bg-[#8493ba38] if you want to show the background */}
                   <div className="flex items-center space-x-2">
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce" />
+                    <div className="w-1.2 h-1.2 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce" />
                     <div
-                      className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce"
+                      className="w-1.2 h-1.2 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce"
                       style={{ animationDelay: "0.1s" }}
                     />
+
                     <div
-                      className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce"
+                      className="w-1.2 h-1.2 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-bounce"
                       style={{ animationDelay: "0.2s" }}
                     />
-                    <span className="text-xs sm:text-sm text-slate-600 ml-2">
+                    {/*<span className="text-xs sm:text-sm text-slate-600 ml-2">
                       AI is thinking...
-                    </span>
+                    </span>*/}
                   </div>
                 </div>
               </div>
