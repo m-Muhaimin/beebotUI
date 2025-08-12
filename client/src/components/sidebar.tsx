@@ -101,7 +101,7 @@ export default function Sidebar({
         {onToggleCollapse && (
           <button
             onClick={onToggleCollapse}
-            className={`absolute ${isCollapsed ? "-right-3" : "-right-3"} top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center text-slate-500 hover:text-slate-700 hidden lg:flex`}
+            className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center text-slate-500 hover:text-slate-700 hidden lg:flex z-10"
             data-testid="button-toggle-sidebar"
           >
             {isCollapsed ? (
