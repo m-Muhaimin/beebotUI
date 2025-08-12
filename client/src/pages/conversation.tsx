@@ -25,6 +25,7 @@ export default function ConversationPage() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isRequestInProgress = useRef(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -35,6 +36,8 @@ export default function ConversationPage() {
     enabled: !!conversationId,
     retry: 3,
     retryDelay: 500,
+    staleTime: isStreaming ? 10000 : 1000, // Prevent refetching during streaming
+    refetchOnWindowFocus: !isStreaming, // Don't refetch during streaming
   });
 
   // Auto-trigger AI response for new conversations
@@ -51,9 +54,11 @@ export default function ConversationPage() {
       if (
         lastMessage.role === "user" &&
         messages.length === 1 &&
-        !streamingMessage
+        !streamingMessage &&
+        !isRequestInProgress.current
       ) {
         // This is a new conversation with only the user's message - start AI response
+        isRequestInProgress.current = true;
         setIsStreaming(true);
         setStreamingMessage("");
 
@@ -114,12 +119,15 @@ export default function ConversationPage() {
                     if (data.finished) {
                       setStreamingMessage("");
                       setIsStreaming(false);
-                      queryClient.invalidateQueries({
-                        queryKey: ["/api/conversations", conversationId],
-                      });
-                      queryClient.invalidateQueries({
-                        queryKey: ["/api/conversations"],
-                      });
+                      // Delay query invalidation to prevent blinking during stream
+                      setTimeout(() => {
+                        queryClient.invalidateQueries({
+                          queryKey: ["/api/conversations", conversationId],
+                        });
+                        queryClient.invalidateQueries({
+                          queryKey: ["/api/conversations"],
+                        });
+                      }, 100);
                       break;
                     }
                   } catch (e) {
@@ -137,6 +145,7 @@ export default function ConversationPage() {
           } finally {
             setIsStreaming(false);
             setStreamingMessage("");
+            isRequestInProgress.current = false;
           }
         };
 
@@ -180,8 +189,9 @@ export default function ConversationPage() {
   }, [conversationData?.messages, streamingMessage]);
 
   const handleSendMessage = async () => {
-    if (!message.trim() || !conversationId || isStreaming) return;
+    if (!message.trim() || !conversationId || isStreaming || isRequestInProgress.current) return;
 
+    isRequestInProgress.current = true;
     const messageToSend = message;
     setMessage("");
     setIsStreaming(true);
@@ -264,12 +274,15 @@ export default function ConversationPage() {
               if (data.finished) {
                 setStreamingMessage("");
                 setIsStreaming(false);
-                queryClient.invalidateQueries({
-                  queryKey: ["/api/conversations", conversationId],
-                });
-                queryClient.invalidateQueries({
-                  queryKey: ["/api/conversations"],
-                });
+                // Delay query invalidation to prevent blinking during stream
+                setTimeout(() => {
+                  queryClient.invalidateQueries({
+                    queryKey: ["/api/conversations", conversationId],
+                  });
+                  queryClient.invalidateQueries({
+                    queryKey: ["/api/conversations"],
+                  });
+                }, 100);
                 break;
               }
             } catch (e) {
@@ -288,6 +301,7 @@ export default function ConversationPage() {
     } finally {
       setIsStreaming(false);
       setStreamingMessage("");
+      isRequestInProgress.current = false;
     }
   };
 
