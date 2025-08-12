@@ -5,6 +5,7 @@ BeeBot is an AI assistant platform built as a modern full-stack web application 
 ## Recent Changes (August 2025)
 
 - **Migration to Replit Environment**: Successfully migrated from Replit Agent to standard Replit environment (Completed August 12, 2025)
+- **UI Improvements**: Fixed sign in/sign up buttons to be properly centered across all device types with responsive design
 - **Environment Setup**: Configured all required dependencies including Node.js packages (tsx, TypeScript, Vite) and Python packages (httpx)
 - **Secret Management**: Successfully configured DATABASE_URL, DEEPSEEK_API_KEY, and EXA_API_KEY environment variables
 - **Database Configuration**: Fixed PostgreSQL connection issues and properly configured database access

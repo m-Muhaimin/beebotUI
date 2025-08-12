@@ -99,27 +99,29 @@ export default function AuthPage() {
           </div>
 
           {/* Mode switcher */}
-          <div className="flex mb-6 pl-[89px] pr-[89px]">
-            <button
-              onClick={() => setMode('signup')}
-              className={`px-6 py-2 text-sm font-medium rounded-l-lg border transition-colors ${
-                mode === 'signup'
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              Sign Up
-            </button>
-            <button
-              onClick={() => setMode('login')}
-              className={`px-6 py-2 text-sm font-medium rounded-r-lg border-l-0 border transition-colors ${
-                mode === 'login'
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              Sign In
-            </button>
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex rounded-lg border border-gray-300 bg-white">
+              <button
+                onClick={() => setMode('signup')}
+                className={`px-6 py-2 text-sm font-medium rounded-l-lg transition-colors ${
+                  mode === 'signup'
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                Sign Up
+              </button>
+              <button
+                onClick={() => setMode('login')}
+                className={`px-6 py-2 text-sm font-medium rounded-r-lg border-l border-gray-300 transition-colors ${
+                  mode === 'login'
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                Sign In
+              </button>
+            </div>
           </div>
 
           {/* Form */}
