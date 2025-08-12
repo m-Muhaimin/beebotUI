@@ -1,5 +1,18 @@
 import { useState } from "react";
-import { Search, Home, Compass, Library, Clock, MoreHorizontal, LogOut, MoreVertical, Settings, UserCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Search,
+  Home,
+  Compass,
+  Library,
+  Clock,
+  MoreHorizontal,
+  LogOut,
+  MoreVertical,
+  Settings,
+  UserCircle,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,7 +34,12 @@ interface SidebarProps {
   onToggleCollapse?: () => void;
 }
 
-export default function Sidebar({ activeNav, onNavChange, isCollapsed = false, onToggleCollapse }: SidebarProps) {
+export default function Sidebar({
+  activeNav,
+  onNavChange,
+  isCollapsed = false,
+  onToggleCollapse,
+}: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [, setLocation] = useLocation();
   const { user } = useAuth();
@@ -35,7 +53,7 @@ export default function Sidebar({ activeNav, onNavChange, isCollapsed = false, o
     { id: "history", label: "History", icon: Clock, path: "/history" },
   ];
 
-  const handleNavClick = (item: typeof navItems[0]) => {
+  const handleNavClick = (item: (typeof navItems)[0]) => {
     onNavChange(item.id);
     if (item.id === "home") {
       setLocation("/");
@@ -44,24 +62,46 @@ export default function Sidebar({ activeNav, onNavChange, isCollapsed = false, o
   };
 
   return (
-    <aside className={`${isCollapsed ? 'w-16' : 'w-60 sm:w-64 lg:w-72 xl:w-80'} bg-white border-r border-slate-200 flex flex-col transition-all duration-300 relative`} data-testid="sidebar">
+    <aside
+      className={`${isCollapsed ? "w-16" : "w-60 sm:w-64 lg:w-72 xl:w-80"} bg-white border-r border-slate-200 flex flex-col transition-all duration-300 relative`}
+      data-testid="sidebar"
+    >
       {/* Logo Section - Responsive */}
       <div className="p-4 sm:p-6 border-b border-slate-200 pl-[16px] pr-[16px] sm:pl-[24px] sm:pr-[24px] pt-[10px] pb-[10px] relative">
-        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-2 sm:space-x-3'}`}>
-          <div className={`${isCollapsed ? 'w-10 h-10' : 'w-7 h-7 sm:w-8 sm:h-8'} brand-gradient rounded-lg flex items-center justify-center transition-all duration-300`}>
-            <svg className={`${isCollapsed ? 'w-6 h-6' : 'w-4 h-4 sm:w-5 sm:h-5'} text-white transition-all duration-300`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        <div
+          className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-2 sm:space-x-3"}`}
+        >
+          <div
+            className={`${isCollapsed ? "w-8 h-8" : "w-7 h-7 sm:w-8 sm:h-8"} brand-gradient brand-gradient-custom rounded-lg flex items-center justify-center transition-all duration-300`}
+          >
+            <svg
+              className={`${isCollapsed ? "w-5 h-5" : "w-4 h-4 sm:w-5 sm:h-5"} text-white transition-all duration-300`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
           </div>
           {!isCollapsed && (
-            <span className="text-base sm:text-lg font-semibold text-slate-800" data-testid="text-logo">BeeBot</span>
+            <span
+              className="text-base sm:text-lg font-semibold text-slate-800"
+              data-testid="text-logo"
+            >
+              BeeBot
+            </span>
           )}
         </div>
         {/* Collapse/Expand Button */}
         {onToggleCollapse && (
           <button
             onClick={onToggleCollapse}
-            className={`absolute ${isCollapsed ? '-right-3' : '-right-3'} top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center text-slate-500 hover:text-slate-700 hidden lg:flex`}
+            className={`absolute ${isCollapsed ? "-right-3" : "-right-3"} top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center text-slate-500 hover:text-slate-700 hidden lg:flex`}
             data-testid="button-toggle-sidebar"
           >
             {isCollapsed ? (
@@ -100,14 +140,18 @@ export default function Sidebar({ activeNav, onNavChange, isCollapsed = false, o
               <li key={item.id}>
                 <button
                   onClick={() => handleNavClick(item)}
-                  className={`flex items-center ${isCollapsed ? 'justify-center px-2' : 'space-x-3 px-3'} py-2 font-medium rounded-lg transition-all duration-300 w-full text-left pt-[9px] pb-[9px] bg-[#edf1f77a] text-[#424242] text-[14px]`}
+                  className={`flex items-center ${isCollapsed ? "justify-center px-2" : "space-x-3 px-3"} py-2 font-medium rounded-lg transition-all duration-300 w-full text-left pt-[9px] pb-[9px] bg-[#edf1f77a] text-[#424242] text-[14px]`}
                   data-testid={`button-nav-${item.id}`}
                   aria-label={item.label}
                   title={isCollapsed ? item.label : undefined}
                 >
-                  <Icon className={`${isCollapsed ? 'w-6 h-6' : 'w-5 h-5'} transition-all duration-300`} />
+                  <Icon
+                    className={`${isCollapsed ? "w-6 h-6" : "w-5 h-5"} transition-all duration-300`}
+                  />
                   {!isCollapsed && (
-                    <span className="font-normal ml-[7px] mr-[7px]">{item.label}</span>
+                    <span className="font-normal ml-[7px] mr-[7px]">
+                      {item.label}
+                    </span>
                   )}
                 </button>
               </li>
@@ -123,13 +167,15 @@ export default function Sidebar({ activeNav, onNavChange, isCollapsed = false, o
           <div className="flex justify-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-base font-medium text-blue-600 transition-all duration-300">
-                  {user?.firstName?.[0] || user?.username?.[0] || 'U'}
+                <button className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-base font-medium text-blue-600 transition-all duration-300">
+                  {user?.firstName?.[0] || user?.username?.[0] || "U"}
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="w-56 ml-4">
                 <div className="px-2 py-1.5 text-sm font-medium">
-                  {user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user?.username}
+                  {user?.firstName
+                    ? `${user.firstName} ${user.lastName || ""}`.trim()
+                    : user?.username}
                 </div>
                 <div className="px-2 py-1 text-xs text-slate-500 border-b">
                   {user?.email}
@@ -143,7 +189,7 @@ export default function Sidebar({ activeNav, onNavChange, isCollapsed = false, o
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   className="cursor-pointer text-red-600 focus:text-red-600"
                   onClick={async () => {
                     try {
@@ -173,12 +219,14 @@ export default function Sidebar({ activeNav, onNavChange, isCollapsed = false, o
             <div className="flex items-center space-x-2 flex-1 min-w-0 mr-2">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-sm font-medium text-blue-600">
-                  {user?.firstName?.[0] || user?.username?.[0] || 'U'}
+                  {user?.firstName?.[0] || user?.username?.[0] || "U"}
                 </span>
               </div>
               <div className="flex-1 min-w-0 overflow-hidden">
                 <p className="truncate font-semibold text-[12px] text-[#374661] pt-[0px] pb-[0px] mt-[0px] mb-[0px]">
-                  {user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user?.username}
+                  {user?.firstName
+                    ? `${user.firstName} ${user.lastName || ""}`.trim()
+                    : user?.username}
                 </p>
                 <p className="text-xs text-slate-500 truncate">{user?.email}</p>
               </div>
@@ -203,7 +251,7 @@ export default function Sidebar({ activeNav, onNavChange, isCollapsed = false, o
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   className="cursor-pointer text-red-600 focus:text-red-600"
                   onClick={async () => {
                     try {
