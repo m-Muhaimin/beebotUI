@@ -5,9 +5,10 @@ import Sidebar from "@/components/sidebar";
 import InputSection from "@/components/input-section";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, User, Bot, Trash2, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { PlusIcon, User, Bot, Trash2, PanelLeftClose, PanelLeftOpen, Bookmark, BookmarkCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useBookmarks } from "@/hooks/useBookmarks";
 import type { Message, Conversation } from "@shared/schema";
 
 interface ConversationData {
@@ -32,6 +33,7 @@ export default function ConversationPage() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { toggleBookmark, isTogglingBookmark } = useBookmarks();
 
   const conversationId = params.id;
 
@@ -372,6 +374,25 @@ export default function ConversationPage() {
     deleteConversationMutation.mutate(conversationId);
   };
 
+  const handleBookmarkToggle = async () => {
+    if (!conversationId) return;
+    try {
+      await toggleBookmark(conversationId);
+      toast({
+        title: "Bookmark updated",
+        description: conversationData?.conversation.isBookmarked 
+          ? "Conversation removed from bookmarks" 
+          : "Conversation added to bookmarks",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update bookmark",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex h-screen" data-testid="conversation-page">
@@ -465,6 +486,27 @@ export default function ConversationPage() {
                 data-testid="button-toggle-sidebar-mobile"
               >
                 {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBookmarkToggle}
+                disabled={isTogglingBookmark}
+                className={`${
+                  conversation.isBookmarked 
+                    ? "text-yellow-600 border-yellow-200 bg-yellow-50 hover:bg-yellow-100" 
+                    : "text-slate-600 border-slate-200 hover:bg-slate-50"
+                } transition-colors`}
+                data-testid="button-bookmark-conversation"
+              >
+                {conversation.isBookmarked ? (
+                  <BookmarkCheck className="w-4 h-4" />
+                ) : (
+                  <Bookmark className="w-4 h-4" />
+                )}
+                <span className="ml-2 hidden sm:inline">
+                  {conversation.isBookmarked ? "Bookmarked" : "Bookmark"}
+                </span>
               </Button>
               <Button
                 variant="outline"

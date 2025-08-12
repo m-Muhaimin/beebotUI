@@ -2,7 +2,7 @@ import { type User, type InsertUser, type Conversation, type InsertConversation,
 import { randomUUID } from "crypto";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -13,8 +13,10 @@ export interface IStorage {
   // Conversation methods
   getConversation(id: string): Promise<Conversation | undefined>;
   getConversationsByUserId(userId: string): Promise<Conversation[]>;
+  getBookmarkedConversationsByUserId(userId: string): Promise<Conversation[]>;
   createConversation(conversation: InsertConversation): Promise<Conversation>;
   updateConversation(id: string, updates: Partial<Conversation>): Promise<Conversation | undefined>;
+  toggleBookmark(id: string): Promise<Conversation | undefined>;
   deleteConversation(id: string): Promise<boolean>;
   
   // Message methods
@@ -61,42 +63,48 @@ export class MemStorage implements IStorage {
 
     const conv1 = await this.createConversation({
       userId: user.id,
-      title: "What's something you've learned recently?"
+      title: "What's something you've learned recently?",
+      isBookmarked: true
     });
     conv1.createdAt = yesterday;
     conv1.updatedAt = yesterday;
 
     const conv2 = await this.createConversation({
       userId: user.id,
-      title: "If you could teleport anywhere right now..."
+      title: "If you could teleport anywhere right now...",
+      isBookmarked: false
     });
     conv2.createdAt = yesterday;
     conv2.updatedAt = yesterday;
 
     const conv3 = await this.createConversation({
       userId: user.id,
-      title: "What's one goal you want to achieve?"
+      title: "What's one goal you want to achieve?",
+      isBookmarked: true
     });
     conv3.createdAt = yesterday;
     conv3.updatedAt = yesterday;
 
     const conv4 = await this.createConversation({
       userId: user.id,
-      title: "Ask me anything weird or random"
+      title: "Ask me anything weird or random",
+      isBookmarked: false
     });
     conv4.createdAt = weekAgo;
     conv4.updatedAt = weekAgo;
 
     const conv5 = await this.createConversation({
       userId: user.id,
-      title: "How are you feeling today, really?"
+      title: "How are you feeling today, really?",
+      isBookmarked: false
     });
     conv5.createdAt = weekAgo;
     conv5.updatedAt = weekAgo;
 
     const conv6 = await this.createConversation({
       userId: user.id,
-      title: "What's one habit you wish you had?"
+      title: "What's one habit you wish you had?",
+      isBookmarked: true
     });
     conv6.createdAt = weekAgo;
     conv6.updatedAt = weekAgo;
@@ -146,11 +154,18 @@ export class MemStorage implements IStorage {
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   }
 
+  async getBookmarkedConversationsByUserId(userId: string): Promise<Conversation[]> {
+    return Array.from(this.conversations.values())
+      .filter((conv) => conv.userId === userId && conv.isBookmarked)
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+  }
+
   async createConversation(insertConversation: InsertConversation): Promise<Conversation> {
     const id = randomUUID();
     const now = new Date();
     const conversation: Conversation = {
       ...insertConversation,
+      isBookmarked: insertConversation.isBookmarked ?? false,
       id,
       createdAt: now,
       updatedAt: now,
@@ -164,6 +179,19 @@ export class MemStorage implements IStorage {
     if (!conversation) return undefined;
     
     const updated = { ...conversation, ...updates, updatedAt: new Date() };
+    this.conversations.set(id, updated);
+    return updated;
+  }
+
+  async toggleBookmark(id: string): Promise<Conversation | undefined> {
+    const conversation = this.conversations.get(id);
+    if (!conversation) return undefined;
+    
+    const updated = { 
+      ...conversation, 
+      isBookmarked: !conversation.isBookmarked, 
+      updatedAt: new Date() 
+    };
     this.conversations.set(id, updated);
     return updated;
   }
@@ -251,6 +279,15 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
+  async getBookmarkedConversationsByUserId(userId: string): Promise<Conversation[]> {
+    const result = await this.db
+      .select()
+      .from(conversations)
+      .where(and(eq(conversations.userId, userId), eq(conversations.isBookmarked, true)))
+      .orderBy(desc(conversations.updatedAt));
+    return result;
+  }
+
   async createConversation(insertConversation: InsertConversation): Promise<Conversation> {
     const result = await this.db.insert(conversations).values(insertConversation).returning();
     return result[0];
@@ -260,6 +297,22 @@ export class DatabaseStorage implements IStorage {
     const result = await this.db
       .update(conversations)
       .set({ ...updates, updatedAt: new Date() })
+      .where(eq(conversations.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async toggleBookmark(id: string): Promise<Conversation | undefined> {
+    // First get the current conversation to toggle its bookmark status
+    const conversation = await this.getConversation(id);
+    if (!conversation) return undefined;
+    
+    const result = await this.db
+      .update(conversations)
+      .set({ 
+        isBookmarked: !conversation.isBookmarked, 
+        updatedAt: new Date() 
+      })
       .where(eq(conversations.id, id))
       .returning();
     return result[0];

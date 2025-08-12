@@ -12,6 +12,7 @@ import {
   UserCircle,
   ChevronLeft,
   ChevronRight,
+  Bookmark,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -48,6 +49,7 @@ export default function Sidebar({
 
   const navItems = [
     { id: "home", label: "Home", icon: Home, path: "/" },
+    { id: "bookmarked", label: "Bookmarked", icon: Bookmark, path: "/bookmarked" },
     { id: "explore", label: "Explore", icon: Compass, path: "/explore" },
     { id: "library", label: "Library", icon: Library, path: "/library" },
     { id: "history", label: "History", icon: Clock, path: "/history" },
@@ -57,6 +59,8 @@ export default function Sidebar({
     onNavChange(item.id);
     if (item.id === "home") {
       setLocation("/");
+    } else if (item.id === "bookmarked") {
+      setLocation("/bookmarked");
     }
     // Other navigation items can be implemented later
   };

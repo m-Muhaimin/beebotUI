@@ -147,6 +147,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get bookmarked conversations for a user (must come before /:id route)
+  app.get('/api/conversations/bookmarked', async (req, res) => {
+    try {
+      let userId = req.session?.userId;
+      if (!userId) {
+        userId = DEMO_USER_ID;
+      }
+      const conversations = await storage.getBookmarkedConversationsByUserId(userId);
+      res.json(conversations);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch bookmarked conversations' });
+    }
+  });
+
   // Get a specific conversation with messages
   app.get('/api/conversations/:id', async (req, res) => {
     try {
@@ -196,6 +210,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: 'Failed to delete conversation' });
     }
   });
+
+  // Toggle bookmark status for a conversation
+  app.post('/api/conversations/:id/bookmark', async (req, res) => {
+    try {
+      const conversation = await storage.toggleBookmark(req.params.id);
+      if (!conversation) {
+        return res.status(404).json({ error: 'Conversation not found' });
+      }
+      res.json({ conversation, success: true });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to toggle bookmark' });
+    }
+  });
+
+
 
   // Create new conversation with initial message (simple, fast response)
   app.post('/api/chat/new', async (req, res) => {

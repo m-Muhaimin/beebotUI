@@ -9,6 +9,7 @@ import WelcomeScreen from "@/components/welcome-screen";
 import LoadingScreen from "@/components/ui/loading-screen";
 import Home from "@/pages/home";
 import ConversationPage from "@/pages/conversation";
+import BookmarkedPage from "@/pages/bookmarked";
 import AuthPage from "@/pages/auth";
 import NotFound from "@/pages/not-found";
 
@@ -34,6 +35,7 @@ function Router() {
     <Switch>
       <Route path="/login" component={AuthPage} />
       <Route path="/" component={isAuthenticated ? Home : AuthPage} />
+      <Route path="/bookmarked" component={isAuthenticated ? BookmarkedPage : AuthPage} />
       <Route path="/conversation/:id" component={isAuthenticated ? ConversationPage : AuthPage} />
       <Route component={NotFound} />
     </Switch>
