@@ -13,7 +13,10 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [isStartingChat, setIsStartingChat] = useState(false);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    // Default to collapsed on mobile devices
+    return window.innerWidth < 1024;
+  });
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -143,8 +146,8 @@ export default function Home() {
                 onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                 variant="ghost"
                 size="sm"
-                className="text-gray-500 hover:text-blue-600 p-2 lg:hidden"
-                data-testid="button-toggle-sidebar"
+                className="text-gray-500 hover:text-blue-600 p-2 lg:hidden fixed top-4 left-4 z-50 bg-white border border-slate-200 rounded-full shadow-sm"
+                data-testid="button-toggle-sidebar-mobile"
               >
                 {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
               </Button>

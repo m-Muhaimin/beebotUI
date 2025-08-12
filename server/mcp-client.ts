@@ -481,8 +481,7 @@ if __name__ == "__main__":
 
           if (selectedTool === "web-search") {
             yield {
-              content:
-                '🔍 Searching the web for "${lastMessage.content}"...\n\n',
+              content: `Searching the web on "${lastMessage.content}"...\n\n`,
             };
 
             // Run actual search

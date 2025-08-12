@@ -63,7 +63,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`${isCollapsed ? "w-16" : "w-60 sm:w-64 lg:w-72 xl:w-80"} bg-white border-r border-slate-200 flex flex-col transition-all duration-300 relative`}
+      className={`${isCollapsed ? "w-0 lg:w-16" : "w-60 sm:w-64 lg:w-72 xl:w-80"} bg-white border-r border-slate-200 flex flex-col transition-all duration-300 relative overflow-hidden`}
       data-testid="sidebar"
     >
       {/* Logo Section - Responsive */}
@@ -97,12 +97,12 @@ export default function Sidebar({
             </span>
           )}
         </div>
-        {/* Collapse/Expand Button */}
+        {/* Collapse/Expand Button - Desktop only, mobile uses header button */}
         {onToggleCollapse && (
           <button
             onClick={onToggleCollapse}
-            className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center text-slate-500 hover:text-slate-700 hidden lg:flex z-10"
-            data-testid="button-toggle-sidebar"
+            className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md transition-all duration-300 items-center justify-center text-slate-500 hover:text-slate-700 z-10 hidden lg:flex"
+            data-testid="button-toggle-sidebar-desktop"
           >
             {isCollapsed ? (
               <ChevronRight className="w-3 h-3" />

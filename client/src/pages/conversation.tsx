@@ -23,7 +23,10 @@ export default function ConversationPage() {
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [streamingMessage, setStreamingMessage] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    // Default to collapsed on mobile devices
+    return window.innerWidth < 1024;
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isRequestInProgress = useRef(false);
   const { toast } = useToast();
@@ -324,6 +327,15 @@ export default function ConversationPage() {
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
+        <Button 
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          variant="ghost"
+          size="sm"
+          className="text-gray-500 hover:text-blue-600 p-2 lg:hidden fixed top-4 left-4 z-50 bg-white border border-slate-200 rounded-full shadow-sm"
+          data-testid="button-toggle-sidebar-mobile"
+        >
+          {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+        </Button>
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
@@ -343,6 +355,15 @@ export default function ConversationPage() {
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
+        <Button 
+          onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          variant="ghost"
+          size="sm"
+          className="text-gray-500 hover:text-blue-600 p-2 lg:hidden fixed top-4 left-4 z-50 bg-white border border-slate-200 rounded-full shadow-sm"
+          data-testid="button-toggle-sidebar-mobile"
+        >
+          {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+        </Button>
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-slate-600 mb-4">Conversation not found</p>
@@ -386,8 +407,8 @@ export default function ConversationPage() {
                 onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                 variant="ghost"
                 size="sm"
-                className="text-gray-500 hover:text-blue-600 p-2 lg:hidden"
-                data-testid="button-toggle-sidebar"
+                className="text-gray-500 hover:text-blue-600 p-2 lg:hidden fixed top-4 left-4 z-50 bg-white border border-slate-200 rounded-full shadow-sm"
+                data-testid="button-toggle-sidebar-mobile"
               >
                 {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
               </Button>
