@@ -43,120 +43,16 @@ export default function ConversationPage() {
     refetchOnWindowFocus: !isStreaming, // Don't refetch during streaming
   });
 
-  // Auto-trigger AI response for new conversations
+  // Auto-trigger AI response for new conversations - DISABLED to prevent infinite loops
+  // This functionality has been moved to manual user interaction only
+  const hasAutoTriggered = useRef(false);
+  
   useEffect(() => {
-    if (
-      conversationData?.messages &&
-      conversationData.messages.length > 0 &&
-      !isStreaming
-    ) {
-      const messages = conversationData.messages;
-      const lastMessage = messages[messages.length - 1];
-
-      // If the last message is from user and there's no assistant response, trigger AI response
-      if (
-        lastMessage.role === "user" &&
-        messages.length === 1 &&
-        !streamingMessage &&
-        !isRequestInProgress.current
-      ) {
-        // This is a new conversation with only the user's message - start AI response
-        isRequestInProgress.current = true;
-        setIsStreaming(true);
-        setStreamingMessage("");
-
-        // Start the AI response immediately
-        const triggerAIResponse = async () => {
-          try {
-            const response = await fetch(`/api/chat/${conversationId}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                message: lastMessage.content,
-                skipSaveMessage: true,
-                selectedTool: selectedTool || null, // Don't auto-select tools for initial responses, but use the selected tool if it exists
-              }),
-            });
-
-            if (!response.ok) {
-              throw new Error("Failed to get AI response");
-            }
-
-            const reader = response.body?.getReader();
-            if (!reader) {
-              throw new Error("No response reader");
-            }
-
-            const decoder = new TextDecoder();
-            let buffer = "";
-
-            while (true) {
-              const { done, value } = await reader.read();
-
-              if (done) break;
-
-              buffer += decoder.decode(value, { stream: true });
-              const lines = buffer.split("\n");
-              buffer = lines.pop() || "";
-
-              for (const line of lines) {
-                if (line.startsWith("data: ")) {
-                  try {
-                    const data = JSON.parse(line.slice(6));
-
-                    if (data.content) {
-                      setStreamingMessage((prev) => prev + data.content);
-                    }
-
-                    if (data.error) {
-                      toast({
-                        title: "Error",
-                        description: data.error,
-                        variant: "destructive",
-                      });
-                      break;
-                    }
-
-                    if (data.finished) {
-                      setStreamingMessage("");
-                      setIsStreaming(false);
-                      // Delay query invalidation to prevent blinking during stream
-                      setTimeout(() => {
-                        queryClient.invalidateQueries({
-                          queryKey: ["/api/conversations", conversationId],
-                        });
-                        queryClient.invalidateQueries({
-                          queryKey: ["/api/conversations"],
-                        });
-                      }, 100);
-                      break;
-                    }
-                  } catch (e) {
-                    // Skip malformed JSON
-                  }
-                }
-              }
-            }
-          } catch (error) {
-            toast({
-              title: "Error",
-              description: "Failed to get AI response",
-              variant: "destructive",
-            });
-          } finally {
-            setIsStreaming(false);
-            setStreamingMessage("");
-            isRequestInProgress.current = false;
-          }
-        };
-
-        // Start the AI response
-        triggerAIResponse();
-      }
+    // Reset auto-trigger flag when conversation changes
+    if (conversationId) {
+      hasAutoTriggered.current = false;
     }
-  }, [conversationData, conversationId, isStreaming, queryClient, toast]);
+  }, [conversationId]);
 
   const deleteConversationMutation = useMutation({
     mutationFn: async (id: string) => {
