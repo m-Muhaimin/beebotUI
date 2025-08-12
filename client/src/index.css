@@ -115,3 +115,41 @@
     min-height: 44px;
   }
 }
+
+/* Result group styling enhancements */
+.result-group {
+  transition: all 0.2s ease-in-out;
+}
+
+.result-group:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.result-header {
+  position: relative;
+}
+
+.result-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--brand-blue), var(--brand-purple));
+  border-radius: 1px;
+}
+
+/* Dark mode support for result groups */
+.dark .result-group {
+  @apply bg-slate-800 bg-opacity-30 border-slate-700;
+}
+
+.dark .result-header {
+  @apply border-slate-700;
+}
+
+.dark .result-header h3 {
+  @apply text-blue-400;
+}
