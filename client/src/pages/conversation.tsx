@@ -43,16 +43,120 @@ export default function ConversationPage() {
     refetchOnWindowFocus: !isStreaming, // Don't refetch during streaming
   });
 
-  // Auto-trigger AI response for new conversations - DISABLED to prevent infinite loops
-  // This functionality has been moved to manual user interaction only
-  const hasAutoTriggered = useRef(false);
+  // Auto-trigger AI response for new conversations with proper safeguards
+  const hasAutoTriggered = useRef(new Set<string>());
   
   useEffect(() => {
-    // Reset auto-trigger flag when conversation changes
-    if (conversationId) {
-      hasAutoTriggered.current = false;
+    if (
+      conversationData?.messages &&
+      conversationData.messages.length === 1 &&
+      conversationId &&
+      !hasAutoTriggered.current.has(conversationId) &&
+      !isStreaming &&
+      !isRequestInProgress.current
+    ) {
+      const lastMessage = conversationData.messages[0];
+      
+      // Only auto-trigger if the single message is from user
+      if (lastMessage.role === "user") {
+        console.log(`Auto-triggering AI response for conversation ${conversationId}`);
+        hasAutoTriggered.current.add(conversationId);
+        isRequestInProgress.current = true;
+        setIsStreaming(true);
+        setStreamingMessage("");
+
+        // Start the AI response immediately
+        const triggerAIResponse = async () => {
+          try {
+            const response = await fetch(`/api/chat/${conversationId}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                message: lastMessage.content,
+                skipSaveMessage: true, // Don't save the user message again
+                selectedTool: selectedTool || null,
+              }),
+            });
+
+            if (!response.ok) {
+              throw new Error("Failed to get AI response");
+            }
+
+            const reader = response.body?.getReader();
+            if (!reader) {
+              throw new Error("No response reader");
+            }
+
+            const decoder = new TextDecoder();
+            let buffer = "";
+
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split("\n");
+              buffer = lines.pop() || "";
+
+              for (const line of lines) {
+                if (line.startsWith("data: ")) {
+                  try {
+                    const data = JSON.parse(line.slice(6));
+
+                    if (data.content) {
+                      setStreamingMessage((prev) => prev + data.content);
+                    }
+
+                    if (data.error) {
+                      toast({
+                        title: "Error",
+                        description: data.error,
+                        variant: "destructive",
+                      });
+                      break;
+                    }
+
+                    if (data.finished) {
+                      setStreamingMessage("");
+                      setIsStreaming(false);
+                      // Delay query invalidation to prevent blinking during stream
+                      setTimeout(() => {
+                        queryClient.invalidateQueries({
+                          queryKey: ["/api/conversations", conversationId],
+                        });
+                        queryClient.invalidateQueries({
+                          queryKey: ["/api/conversations"],
+                        });
+                      }, 100);
+                      break;
+                    }
+                  } catch (e) {
+                    // Skip malformed JSON
+                  }
+                }
+              }
+            }
+          } catch (error) {
+            console.error("Failed to get AI response:", error);
+            toast({
+              title: "Error",
+              description: "Failed to get AI response",
+              variant: "destructive",
+            });
+          } finally {
+            setIsStreaming(false);
+            setStreamingMessage("");
+            isRequestInProgress.current = false;
+          }
+        };
+
+        // Start the AI response
+        triggerAIResponse();
+      }
     }
-  }, [conversationId]);
+  }, [conversationData, conversationId, isStreaming, queryClient, toast, selectedTool]);
 
   const deleteConversationMutation = useMutation({
     mutationFn: async (id: string) => {
