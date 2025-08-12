@@ -5,7 +5,7 @@ import Sidebar from "@/components/sidebar";
 import InputSection from "@/components/input-section";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, User, Bot, Trash2 } from "lucide-react";
+import { PlusIcon, User, Bot, Trash2, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { Message, Conversation } from "@shared/schema";
@@ -23,6 +23,7 @@ export default function ConversationPage() {
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [streamingMessage, setStreamingMessage] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -303,7 +304,12 @@ export default function ConversationPage() {
   if (isLoading) {
     return (
       <div className="flex h-screen" data-testid="conversation-page">
-        <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
+        <Sidebar 
+          activeNav={activeNav} 
+          onNavChange={setActiveNav}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
@@ -317,7 +323,12 @@ export default function ConversationPage() {
   if (!conversationData) {
     return (
       <div className="flex h-screen" data-testid="conversation-page">
-        <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
+        <Sidebar 
+          activeNav={activeNav} 
+          onNavChange={setActiveNav}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-slate-600 mb-4">Conversation not found</p>
@@ -332,7 +343,12 @@ export default function ConversationPage() {
 
   return (
     <div className="flex h-screen" data-testid="conversation-page">
-      <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
+      <Sidebar 
+        activeNav={activeNav} 
+        onNavChange={setActiveNav}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+      />
       <main className="flex-1 flex flex-col min-w-0">
         {/* Header - Responsive */}
         <header className="bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6">
@@ -352,6 +368,15 @@ export default function ConversationPage() {
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-3">
+              <Button 
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                variant="ghost"
+                size="sm"
+                className="text-gray-500 hover:text-blue-600 p-2 lg:hidden"
+                data-testid="button-toggle-sidebar"
+              >
+                {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+              </Button>
               <Button
                 variant="outline"
                 size="sm"

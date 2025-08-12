@@ -6,13 +6,14 @@ import { useWelcome } from "@/hooks/useWelcome";
 import Sidebar from "@/components/sidebar";
 import InputSection from "@/components/input-section";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, Lightbulb, BarChart, BookOpen, Code, HelpCircle } from "lucide-react";
+import { PlusIcon, Lightbulb, BarChart, BookOpen, Code, HelpCircle, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 export default function Home() {
   const [activeNav, setActiveNav] = useState("home");
   const [message, setMessage] = useState("");
   const [isStartingChat, setIsStartingChat] = useState(false);
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -120,7 +121,12 @@ export default function Home() {
 
   return (
     <div className="flex h-screen" data-testid="home-page">
-      <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
+      <Sidebar 
+        activeNav={activeNav} 
+        onNavChange={setActiveNav} 
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+      />
       <main className="flex-1 flex flex-col min-w-0">
         {/* Header - Responsive */}
         <header className="bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 pt-[6px] pb-[6px]">
@@ -133,6 +139,15 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              <Button 
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                variant="ghost"
+                size="sm"
+                className="text-gray-500 hover:text-blue-600 p-2 lg:hidden"
+                data-testid="button-toggle-sidebar"
+              >
+                {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+              </Button>
               <Button 
                 onClick={resetWelcome}
                 variant="ghost"

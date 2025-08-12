@@ -50,6 +50,15 @@ BeeBot is an AI assistant platform built as a modern full-stack web application 
   - Support for both light and dark themes with appropriate color schemes
   - Maintains regular markdown parsing for non-result content
   - Seamless integration with existing MarkdownRenderer component
+- **Sidebar Collapse/Expand Functionality (August 12, 2025)**: Added comprehensive sidebar toggle functionality:
+  - Toggle button positioned on the right side of sidebar header with smooth animations
+  - Responsive behavior: automatic toggle button on desktop (lg+) and manual button on mobile/tablet
+  - Smooth width transitions (300ms duration) between expanded and collapsed states
+  - Collapsed state shows only icons with tooltips for navigation items
+  - Search bar and conversation history hidden when collapsed for clean minimal view
+  - User profile adapts to show dropdown menu from avatar in collapsed mode
+  - Consistent functionality across both Home and Conversation pages
+  - Mobile-friendly toggle buttons in page headers for smaller screens
 
 # User Preferences
 
