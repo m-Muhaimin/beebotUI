@@ -682,7 +682,8 @@ if __name__ == "__main__":
                 // For search tools, we already streamed the results - no need for follow-up
                 if (pendingToolResults.length > 0) {
                   // Search results were already streamed, just end here
-                  break;
+                  yield { finished: true };
+                  return;
                 }
               }
 
@@ -690,7 +691,8 @@ if __name__ == "__main__":
                 parsed.choices?.[0]?.finish_reason === "stop" ||
                 parsed.choices?.[0]?.finish_reason === "tool_calls"
               ) {
-                break;
+                yield { finished: true };
+                return;
               }
             } catch (e) {
               // Ignore JSON parsing errors for streaming data
@@ -699,6 +701,7 @@ if __name__ == "__main__":
         }
       }
 
+      // Only yield finished if we haven't already returned
       yield { finished: true };
     } catch (error) {
       yield {
