@@ -148,7 +148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get a specific conversation with messages
-  app.get('/api/conversations/:id', isAuthenticated, async (req, res) => {
+  app.get('/api/conversations/:id', async (req, res) => {
     try {
       const conversation = await storage.getConversation(req.params.id);
       if (!conversation) {
@@ -240,7 +240,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Chat endpoint for streaming responses
-  app.post('/api/chat/:conversationId', isAuthenticated, async (req, res) => {
+  app.post('/api/chat/:conversationId', async (req, res) => {
     try {
       const { message, skipSaveMessage = false, selectedTool } = req.body;
       const conversationId = req.params.conversationId;
