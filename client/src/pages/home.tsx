@@ -164,7 +164,7 @@ export default function Home() {
                   <circle cx="12" cy="12" r="2" fill="currentColor" opacity="0.8"/>
                 </svg>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 mb-2">Welcome to BeeBot</h1>
+              <h1 className="sm:text-3xl lg:text-4xl font-bold text-slate-800 mb-2 text-[25px]">Welcome to BeeBot</h1>
               <p className="text-lg sm:text-xl text-slate-600">How can I help you today?</p>
 
             </div>
