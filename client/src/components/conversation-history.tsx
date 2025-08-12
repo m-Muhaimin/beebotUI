@@ -95,7 +95,7 @@ export default function ConversationHistory({ onSelectConversation }: Conversati
                 <button
                   key={conversation.id}
                   onClick={() => handleConversationClick(conversation.id)}
-                  className="w-full text-left p-3 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200 text-[12px] pt-[5px] pb-[5px]"
+                  className="w-full text-left p-3 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200 pt-[5px] pb-[5px] text-[14px] pl-[8px] pr-[8px] bg-[#ffffff]"
                   data-testid={`button-history-conversation-${conversation.id}`}
                 >
                   {conversation.title}
