@@ -59,6 +59,12 @@ BeeBot is an AI assistant platform built as a modern full-stack web application 
   - User profile adapts to show dropdown menu from avatar in collapsed mode
   - Consistent functionality across both Home and Conversation pages
   - Mobile-friendly toggle buttons in page headers for smaller screens
+  - **Enhanced Icon Sizing (August 12, 2025)**: Optimized collapsed sidebar visual hierarchy:
+    - Larger logo icon (w-6 h-6) and container (w-10 h-10) in collapsed state
+    - Enhanced navigation icons (w-6 h-6) for better visibility when collapsed
+    - Improved user avatar size (w-10 h-10) in collapsed mode
+    - Consistent toggle button positioning across all screen sizes
+    - Smooth size transitions with 300ms duration for all interactive elements
 
 # User Preferences
 
