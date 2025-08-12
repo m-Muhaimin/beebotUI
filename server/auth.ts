@@ -38,7 +38,7 @@ export function getSession() {
     return session({
       secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
       resave: false,
-      saveUninitialized: false,
+      saveUninitialized: true, // Allow session creation for memory store
       rolling: true, // Refresh session expiration on activity
       cookie: {
         httpOnly: true,

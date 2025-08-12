@@ -158,11 +158,14 @@ export default function Home() {
           <div className="max-w-4xl mx-auto">
             {/* Welcome Message */}
             <div className="text-center mb-6 sm:mb-8 lg:mb-12">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 brand-gradient rounded-full mx-auto mb-4 sm:mb-6 flex items-center justify-center opacity-10">
-                <svg className="w-10 h-10 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 brand-gradient rounded-full mx-auto mb-4 sm:mb-6 flex items-center justify-center">
+                <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
+                  <circle cx="12" cy="12" r="2" fill="currentColor" opacity="0.8"/>
                 </svg>
               </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 mb-2">Welcome to BeeBot</h1>
+              <p className="text-lg sm:text-xl text-slate-600">How can I help you today?</p>
 
             </div>
 
