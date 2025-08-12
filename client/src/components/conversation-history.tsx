@@ -15,7 +15,7 @@ export default function ConversationHistory({ onSelectConversation }: Conversati
     week: true,
   });
 
-  const { data: conversations = [], isLoading } = useQuery({
+  const { data: conversations = [], isLoading } = useQuery<Conversation[]>({
     queryKey: ['/api/conversations'],
     enabled: true,
   });
@@ -95,7 +95,7 @@ export default function ConversationHistory({ onSelectConversation }: Conversati
                 <button
                   key={conversation.id}
                   onClick={() => handleConversationClick(conversation.id)}
-                  className="w-full text-left p-3 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200 pt-[5px] pb-[5px] text-[14px] pl-[8px] pr-[8px] bg-[#ffffff]"
+                  className="w-full text-left p-3 text-slate-800 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200 pt-[5px] pb-[5px] text-[14px] pl-[8px] pr-[8px] bg-[#ffffff]"
                   data-testid={`button-history-conversation-${conversation.id}`}
                 >
                   {conversation.title}
@@ -126,7 +126,7 @@ export default function ConversationHistory({ onSelectConversation }: Conversati
                 <button
                   key={conversation.id}
                   onClick={() => handleConversationClick(conversation.id)}
-                  className="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200"
+                  className="w-full text-left p-3 text-sm text-slate-800 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200"
                   data-testid={`button-history-conversation-${conversation.id}`}
                 >
                   {conversation.title}
@@ -137,7 +137,7 @@ export default function ConversationHistory({ onSelectConversation }: Conversati
         </div>
       )}
       {/* Empty state */}
-      {conversations.length === 0 && !isLoading && (
+      {(conversations as Conversation[]).length === 0 && !isLoading && (
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-500">No conversations yet</p>
           <p className="text-xs text-slate-400 mt-1">Start chatting to see your history here</p>
