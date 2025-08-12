@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Lightbulb, Globe, Search, Send, X } from "lucide-react";
+import { Lightbulb, Globe, Search, Send, X, Square } from "lucide-react";
 
 interface InputSectionProps {
   message: string;
@@ -11,6 +11,8 @@ interface InputSectionProps {
   disabled?: boolean;
   selectedTool?: string | null;
   onToolChange?: (tool: string | null) => void;
+  isStreaming?: boolean;
+  onStopStreaming?: () => void;
 }
 
 export default function InputSection({ 
@@ -20,7 +22,9 @@ export default function InputSection({
   onQuickAction,
   disabled = false,
   selectedTool = null,
-  onToolChange
+  onToolChange,
+  isStreaming = false,
+  onStopStreaming
 }: InputSectionProps) {
   const [localSelectedTool, setLocalSelectedTool] = useState<string | null>(selectedTool);
   
@@ -86,15 +90,21 @@ export default function InputSection({
             })}
           </div>
           <Button
-            onClick={onSendMessage}
+            onClick={isStreaming ? onStopStreaming : onSendMessage}
             size="sm"
-            disabled={disabled || !message.trim()}
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 absolute right-3 bottom-3 w-8 h-8 p-0 bg-brand-blue hover:bg-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed pl-[25px] pr-[25px] pt-[20px] pb-[20px]"
-            aria-label="Send message"
-            data-testid="button-send"
+            disabled={(!isStreaming && (disabled || !message.trim())) || (isStreaming && !onStopStreaming)}
+            className={`inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 absolute right-3 bottom-3 w-8 h-8 p-0 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed pl-[25px] pr-[25px] pt-[20px] pb-[20px] ${
+              isStreaming 
+                ? "bg-red-500 hover:bg-red-600 text-white" 
+                : "bg-brand-blue hover:bg-blue-600 text-white"
+            }`}
+            aria-label={isStreaming ? "Stop generation" : "Send message"}
+            data-testid={isStreaming ? "button-stop" : "button-send"}
           >
-            {disabled ? (
+            {disabled && !isStreaming ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : isStreaming ? (
+              <Square className="w-4 h-4" />
             ) : (
               <Send className="w-4 h-4" />
             )}

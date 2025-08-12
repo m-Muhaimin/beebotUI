@@ -29,6 +29,7 @@ export default function ConversationPage() {
   });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isRequestInProgress = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -68,6 +69,7 @@ export default function ConversationPage() {
         // Start the AI response immediately
         const triggerAIResponse = async () => {
           try {
+            abortControllerRef.current = new AbortController();
             const response = await fetch(`/api/chat/${conversationId}`, {
               method: "POST",
               headers: {
@@ -78,6 +80,7 @@ export default function ConversationPage() {
                 skipSaveMessage: true, // Don't save the user message again
                 selectedTool: selectedTool || null,
               }),
+              signal: abortControllerRef.current.signal,
             });
 
             if (!response.ok) {
@@ -138,17 +141,22 @@ export default function ConversationPage() {
                 }
               }
             }
-          } catch (error) {
-            console.error("Failed to get AI response:", error);
-            toast({
-              title: "Error",
-              description: "Failed to get AI response",
-              variant: "destructive",
-            });
+          } catch (error: any) {
+            if (error.name === 'AbortError') {
+              console.log('Auto-trigger AI response was aborted');
+            } else {
+              console.error("Failed to get AI response:", error);
+              toast({
+                title: "Error",
+                description: "Failed to get AI response",
+                variant: "destructive",
+              });
+            }
           } finally {
             setIsStreaming(false);
             setStreamingMessage("");
             isRequestInProgress.current = false;
+            abortControllerRef.current = null;
           }
         };
 
@@ -157,6 +165,16 @@ export default function ConversationPage() {
       }
     }
   }, [conversationData, conversationId, isStreaming, queryClient, toast, selectedTool]);
+
+  const handleStopStreaming = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsStreaming(false);
+    setStreamingMessage("");
+    isRequestInProgress.current = false;
+  };
 
   const deleteConversationMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -224,6 +242,7 @@ export default function ConversationPage() {
     );
 
     try {
+      abortControllerRef.current = new AbortController();
       const response = await fetch(`/api/chat/${conversationId}`, {
         method: "POST",
         headers: {
@@ -233,6 +252,7 @@ export default function ConversationPage() {
           message: messageToSend,
           selectedTool: selectedTool,
         }),
+        signal: abortControllerRef.current.signal,
       });
 
       if (!response.ok) {
@@ -294,17 +314,22 @@ export default function ConversationPage() {
           }
         }
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to send message",
-        variant: "destructive",
-      });
-      setMessage(messageToSend); // Restore message on error
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        console.log('Message sending was aborted');
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to send message",
+          variant: "destructive",
+        });
+        setMessage(messageToSend); // Restore message on error
+      }
     } finally {
       setIsStreaming(false);
       setStreamingMessage("");
       isRequestInProgress.current = false;
+      abortControllerRef.current = null;
     }
   };
 
@@ -543,6 +568,8 @@ export default function ConversationPage() {
           onQuickAction={handleQuickAction}
           selectedTool={selectedTool}
           onToolChange={setSelectedTool}
+          isStreaming={isStreaming}
+          onStopStreaming={handleStopStreaming}
         />
       </main>
     </div>
