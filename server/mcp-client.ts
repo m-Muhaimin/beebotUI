@@ -480,20 +480,10 @@ if __name__ == "__main__":
           // Directly call the selected tool with the user's query
 
           if (selectedTool === "web-search") {
-            const searchText = `🔍 Searching the web for "${lastMessage.content}"`;
-
-            // Animation frames
-            const frames = [
-              `${searchText}.`,
-              `${searchText}..`,
-              `${searchText}...`,
-            ];
-
-            // Loop through frames with a small delay to simulate animation
-            for (const frame of frames) {
-              yield { content: frame + "\n\n" };
-              await new Promise((res) => setTimeout(res, 300)); // 300ms delay per frame
-            }
+            yield {
+              content:
+                '🔍 Searching the web for "${lastMessage.content}"...\n\n',
+            };
 
             // Run actual search
             const toolResult = await this.callTool("web_search", {
