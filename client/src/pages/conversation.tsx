@@ -144,6 +144,7 @@ export default function ConversationPage() {
           } catch (error: any) {
             if (error.name === 'AbortError') {
               console.log('Auto-trigger AI response was aborted');
+              // Don't clear streaming message on abort - let handleStopStreaming handle it
             } else {
               console.error("Failed to get AI response:", error);
               toast({
@@ -151,11 +152,11 @@ export default function ConversationPage() {
                 description: "Failed to get AI response",
                 variant: "destructive",
               });
+              setIsStreaming(false);
+              setStreamingMessage("");
+              isRequestInProgress.current = false;
             }
           } finally {
-            setIsStreaming(false);
-            setStreamingMessage("");
-            isRequestInProgress.current = false;
             abortControllerRef.current = null;
           }
         };
@@ -171,6 +172,33 @@ export default function ConversationPage() {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
+    
+    // If we have partial streaming content, save it as a complete message
+    if (streamingMessage.trim()) {
+      // Optimistically add the partial AI response to the conversation
+      queryClient.setQueryData(
+        ["/api/conversations", conversationId],
+        (oldData: ConversationData | undefined) => {
+          if (!oldData) return oldData;
+
+          const newMessage = {
+            id: `temp-stopped-${Date.now()}`,
+            conversationId: conversationId!,
+            role: "assistant" as const,
+            content: streamingMessage + " [Response stopped by user]",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            metadata: null,
+          };
+
+          return {
+            ...oldData,
+            messages: [...oldData.messages, newMessage],
+          };
+        },
+      );
+    }
+    
     setIsStreaming(false);
     setStreamingMessage("");
     isRequestInProgress.current = false;
@@ -317,6 +345,7 @@ export default function ConversationPage() {
     } catch (error: any) {
       if (error.name === 'AbortError') {
         console.log('Message sending was aborted');
+        // Don't clear streaming message on abort - let handleStopStreaming handle it
       } else {
         toast({
           title: "Error",
@@ -324,11 +353,11 @@ export default function ConversationPage() {
           variant: "destructive",
         });
         setMessage(messageToSend); // Restore message on error
+        setIsStreaming(false);
+        setStreamingMessage("");
+        isRequestInProgress.current = false;
       }
     } finally {
-      setIsStreaming(false);
-      setStreamingMessage("");
-      isRequestInProgress.current = false;
       abortControllerRef.current = null;
     }
   };
