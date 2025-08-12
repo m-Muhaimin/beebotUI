@@ -165,7 +165,7 @@ export default function Home() {
                 </svg>
               </div>
               <h1 className="sm:text-3xl lg:text-4xl font-bold text-slate-800 mb-2 text-[25px]">Welcome to BeeBot</h1>
-              <p className="text-lg sm:text-xl text-slate-600">How can I help you today?</p>
+              <p className="sm:text-xl text-slate-600 text-[17px]">How can I help you today?</p>
 
             </div>
 
