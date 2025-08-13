@@ -67,11 +67,11 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`${isCollapsed ? "w-0 lg:w-16" : "w-60 sm:w-64 lg:w-72 xl:w-80"} bg-white border-r border-slate-200 flex flex-col transition-all duration-300 relative overflow-hidden`}
+      className={`${isCollapsed ? "w-0 lg:w-16" : "w-60 sm:w-64 lg:w-72 xl:w-80"} bg-background border-r border-border flex flex-col transition-all duration-300 relative overflow-hidden`}
       data-testid="sidebar"
     >
       {/* Logo Section - Responsive */}
-      <div className="p-4 sm:p-6 border-b border-slate-200 pl-[16px] pr-[16px] sm:pl-[24px] sm:pr-[24px] pt-[10px] pb-[10px] relative">
+      <div className="p-4 sm:p-6 border-b border-border pl-[16px] pr-[16px] sm:pl-[24px] sm:pr-[24px] pt-[10px] pb-[10px] relative">
         <div
           className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-2 sm:space-x-3"}`}
         >
@@ -94,7 +94,7 @@ export default function Sidebar({
           </div>
           {!isCollapsed && (
             <span
-              className="text-base sm:text-lg font-semibold text-slate-800"
+              className="text-base sm:text-lg font-semibold text-foreground"
               data-testid="text-logo"
             >
               BeeBot
@@ -105,7 +105,7 @@ export default function Sidebar({
         {onToggleCollapse && (
           <button
             onClick={onToggleCollapse}
-            className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md transition-all duration-300 items-center justify-center text-slate-500 hover:text-slate-700 z-10 hidden lg:flex"
+            className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-background border border-border rounded-full shadow-sm hover:shadow-md transition-all duration-300 items-center justify-center text-muted-foreground hover:text-foreground z-10 hidden lg:flex"
             data-testid="button-toggle-sidebar-desktop"
           >
             {isCollapsed ? (
@@ -122,13 +122,13 @@ export default function Sidebar({
         {!isCollapsed && (
           <div className="mb-4 sm:mb-6">
             <div className="relative">
-              <Search className="absolute left-2.5 sm:left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
+              <Search className="absolute left-2.5 sm:left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-8 sm:h-10 w-full rounded-md border bg-background px-3 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pl-8 sm:pl-10 text-xs sm:text-sm border-slate-200 focus:ring-2 focus:ring-brand-blue focus:border-transparent"
+                className="h-8 sm:h-10 w-full rounded-md border bg-background px-3 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 pl-8 sm:pl-10 text-xs sm:text-sm border-border focus:ring-2 focus:ring-primary focus:border-transparent text-foreground"
                 data-testid="input-search"
               />
             </div>
@@ -144,7 +144,7 @@ export default function Sidebar({
               <li key={item.id}>
                 <button
                   onClick={() => handleNavClick(item)}
-                  className={`flex items-center ${isCollapsed ? "justify-center px-2" : "space-x-3 px-3"} py-2 font-medium rounded-lg transition-all duration-300 w-full text-left pt-[9px] pb-[9px] bg-[#edf1f77a] text-[#424242] text-[14px]`}
+                  className={`flex items-center ${isCollapsed ? "justify-center px-2" : "space-x-3 px-3"} py-2 font-medium rounded-lg transition-all duration-300 w-full text-left pt-[9px] pb-[9px] ${isActive ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground"} text-[14px]`}
                   data-testid={`button-nav-${item.id}`}
                   aria-label={item.label}
                   title={isCollapsed ? item.label : undefined}
@@ -166,12 +166,12 @@ export default function Sidebar({
         {!isCollapsed && <ConversationHistory />}
       </nav>
       {/* User Profile & Logout */}
-      <div className="p-4 border-t border-slate-200 pt-[8px] pb-[8px]">
+      <div className="p-4 border-t border-border pt-[8px] pb-[8px]">
         {isCollapsed ? (
           <div className="flex justify-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-base font-medium text-blue-600 transition-all duration-300">
+                <button className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-base font-medium text-secondary-foreground transition-all duration-300">
                   {user?.firstName?.[0] || user?.username?.[0] || "U"}
                 </button>
               </DropdownMenuTrigger>
@@ -181,7 +181,7 @@ export default function Sidebar({
                     ? `${user.firstName} ${user.lastName || ""}`.trim()
                     : user?.username}
                 </div>
-                <div className="px-2 py-1 text-xs text-slate-500 border-b">
+                <div className="px-2 py-1 text-xs text-muted-foreground border-b border-border">
                   {user?.email}
                 </div>
                 <DropdownMenuItem className="cursor-pointer">
@@ -221,7 +221,7 @@ export default function Sidebar({
         ) : (
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 flex-1 min-w-0 mr-2">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-sm font-medium text-blue-600">
                   {user?.firstName?.[0] || user?.username?.[0] || "U"}
                 </span>

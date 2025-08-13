@@ -79,8 +79,21 @@
   }
 
   body {
-    @apply bg-slate-50 font-sans antialiased text-slate-800 overflow-hidden;
+    @apply bg-background font-sans antialiased text-foreground overflow-hidden;
     font-family: var(--font-sans);
+  }
+
+  .dark body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Ensure white text in dark mode */
+  .dark {
+    color: white;
+  }
+
+  .dark * {
+    color: inherit;
   }
 }
 
