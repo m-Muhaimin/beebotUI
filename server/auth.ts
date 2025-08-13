@@ -11,8 +11,7 @@ export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   
   // Use database session store if DATABASE_URL is available
-  // Temporarily disabled due to connectivity issues
-  if (false && process.env.DATABASE_URL) {
+  if (process.env.DATABASE_URL) {
     const pgStore = connectPg(session);
     const sessionStore = new pgStore({
       conString: process.env.DATABASE_URL,
