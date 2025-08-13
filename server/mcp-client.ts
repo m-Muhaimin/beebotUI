@@ -665,10 +665,22 @@ if __name__ == "__main__":
         case "search_arxiv":
           if (result.data && Array.isArray(result.data)) {
             return result.data.map((item: any, index: number) => 
-              `## Result ${index + 1}: ${item.title}\n\n${item.content}\n\nURL: ${item.url}\n\n---\n`
+              `## Result ${index + 1}: ${item.title || 'Untitled'}\n\n${item.content || item.description || 'No content available'}\n\nURL: ${item.url}\n\n---\n`
             ).join('\n');
           }
-          break;
+          // Fallback for different response structure
+          if (result.results && Array.isArray(result.results)) {
+            return result.results.map((item: any, index: number) => 
+              `## Result ${index + 1}: ${item.title || item.name || 'Untitled'}\n\n${item.snippet || item.content || item.description || 'No content available'}\n\nURL: ${item.url || item.link}\n\n---\n`
+            ).join('\n');
+          }
+          // Another fallback for basic array structure
+          if (Array.isArray(result)) {
+            return result.map((item: any, index: number) => 
+              `## Result ${index + 1}: ${item.title || item.name || 'Untitled'}\n\n${item.snippet || item.content || item.description || 'No content available'}\n\nURL: ${item.url || item.link}\n\n---\n`
+            ).join('\n');
+          }
+          return `Found search results but unable to format properly:\n\n${JSON.stringify(result, null, 2)}`;
           
         case "search_image_jina":
           if (result.data && Array.isArray(result.data)) {
@@ -691,7 +703,8 @@ if __name__ == "__main__":
       }
 
       // Fallback to raw JSON if format not recognized
-      return JSON.stringify(result, null, 2);
+      console.log("Jina API response format not recognized:", JSON.stringify(result, null, 2));
+      return `Received response from Jina API but unable to format it properly. Raw response:\n\n${JSON.stringify(result, null, 2)}`;
 
     } catch (error) {
       return `Error calling Jina tool ${name}: ${error instanceof Error ? error.message : String(error)}`;
