@@ -48,11 +48,9 @@ export default function InputSection({
 
   const tools = [
     { id: 'reasoning', label: 'Reasoning', icon: Lightbulb, description: 'Pure AI reasoning without tools' },
-    { id: 'web-search', label: 'Web Search', icon: Globe, description: 'Search the web using Exa API' },
-    { id: 'deep-research', label: 'Deep Research', icon: Search, description: 'Comprehensive research and analysis' },
-    { id: 'read-url', label: 'Read URL', icon: FileText, description: 'Extract content from web pages' },
-    { id: 'screenshot', label: 'Screenshot', icon: Camera, description: 'Capture webpage screenshots' },
-    { id: 'search-jina', label: 'Jina Web Search', icon: Globe, description: 'Search web with Jina AI' },
+    { id: 'read-url', label: 'Read URL', icon: FileText, description: 'Extract content from web pages using Jina AI' },
+    { id: 'screenshot', label: 'Screenshot', icon: Camera, description: 'Capture webpage screenshots using Jina AI' },
+    { id: 'search-jina', label: 'Web Search', icon: Globe, description: 'Search web with Jina AI' },
     { id: 'search-arxiv', label: 'arXiv Search', icon: Archive, description: 'Search academic papers on arXiv' }
   ];
 

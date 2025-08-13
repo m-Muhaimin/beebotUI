@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 import { spawn, ChildProcess } from "child_process";
 import { randomUUID } from "crypto";
 import { promises as fs } from "fs";
-import EventSource from "eventsource";
+import { EventSource } from "eventsource";
 
 interface ChatMessage {
   role: "user" | "assistant" | "system" | "tool";
@@ -636,24 +636,42 @@ if __name__ == "__main__":
         if (lastMessage && lastMessage.role === "user") {
           // Directly call the selected tool with the user's query
 
-          if (selectedTool === "web-search") {
+          if (selectedTool === "read-url") {
             yield {
-              content: `Searching the web on "${lastMessage.content}"...\n\n`,
+              content: `📄 Reading content from "${lastMessage.content}"...\n\n`,
             };
-
-            // Run actual search
-            const toolResult = await this.callTool("web_search", {
+            const toolResult = await this.callTool("read_url", {
+              url: lastMessage.content,
+            });
+            yield { content: toolResult };
+            yield { finished: true };
+            return;
+          } else if (selectedTool === "screenshot") {
+            yield {
+              content: `📸 Capturing screenshot of "${lastMessage.content}"...\n\n`,
+            };
+            const toolResult = await this.callTool("capture_screenshot_url", {
+              url: lastMessage.content,
+            });
+            yield { content: toolResult };
+            yield { finished: true };
+            return;
+          } else if (selectedTool === "search-jina") {
+            yield {
+              content: `🌐 Searching the web for "${lastMessage.content}" using Jina AI...\n\n`,
+            };
+            const toolResult = await this.callTool("search_web_jina", {
               query: lastMessage.content,
             });
             yield { content: toolResult };
             yield { finished: true };
             return;
-          } else if (selectedTool === "deep-research") {
+          } else if (selectedTool === "search-arxiv") {
             yield {
-              content: `🔬 Conducting deep research on "${lastMessage.content}"...\n\n`,
+              content: `🔬 Searching arXiv papers for "${lastMessage.content}"...\n\n`,
             };
-            const toolResult = await this.callTool("deep_research", {
-              topic: lastMessage.content,
+            const toolResult = await this.callTool("search_arxiv", {
+              query: lastMessage.content,
             });
             yield { content: toolResult };
             yield { finished: true };
@@ -667,16 +685,6 @@ if __name__ == "__main__":
 
       if (selectedTool) {
         switch (selectedTool) {
-          case "web-search":
-            toolsToUse = this.availableTools.filter(
-              (tool) => tool.name === "web_search",
-            );
-            break;
-          case "deep-research":
-            toolsToUse = this.availableTools.filter(
-              (tool) => tool.name === "deep_research",
-            );
-            break;
           case "read-url":
             toolsToUse = this.availableTools.filter(
               (tool) => tool.name === "read_url",
@@ -822,14 +830,6 @@ if __name__ == "__main__":
                     yield {
                       content: `\n\n⚠️ Getting weather alerts for ${toolArgs.state}...\n\n`,
                     };
-                  } else if (toolName === "web_search") {
-                    yield {
-                      content: `\n\n🔍 Searching the web for "${toolArgs.query}"...\n\n`,
-                    };
-                  } else if (toolName === "deep_research") {
-                    yield {
-                      content: `\n\n🔬 Conducting deep research on "${toolArgs.query}"...\n\n`,
-                    };
                   } else if (toolName === "read_url") {
                     yield {
                       content: `\n\n📄 Reading content from ${toolArgs.url}...\n\n`,
@@ -851,8 +851,10 @@ if __name__ == "__main__":
                   const toolResult = await this.callTool(toolName, toolArgs);
 
                   if (
-                    toolName === "web_search" ||
-                    toolName === "deep_research"
+                    toolName === "search_web_jina" ||
+                    toolName === "search_arxiv" ||
+                    toolName === "read_url" ||
+                    toolName === "capture_screenshot_url"
                   ) {
                     yield { content: `${toolResult}\n\n` };
                     pendingToolResults.push(toolResult);
