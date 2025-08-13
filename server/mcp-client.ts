@@ -606,50 +606,55 @@ if __name__ == "__main__":
             method: 'GET',
             headers: {
               'Accept': 'application/json',
-              'User-Agent': 'BeeBot/1.0'
+              'User-Agent': 'BeeBot/1.0',
+              'X-Return-Format': 'json',
+              'X-Max-Results': String(arguments_.num_results || 5)
             }
           };
-          // Add Jina API key if available
+          // Jina API key is required for search functionality
           if (this.jinaApiKey) {
             options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
+          } else {
+            throw new Error('Jina API key is required for search functionality. Please provide your Jina API key.');
           }
-          // Add search-specific headers
-          options.headers['X-Return-Format'] = 'json';
-          options.headers['X-Max-Results'] = String(arguments_.num_results || 5);
           break;
 
         case "search_arxiv":
           // Use GET request for ArXiv search with site restriction
-          url = `${searchUrl}${encodeURIComponent(arguments_.query)} site:arxiv.org`;
+          url = `${searchUrl}${encodeURIComponent(arguments_.query + ' site:arxiv.org')}`;
           options = {
             method: 'GET',
             headers: {
               'Accept': 'application/json',
-              'User-Agent': 'BeeBot/1.0'
+              'User-Agent': 'BeeBot/1.0',
+              'X-Return-Format': 'json',
+              'X-Max-Results': String(arguments_.num_results || 5)
             }
           };
           if (this.jinaApiKey) {
             options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
+          } else {
+            throw new Error('Jina API key is required for ArXiv search functionality. Please provide your Jina API key.');
           }
-          options.headers['X-Return-Format'] = 'json';
-          options.headers['X-Max-Results'] = String(arguments_.num_results || 5);
           break;
 
         case "search_image_jina":
           // Use GET request for image search
-          url = `${searchUrl}${encodeURIComponent(arguments_.query)} type:image`;
+          url = `${searchUrl}${encodeURIComponent(arguments_.query + ' type:image')}`;
           options = {
             method: 'GET',
             headers: {
               'Accept': 'application/json',
-              'User-Agent': 'BeeBot/1.0'
+              'User-Agent': 'BeeBot/1.0',
+              'X-Return-Format': 'json',
+              'X-Max-Results': String(arguments_.num_results || 5)
             }
           };
           if (this.jinaApiKey) {
             options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
+          } else {
+            throw new Error('Jina API key is required for image search functionality. Please provide your Jina API key.');
           }
-          options.headers['X-Return-Format'] = 'json';
-          options.headers['X-Max-Results'] = String(arguments_.num_results || 5);
           break;
 
         case "rerank_jina":
@@ -716,9 +721,14 @@ if __name__ == "__main__":
             ).join('\n');
           }
           
+          // Handle authentication error response
+          if (result.code === 401 || (result.name && result.name.includes('Authentication'))) {
+            return `# Authentication Required\n\nQuery: "${arguments_.query}"\n\nJina API key is required for search functionality. The API returned:\n\nError: ${result.message || result.readableMessage || 'Authentication failed'}\n\nTo use search features, please:\n1. Get your free API key from https://jina.ai\n2. Add it to your environment variables as JINA_API_KEY`;
+          }
+          
           // Handle usage/metadata response
           if (result.data && result.data.usage1 && result.data.usage2) {
-            return `# Jina Search API Information\n\nQuery: "${arguments_.query}"\n\nThe API returned usage information instead of search results. This might indicate:\n- The search query format needs adjustment\n- API key authentication required for search results\n- Different endpoint needed for search functionality\n\nAPI Information:\n- Reader URL: ${result.data.usage1}\n- Search URL: ${result.data.usage2}\n- Homepage: ${result.data.homepage}\n- Balance: ${result.data.balanceLeft} credits`;
+            return `# Jina Search Setup Information\n\nQuery: "${arguments_.query}"\n\nThe API returned configuration information. Please ensure your API key is properly configured.\n\nAPI Information:\n- Reader URL: ${result.data.usage1}\n- Search URL: ${result.data.usage2}\n- Homepage: ${result.data.homepage}\n- Credits Balance: ${result.data.balanceLeft}`;
           }
           
           return `Unable to format search results. Response structure:\n\n${JSON.stringify(result, null, 2)}`;
