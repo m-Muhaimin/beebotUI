@@ -64,47 +64,7 @@
   --slate-900: hsl(222.2, 84%, 4.9%);
 }
 
-.dark {
-  /* Dark theme colors with proper contrast */
-  --background: hsl(222.2, 84%, 4.9%);
-  --foreground: hsl(210, 40%, 98%);
-  --card: hsl(222.2, 84%, 4.9%);
-  --card-foreground: hsl(210, 40%, 98%);
-  --popover: hsl(222.2, 84%, 4.9%);
-  --popover-foreground: hsl(210, 40%, 98%);
-  
-  /* Primary colors for dark mode */
-  --primary: hsl(217.2, 91.2%, 59.8%);
-  --primary-foreground: hsl(222.2, 84%, 4.9%);
-  
-  /* Secondary colors for dark mode */
-  --secondary: hsl(217.2, 32.6%, 17.5%);
-  --secondary-foreground: hsl(210, 40%, 98%);
-  
-  /* Muted colors for dark mode */
-  --muted: hsl(217.2, 32.6%, 17.5%);
-  --muted-foreground: hsl(215, 20.2%, 65.1%);
-  
-  /* Accent colors for dark mode */
-  --accent: hsl(217.2, 32.6%, 17.5%);
-  --accent-foreground: hsl(210, 40%, 98%);
-  
-  /* Destructive colors for dark mode */
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(210, 40%, 98%);
-  
-  /* Border and input colors for dark mode */
-  --border: hsl(217.2, 32.6%, 17.5%);
-  --input: hsl(217.2, 32.6%, 17.5%);
-  --ring: hsl(217.2, 91.2%, 59.8%);
-  
-  /* Chart colors for dark mode */
-  --chart-1: hsl(220, 70%, 50%);
-  --chart-2: hsl(160, 60%, 45%);
-  --chart-3: hsl(30, 80%, 55%);
-  --chart-4: hsl(280, 65%, 60%);
-  --chart-5: hsl(340, 75%, 55%);
-}
+
 
 @layer base {
   * {
@@ -116,14 +76,7 @@
     font-family: var(--font-sans);
   }
 
-  .dark body {
-    @apply bg-background text-foreground;
-  }
 
-  /* Ensure proper text colors in dark mode */
-  .dark {
-    color: hsl(210, 40%, 98%);
-  }
 }
 
 @layer utilities {
@@ -183,18 +136,7 @@
   border-radius: 1px;
 }
 
-/* Dark mode support for result groups */
-.dark .result-group {
-  @apply bg-slate-800 bg-opacity-30 border-slate-700;
-}
 
-.dark .result-header {
-  @apply border-slate-700;
-}
-
-.dark .result-header h3 {
-  @apply text-blue-400;
-}
 
 .brand-gradient-custom {
   background: linear-gradient(135deg, var(--brand-blue), var(--brand-purple));
