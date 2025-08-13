@@ -599,7 +599,9 @@ export default function ConversationPage() {
                     msg.role === "user"
                       ? "px-4 sm:px-6 py-3 sm:py-4 bg-brand-blue text-white"
                       : "px-4 sm:px-6 py-3 sm:py-4"
-                  }`}
+                  }
+                  ${isSpecialContent ? "special-paragraph" : "normal-paragraph"}
+                  `}
                 >
                   <MarkdownRenderer content={msg.content} />
                 </div>
@@ -642,11 +644,11 @@ export default function ConversationPage() {
                 </div>
 
                 {/* Loading dots - Responsive */}
-                <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#424242] ">
+                <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#424242] bg-[#8493ba38]">
                   {" "}
                   {/* Add bg-[#8493ba38] if you want to show the background */}
                   <div className="flex items-center space-x-1.5">
-                    <div className="w-1 h-1 sm:w-1 sm:h-1 bg-[#1f61f0] rounded-full animate-bounce" />
+                    <div className="w-1.3 h-1.3 sm:w-1.3 sm:h-1.3 bg-[#f4f4f4] rounded-full animate-bounce" />
                     <div
                       className="w-1 h-1 sm:w-1 sm:h-1 bg-[#1f61f0] rounded-full animate-bounce"
                       style={{ animationDelay: "0.1s" }}
