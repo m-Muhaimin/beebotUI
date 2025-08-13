@@ -1,0 +1,160 @@
+Here's a streamlined guide for adding Jina AI MCP Tools to your existing BeeBot app in Replit:
+
+### 1. **Install Jina MCP Tools in Replit Shell**
+```bash
+npm install jina-mcp-tools
+```
+
+### 2. **Update Replit Configuration**
+Edit `.replit` file:
+```bash
+run = "npm run dev & npx jina-mcp-tools"
+```
+
+### 3. **Set Environment Variables**
+In Replit's Secrets (🔒 icon):
+```bash
+JINA_API_KEY=your_jina_api_key
+MCP_PORT=5001  # Different from your main app port
+```
+
+### 4. **Create Jina Service File**
+`/services/jina-mcp.js`:
+```javascript
+const { exec } = require('child_process');
+
+module.exports = {
+  start: () => {
+    const jina = exec('npx jina-mcp-tools', {
+      env: {
+        ...process.env,
+        PORT: process.env.MCP_PORT || 5001
+      }
+    });
+    
+    jina.stdout.on('data', data => console.log(`[Jina MCP]: ${data}`));
+    jina.stderr.on('data', data => console.error(`[Jina Error]: ${data}`));
+    
+    return jina;
+  }
+}
+```
+
+### 5. **Modify MCP Server List**
+`/server/mcp-servers.json`:
+```json
+{
+  "jina": {
+    "url": "http://localhost:5001",
+    "tools": ["jina_reader", "jina_search"]
+  }
+}
+```
+
+### 6. **Update Tool Selection UI**
+`/client/src/components/tools.tsx`:
+```typescript
+export const JINA_TOOLS = [
+  {
+    id: 'jina_reader',
+    name: 'Web Reader',
+    icon: <Globe size={16} />,
+    description: 'Extract clean content from any webpage'
+  },
+  {
+    id: 'jina_search', 
+    name: 'Web Search',
+    icon: <Search size={16} />,
+    description: 'Search the web for up-to-date information'
+  }
+];
+```
+
+### 7. **Create Jina Client Service**
+`/client/src/services/jina.ts`:
+```typescript
+export const jinaClient = {
+  search: async (query: string) => {
+    const res = await fetch('/api/mcp/jina/search', {
+      method: 'POST',
+      body: JSON.stringify({ query })
+    });
+    return res.json();
+  },
+  
+  read: async (url: string) => {
+    const res = await fetch('/api/mcp/jina/read', {
+      method: 'POST',
+      body: JSON.stringify({ url })
+    });
+    return res.json();
+  }
+};
+```
+
+### 8. **Add API Proxy Routes**
+`/server/routes/mcp.js`:
+```javascript
+router.post('/jina/search', async (req, res) => {
+  try {
+    const response = await fetch(`http://localhost:${process.env.MCP_PORT}/tools/jina_search`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'jina_search',
+        arguments: req.body
+      })
+    });
+    res.json(await response.json());
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+```
+
+### 9. **Update Message Handler**
+`/client/src/hooks/useChat.ts`:
+```typescript
+const handleJinaTool = async (toolId: string, input: string) => {
+  if (toolId === 'jina_search') {
+    return await jinaClient.search(input);
+  }
+  if (toolId === 'jina_reader') {
+    return await jinaClient.read(input); 
+  }
+};
+```
+
+### 10. **Run in Replit**
+1. Click "Run" button
+2. Both your main app and Jina MCP will start
+3. Check Replit logs for both services
+
+### Key Replit-Specific Considerations:
+
+1. **Port Management**:
+   - Main app: 3000 (default)
+   - Jina MCP: 5001 (configured)
+
+2. **Process Monitoring**:
+   - Both processes show in Replit logs
+   - Use `console.log` prefixes to differentiate
+
+3. **Auto-Refresh**:
+   - Replit will restart both services on file changes
+
+4. **Troubleshooting**:
+```bash
+# Check running processes
+ps aux
+
+# Check port usage
+lsof -i :5001
+```
+
+This implementation gives you:
+- Zero-config setup in Replit
+- Integrated logging
+- Automatic process management
+- Seamless tool integration
+- Scalable for additional MCP services

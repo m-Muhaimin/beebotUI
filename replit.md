@@ -4,7 +4,13 @@ BeeBot is an AI assistant platform built as a modern full-stack web application 
 
 ## Recent Changes (August 2025)
 
-- **Migration to Replit Environment**: Successfully migrated from Replit Agent to standard Replit environment (Completed August 12, 2025)
+- **Complete Migration to Replit Environment**: Successfully migrated from Replit Agent to standard Replit environment with full functionality (Completed August 13, 2025)
+- **Jina AI Integration**: Added comprehensive Jina AI MCP tools for advanced web content processing (August 13, 2025):
+  - Web page content extraction via `read_url` tool using Jina Reader API
+  - Screenshot capture functionality with `capture_screenshot_url` tool
+  - Enhanced web search through `search_web_jina` with Jina's advanced search capabilities
+  - Academic paper search via `search_arxiv` for arXiv repository access
+  - All tools support both free tier and API key enhanced performance
 - **Critical Bug Fix**: Fixed infinite loop issue in conversation auto-trigger causing rapid API calls (Fixed August 12, 2025)
 - **Stop Button Implementation**: Added ability for send button to act as stop button during AI response streaming, preserving partial content when stopped (Fixed August 12, 2025)
 - **Critical Bug Fix**: Fixed infinite loop issue in conversation auto-trigger causing rapid API calls (Fixed August 12, 2025)
