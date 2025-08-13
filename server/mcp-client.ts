@@ -778,50 +778,75 @@ if __name__ == "__main__":
             yield {
               content: `📄 Reading content from "${lastMessage.content}"...\n\n`,
             };
-            const toolResult = await this.callTool("read_url", {
+            const toolResult = await this.callJinaTool("read_url", {
               url: lastMessage.content,
             });
-            yield { content: toolResult };
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
             yield { finished: true };
             return;
           } else if (selectedTool === "screenshot") {
             yield {
               content: `📸 Capturing screenshot of "${lastMessage.content}"...\n\n`,
             };
-            const toolResult = await this.callTool("capture_screenshot_url", {
+            const toolResult = await this.callJinaTool("capture_screenshot_url", {
               url: lastMessage.content,
             });
-            yield { content: toolResult };
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
             yield { finished: true };
             return;
           } else if (selectedTool === "search-jina") {
             yield {
               content: `🌐 Searching the web for "${lastMessage.content}" using Jina AI...\n\n`,
             };
-            const toolResult = await this.callTool("search_web_jina", {
+            const toolResult = await this.callJinaTool("search_web_jina", {
               query: lastMessage.content,
             });
-            yield { content: toolResult };
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
             yield { finished: true };
             return;
           } else if (selectedTool === "search-arxiv") {
             yield {
               content: `🔬 Searching arXiv papers for "${lastMessage.content}"...\n\n`,
             };
-            const toolResult = await this.callTool("search_arxiv", {
+            const toolResult = await this.callJinaTool("search_arxiv", {
               query: lastMessage.content,
             });
-            yield { content: toolResult };
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
             yield { finished: true };
             return;
           } else if (selectedTool === "search-image") {
             yield {
               content: `🖼️ Searching for images of "${lastMessage.content}" using Jina AI...\n\n`,
             };
-            const toolResult = await this.callTool("search_image_jina", {
+            const toolResult = await this.callJinaTool("search_image_jina", {
               query: lastMessage.content,
             });
-            yield { content: toolResult };
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
             yield { finished: true };
             return;
           } else if (selectedTool === "rerank") {
@@ -836,11 +861,16 @@ if __name__ == "__main__":
               return;
             }
             const [query, ...documents] = parts;
-            const toolResult = await this.callTool("rerank_jina", {
+            const toolResult = await this.callJinaTool("rerank_jina", {
               query: query.trim(),
               documents: documents.map(doc => doc.trim()),
             });
-            yield { content: toolResult };
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
             yield { finished: true };
             return;
           }
