@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Lightbulb, Globe, Search, Send, X, Square } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Lightbulb, Globe, Search, Send, X, Square, Plus, FileText, Camera, Archive } from "lucide-react";
 
 interface InputSectionProps {
   message: string;
@@ -41,9 +47,13 @@ export default function InputSection({
   }, [onSendMessage]);
 
   const tools = [
-    { id: 'reasoning', label: 'Reasoning', icon: Lightbulb },
-    { id: 'web-search', label: 'Web Search', icon: Globe },
-    { id: 'deep-research', label: 'Deep Research', icon: Search }
+    { id: 'reasoning', label: 'Reasoning', icon: Lightbulb, description: 'Pure AI reasoning without tools' },
+    { id: 'web-search', label: 'Web Search', icon: Globe, description: 'Search the web using Exa API' },
+    { id: 'deep-research', label: 'Deep Research', icon: Search, description: 'Comprehensive research and analysis' },
+    { id: 'read-url', label: 'Read URL', icon: FileText, description: 'Extract content from web pages' },
+    { id: 'screenshot', label: 'Screenshot', icon: Camera, description: 'Capture webpage screenshots' },
+    { id: 'search-jina', label: 'Jina Web Search', icon: Globe, description: 'Search web with Jina AI' },
+    { id: 'search-arxiv', label: 'arXiv Search', icon: Archive, description: 'Search academic papers on arXiv' }
   ];
 
   const handleToolSelect = (toolId: string) => {
@@ -67,27 +77,46 @@ export default function InputSection({
             data-testid="textarea-message"
           />
           
-          {/* Tool Selection Inside Input */}
-          <div className="absolute bottom-3 left-4 flex items-center space-x-2">
-            {tools.map((tool) => {
-              const Icon = tool.icon;
-              const isSelected = (onToolChange ? localSelectedTool : selectedTool) === tool.id;
-              return (
+          {/* Tool Selection Dropdown Inside Input */}
+          <div className="absolute bottom-3 left-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button
-                  key={tool.id}
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleToolSelect(tool.id)}
                   disabled={disabled}
-                  className="justify-center gap-2 whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-9 flex items-center space-x-1 px-2 py-1 text-xs rounded-md transition-colors text-slate-500 hover:text-slate-700 hover:bg-slate-100 font-normal text-center bg-[#d1deeb59] pt-[0px] pb-[0px] pl-[14px] pr-[14px] ml-[4px] mr-[4px]"
-                  data-testid={`tool-${tool.id}`}
+                  className="h-8 w-8 p-0 rounded-md bg-[#d1deeb59] hover:bg-[#d1deeb80] text-slate-500 hover:text-slate-700 transition-colors"
+                  data-testid="tool-dropdown-trigger"
                 >
-                  <Icon className="w-3 h-3" />
-                  <span className="ml-[-3px] mr-[-3px]">{tool.label}</span>
-                  {isSelected && <X className="w-3 h-3 ml-1" />}
+                  <Plus className="w-4 h-4" />
                 </Button>
-              );
-            })}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-64">
+                {tools.map((tool) => {
+                  const Icon = tool.icon;
+                  const isSelected = (onToolChange ? localSelectedTool : selectedTool) === tool.id;
+                  return (
+                    <DropdownMenuItem
+                      key={tool.id}
+                      onClick={() => handleToolSelect(tool.id)}
+                      className={`flex items-start gap-3 px-3 py-2 cursor-pointer ${
+                        isSelected ? 'bg-blue-50 text-blue-700' : ''
+                      }`}
+                      data-testid={`tool-${tool.id}`}
+                    >
+                      <Icon className={`w-4 h-4 mt-0.5 ${isSelected ? 'text-blue-600' : 'text-slate-500'}`} />
+                      <div className="flex-1">
+                        <div className={`text-sm font-medium ${isSelected ? 'text-blue-700' : 'text-slate-700'}`}>
+                          {tool.label}
+                          {isSelected && <span className="ml-2 text-blue-500">✓</span>}
+                        </div>
+                        <div className="text-xs text-slate-500 mt-0.5">{tool.description}</div>
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <Button
             onClick={isStreaming ? onStopStreaming : onSendMessage}

@@ -677,6 +677,26 @@ if __name__ == "__main__":
               (tool) => tool.name === "deep_research",
             );
             break;
+          case "read-url":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "read_url",
+            );
+            break;
+          case "screenshot":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "capture_screenshot_url",
+            );
+            break;
+          case "search-jina":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "search_web_jina",
+            );
+            break;
+          case "search-arxiv":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "search_arxiv",
+            );
+            break;
           case "reasoning":
             // For reasoning mode, disable all tools to force pure reasoning
             toolsToUse = [];
