@@ -57,8 +57,8 @@ export class MCPChatClient extends EventEmitter {
     this.jinaApiKey = process.env.JINA_API_KEY || null;
 
     this.initializeWeatherServer();
-    this.initializeSearchServer();
     this.initializeJinaTools();
+    // Note: Removed old search server initialization - using Jina instead
   }
 
   private async initializeWeatherServer() {
@@ -292,27 +292,8 @@ if __name__ == "__main__":
     }
   }
 
-  private async initializeSearchServer() {
-    try {
-      // Wait a bit for the Python packages to be available
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Start the search server process
-      this.searchServer = spawn("python3", ["search_server.py"], {
-        stdio: ["pipe", "pipe", "pipe"],
-      });
-
-      // Set up communication handlers for search server
-      this.setupSearchServerCommunication();
-
-      // Initialize search tools list
-      setTimeout(() => this.listTools(), 3000);
-
-      console.log("Search MCP server initialized successfully");
-    } catch (error) {
-      console.error("Failed to initialize search server:", error);
-    }
-  }
+  // REMOVED: Old search server - now using Jina AI tools directly
+  // private async initializeSearchServer() { ... }
 
   private async initializeJinaTools() {
     try {
@@ -433,39 +414,8 @@ if __name__ == "__main__":
     });
   }
 
-  private setupSearchServerCommunication() {
-    if (!this.searchServer) return;
-
-    this.searchServer.stdout?.on("data", (data) => {
-      const lines = data
-        .toString()
-        .split("\n")
-        .filter((line: string) => line.trim());
-
-      for (const line of lines) {
-        try {
-          const message = JSON.parse(line);
-
-          if (message.id && this.pendingRequests.has(message.id)) {
-            const { resolve, reject } = this.pendingRequests.get(message.id)!;
-            this.pendingRequests.delete(message.id);
-
-            if (message.error) {
-              reject(new Error(message.error.message || "MCP Error"));
-            } else {
-              resolve(message.result);
-            }
-          }
-        } catch (error) {
-          // Ignore parsing errors
-        }
-      }
-    });
-
-    this.searchServer.stderr?.on("data", (data) => {
-      console.error("Search server error:", data.toString());
-    });
-  }
+  // REMOVED: Old search server communication - now using Jina AI tools directly
+  // private setupSearchServerCommunication() { ... }
 
   private async sendMCPRequest(
     method: string,
@@ -510,24 +460,23 @@ if __name__ == "__main__":
 
   private async listTools(): Promise<void> {
     try {
-      // Get tools from both servers
-      const [weatherResponse, searchResponse] = await Promise.allSettled([
+      // Get tools from weather server only (keep weather functionality)
+      const [weatherResponse] = await Promise.allSettled([
         this.sendMCPRequest("tools/list", {}, "weather"),
-        this.sendMCPRequest("tools/list", {}, "search"),
       ]);
 
+      // Reset available tools to only include weather tools (if available) plus Jina tools
       this.availableTools = [];
 
       if (weatherResponse.status === "fulfilled") {
         this.availableTools.push(...(weatherResponse.value.tools || []));
       }
 
-      if (searchResponse.status === "fulfilled") {
-        this.availableTools.push(...(searchResponse.value.tools || []));
-      }
+      // Jina tools are already added in initializeJinaTools(), no need to add again
+      console.log("Available tools loaded:", this.availableTools.map(t => t.name));
     } catch (error) {
       console.error("Failed to list MCP tools:", error);
-      this.availableTools = [];
+      // Keep Jina tools even if weather server fails
     }
   }
 
@@ -539,9 +488,8 @@ if __name__ == "__main__":
         return await this.callJinaTool(name, arguments_);
       }
 
-      // Determine which server to use based on tool name  
-      const isSearchTool = ["web_search", "deep_research"].includes(name);
-      const serverType = isSearchTool ? "search" : "weather";
+      // All remaining tools should be weather tools
+      const serverType = "weather";
 
       const response = await this.sendMCPRequest(
         "tools/call",
