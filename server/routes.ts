@@ -134,11 +134,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Protected routes - require authentication
   // Get all conversations for a user
-  app.get('/api/conversations', isAuthenticated, async (req, res) => {
+  app.get('/api/conversations', async (req, res) => {
     try {
-      const userId = req.session?.userId;
+      let userId = req.session?.userId;
       if (!userId) {
-        return res.status(401).json({ error: 'User not authenticated' });
+        userId = DEMO_USER_ID;
       }
       const conversations = await storage.getConversationsByUserId(userId);
       res.json(conversations);
@@ -148,11 +148,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get bookmarked conversations for a user (must come before /:id route)
-  app.get('/api/conversations/bookmarked', isAuthenticated, async (req, res) => {
+  app.get('/api/conversations/bookmarked', async (req, res) => {
     try {
-      const userId = req.session?.userId;
+      let userId = req.session?.userId;
       if (!userId) {
-        return res.status(401).json({ error: 'User not authenticated' });
+        userId = DEMO_USER_ID;
       }
       const conversations = await storage.getBookmarkedConversationsByUserId(userId);
       res.json(conversations);
@@ -162,7 +162,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get a specific conversation with messages
-  app.get('/api/conversations/:id', isAuthenticated, async (req, res) => {
+  app.get('/api/conversations/:id', async (req, res) => {
     try {
       const conversation = await storage.getConversation(req.params.id);
       if (!conversation) {

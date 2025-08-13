@@ -1,9 +1,11 @@
-import { createContext, useContext, useEffect, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-type Theme = "light";
+type Theme = "dark" | "light" | "system";
 
 type ThemeProviderProps = {
   children: ReactNode;
+  defaultTheme?: Theme;
+  storageKey?: string;
 };
 
 type ThemeProviderState = {
@@ -12,7 +14,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: "light",
+  theme: "system",
   setTheme: () => null,
 };
 
@@ -20,19 +22,41 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
+  defaultTheme = "dark", // Default to dark theme
+  storageKey = "beebot-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const theme: Theme = "light";
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+    }
+    return defaultTheme;
+  });
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add("light");
-  }, []);
 
-  const value: ThemeProviderState = {
+    root.classList.remove("light", "dark");
+
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light";
+
+      root.classList.add(systemTheme);
+      return;
+    }
+
+    root.classList.add(theme);
+  }, [theme]);
+
+  const value = {
     theme,
-    setTheme: () => null, // No-op since theme is always light
+    setTheme: (theme: Theme) => {
+      localStorage.setItem(storageKey, theme);
+      setTheme(theme);
+    },
   };
 
   return (

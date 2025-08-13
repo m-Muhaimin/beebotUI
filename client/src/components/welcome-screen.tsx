@@ -190,7 +190,7 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
       {isVisible && (
         <motion.div
           data-testid="welcome-screen"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-background dark:via-background dark:to-background p-4 sm:p-6 lg:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900 p-4 sm:p-6 lg:p-8"
           initial="hidden"
           animate="visible"
           exit="exit"
@@ -204,7 +204,7 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
             {[...Array(15)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute w-1 h-1 sm:w-2 sm:h-2 bg-primary/40 rounded-full opacity-20"
+                className="absolute w-1 h-1 sm:w-2 sm:h-2 bg-blue-400 dark:bg-blue-300 rounded-full opacity-20"
                 animate={{
                   x: [Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800), Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 800)],
                   y: [Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 600), Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 600)],
@@ -225,13 +225,13 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
 
           {/* Device Indicators */}
           <div className="absolute top-4 left-4 sm:top-6 sm:left-6 flex space-x-2 opacity-30">
-            <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-primary sm:hidden" />
-            <Tablet className="w-4 h-4 sm:w-5 sm:h-5 text-primary hidden sm:block md:hidden" />
-            <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-primary hidden md:block" />
+            <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400 sm:hidden" />
+            <Tablet className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400 hidden sm:block md:hidden" />
+            <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400 hidden md:block" />
           </div>
 
           <Card 
-            className="relative w-full max-w-xs sm:max-w-sm lg:max-w-lg mx-auto p-3 sm:p-4 lg:p-6 text-center bg-background/95 backdrop-blur-md border-0 shadow-xl rounded-xl sm:rounded-2xl"
+            className="relative w-full max-w-xs sm:max-w-sm lg:max-w-lg mx-auto p-3 sm:p-4 lg:p-6 text-center bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-0 shadow-xl rounded-xl sm:rounded-2xl"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -244,11 +244,11 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
               >
                 <div className="relative">
                   <motion.div
-                    className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-primary rounded-xl flex items-center justify-center shadow-md"
+                    className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-primary-foreground" />
+                    <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
                   </motion.div>
                   <motion.div
                     className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center"
@@ -270,13 +270,13 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
               {/* Content - Cleaner Typography */}
               <motion.div variants={textVariants} className="space-y-2 sm:space-y-3 lg:space-y-4">
                 <div className="space-y-1 sm:space-y-2">
-                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground leading-tight">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white leading-tight">
                     {currentWelcome.title}
                   </h1>
-                  <p className="text-sm sm:text-base lg:text-lg font-medium text-primary">
+                  <p className="text-sm sm:text-base lg:text-lg font-medium text-blue-600 dark:text-blue-400">
                     {currentWelcome.subtitle}
                   </p>
-                  <p className="text-xs sm:text-sm lg:text-base text-muted-foreground leading-relaxed px-1 sm:px-2">
+                  <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-300 leading-relaxed px-1 sm:px-2">
                     {currentWelcome.description}
                   </p>
                 </div>
@@ -291,7 +291,7 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
                   {currentWelcome.features.map((feature, index) => (
                     <motion.div
                       key={feature}
-                      className="bg-muted px-2 py-1 rounded-md text-xs font-medium text-muted-foreground border border-border"
+                      className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.7 + index * 0.05 }}
@@ -309,8 +309,8 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
                       key={index}
                       className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 ${
                         index === currentStep 
-                          ? "bg-primary" 
-                          : "bg-muted-foreground hover:bg-muted-foreground/80"
+                          ? "bg-blue-600 dark:bg-blue-400" 
+                          : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
                       }`}
                       initial={{ scale: 0.8 }}
                       animate={{ 
@@ -341,7 +341,7 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
                       onClick={handleSkip}
                       variant="ghost"
                       size="sm"
-                      className="text-xs sm:text-sm text-muted-foreground hover:text-foreground h-8 sm:h-9"
+                      className="text-xs sm:text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 h-8 sm:h-9"
                       data-testid="button-skip"
                     >
                       Skip
@@ -349,7 +349,7 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
                     <Button
                       onClick={() => setCurrentStep(currentStep + 1)}
                       size="sm"
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 h-8 sm:h-9 text-xs sm:text-sm"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 h-8 sm:h-9 text-xs sm:text-sm"
                       data-testid="button-next"
                     >
                       Next
@@ -362,7 +362,7 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
                       onClick={() => setCurrentStep(0)}
                       variant="outline"
                       size="sm"
-                      className="border border-primary text-primary hover:bg-muted h-8 sm:h-9 text-xs sm:text-sm"
+                      className="border border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950 h-8 sm:h-9 text-xs sm:text-sm"
                       data-testid="button-replay"
                     >
                       Replay
@@ -370,7 +370,7 @@ export default function WelcomeScreen({ onComplete, userName }: WelcomeScreenPro
                     <Button
                       onClick={handleGetStarted}
                       size="sm"
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 h-8 sm:h-9 text-xs sm:text-sm"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 h-8 sm:h-9 text-xs sm:text-sm"
                       data-testid="button-get-started"
                     >
                       Get Started
