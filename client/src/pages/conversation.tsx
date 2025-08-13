@@ -5,7 +5,16 @@ import Sidebar from "@/components/sidebar";
 import InputSection from "@/components/input-section";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, User, Bot, Trash2, PanelLeftClose, PanelLeftOpen, Bookmark, BookmarkCheck } from "lucide-react";
+import {
+  PlusIcon,
+  User,
+  Bot,
+  Trash2,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Bookmark,
+  BookmarkCheck,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useBookmarks } from "@/hooks/useBookmarks";
@@ -48,7 +57,7 @@ export default function ConversationPage() {
 
   // Auto-trigger AI response for new conversations with proper safeguards
   const hasAutoTriggered = useRef(new Set<string>());
-  
+
   useEffect(() => {
     if (
       conversationData?.messages &&
@@ -59,10 +68,12 @@ export default function ConversationPage() {
       !isRequestInProgress.current
     ) {
       const lastMessage = conversationData.messages[0];
-      
+
       // Only auto-trigger if the single message is from user
       if (lastMessage.role === "user") {
-        console.log(`Auto-triggering AI response for conversation ${conversationId}`);
+        console.log(
+          `Auto-triggering AI response for conversation ${conversationId}`,
+        );
         hasAutoTriggered.current.add(conversationId);
         isRequestInProgress.current = true;
         setIsStreaming(true);
@@ -144,8 +155,8 @@ export default function ConversationPage() {
               }
             }
           } catch (error: any) {
-            if (error.name === 'AbortError') {
-              console.log('Auto-trigger AI response was aborted');
+            if (error.name === "AbortError") {
+              console.log("Auto-trigger AI response was aborted");
               // Don't clear streaming message on abort - let handleStopStreaming handle it
             } else {
               console.error("Failed to get AI response:", error);
@@ -167,14 +178,21 @@ export default function ConversationPage() {
         triggerAIResponse();
       }
     }
-  }, [conversationData, conversationId, isStreaming, queryClient, toast, selectedTool]);
+  }, [
+    conversationData,
+    conversationId,
+    isStreaming,
+    queryClient,
+    toast,
+    selectedTool,
+  ]);
 
   const handleStopStreaming = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
-    
+
     // If we have partial streaming content, save it as a complete message
     if (streamingMessage.trim()) {
       // Optimistically add the partial AI response to the conversation
@@ -200,7 +218,7 @@ export default function ConversationPage() {
         },
       );
     }
-    
+
     setIsStreaming(false);
     setStreamingMessage("");
     isRequestInProgress.current = false;
@@ -240,7 +258,13 @@ export default function ConversationPage() {
   }, [conversationData?.messages, streamingMessage]);
 
   const handleSendMessage = async () => {
-    if (!message.trim() || !conversationId || isStreaming || isRequestInProgress.current) return;
+    if (
+      !message.trim() ||
+      !conversationId ||
+      isStreaming ||
+      isRequestInProgress.current
+    )
+      return;
 
     isRequestInProgress.current = true;
     const messageToSend = message;
@@ -345,8 +369,8 @@ export default function ConversationPage() {
         }
       }
     } catch (error: any) {
-      if (error.name === 'AbortError') {
-        console.log('Message sending was aborted');
+      if (error.name === "AbortError") {
+        console.log("Message sending was aborted");
         // Don't clear streaming message on abort - let handleStopStreaming handle it
       } else {
         toast({
@@ -380,8 +404,8 @@ export default function ConversationPage() {
       await toggleBookmark(conversationId);
       toast({
         title: "Bookmark updated",
-        description: conversationData?.conversation.isBookmarked 
-          ? "Conversation removed from bookmarks" 
+        description: conversationData?.conversation.isBookmarked
+          ? "Conversation removed from bookmarks"
           : "Conversation added to bookmarks",
       });
     } catch (error) {
@@ -396,20 +420,24 @@ export default function ConversationPage() {
   if (isLoading) {
     return (
       <div className="flex h-screen" data-testid="conversation-page">
-        <Sidebar 
-          activeNav={activeNav} 
+        <Sidebar
+          activeNav={activeNav}
           onNavChange={setActiveNav}
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
-        <Button 
+        <Button
           onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           variant="ghost"
           size="sm"
           className="text-gray-500 hover:text-blue-600 p-2 lg:hidden fixed top-4 left-4 z-50 bg-white border border-slate-200 rounded-full shadow-sm"
           data-testid="button-toggle-sidebar-mobile"
         >
-          {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+          {isSidebarCollapsed ? (
+            <PanelLeftOpen className="w-4 h-4" />
+          ) : (
+            <PanelLeftClose className="w-4 h-4" />
+          )}
         </Button>
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -424,20 +452,24 @@ export default function ConversationPage() {
   if (!conversationData) {
     return (
       <div className="flex h-screen" data-testid="conversation-page">
-        <Sidebar 
-          activeNav={activeNav} 
+        <Sidebar
+          activeNav={activeNav}
           onNavChange={setActiveNav}
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
-        <Button 
+        <Button
           onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           variant="ghost"
           size="sm"
           className="text-gray-500 hover:text-blue-600 p-2 lg:hidden fixed top-4 left-4 z-50 bg-white border border-slate-200 rounded-full shadow-sm"
           data-testid="button-toggle-sidebar-mobile"
         >
-          {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+          {isSidebarCollapsed ? (
+            <PanelLeftOpen className="w-4 h-4" />
+          ) : (
+            <PanelLeftClose className="w-4 h-4" />
+          )}
         </Button>
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -453,8 +485,8 @@ export default function ConversationPage() {
 
   return (
     <div className="flex h-screen" data-testid="conversation-page">
-      <Sidebar 
-        activeNav={activeNav} 
+      <Sidebar
+        activeNav={activeNav}
         onNavChange={setActiveNav}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -478,14 +510,18 @@ export default function ConversationPage() {
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-3">
-              <Button 
+              <Button
                 onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                 variant="ghost"
                 size="sm"
                 className="text-gray-500 hover:text-blue-600 p-2 lg:hidden fixed top-4 left-4 z-50 bg-white border border-slate-200 rounded-full shadow-sm"
                 data-testid="button-toggle-sidebar-mobile"
               >
-                {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+                {isSidebarCollapsed ? (
+                  <PanelLeftOpen className="w-4 h-4" />
+                ) : (
+                  <PanelLeftClose className="w-4 h-4" />
+                )}
               </Button>
               <Button
                 variant="outline"
@@ -493,8 +529,8 @@ export default function ConversationPage() {
                 onClick={handleBookmarkToggle}
                 disabled={isTogglingBookmark}
                 className={`${
-                  conversation.isBookmarked 
-                    ? "text-yellow-600 border-yellow-200 bg-yellow-50 hover:bg-yellow-100" 
+                  conversation.isBookmarked
+                    ? "text-yellow-600 border-yellow-200 bg-yellow-50 hover:bg-yellow-100"
                     : "text-slate-600 border-slate-200 hover:bg-slate-50"
                 } transition-colors`}
                 data-testid="button-bookmark-conversation"
@@ -568,7 +604,7 @@ export default function ConversationPage() {
                   <MarkdownRenderer content={msg.content} />
                 </div>
                 {msg.role === "user" && (
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0 text-white">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0 text-white user-res-card">
                     <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                 )}
