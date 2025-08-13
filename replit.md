@@ -22,7 +22,7 @@ The backend uses **Express.js** with **TypeScript** in an ESM configuration. It 
 
 ## Data Storage Solutions
 
-The application uses a **Supabase PostgreSQL** database with **Drizzle ORM** for type-safe database operations and schema management. **Drizzle Kit** manages database migrations. Conversation and message schemas are implemented with UUID primary keys and proper relationships.
+The application uses a **Replit-managed PostgreSQL** database with **Drizzle ORM** for type-safe database operations and schema management. **Drizzle Kit** manages database migrations. Conversation and message schemas are implemented with UUID primary keys and proper relationships. The migration from Replit Agent to standard Replit environment has been completed successfully with full authentication functionality.
 
 ## Authentication and Authorization
 
@@ -35,7 +35,7 @@ The development setup includes concurrent Vite (frontend) and Express (backend) 
 # External Dependencies
 
 ## Database Services
-- **Supabase**: Serverless PostgreSQL database platform.
+- **Replit PostgreSQL**: Managed PostgreSQL database platform with automatic provisioning.
 - **Drizzle ORM**: TypeScript ORM for database operations.
 
 ## UI and Component Libraries
