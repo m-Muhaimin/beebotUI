@@ -600,29 +600,56 @@ if __name__ == "__main__":
           break;
 
         case "search_web_jina":
-          url = searchUrl;
-          options.body = JSON.stringify({
-            query: arguments_.query,
-            count: arguments_.num_results || 5
-          });
+          // Use GET request for search with query parameter
+          url = `${searchUrl}${encodeURIComponent(arguments_.query)}`;
+          options = {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'BeeBot/1.0'
+            }
+          };
+          // Add Jina API key if available
+          if (this.jinaApiKey) {
+            options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
+          }
+          // Add search-specific headers
+          options.headers['X-Return-Format'] = 'json';
+          options.headers['X-Max-Results'] = String(arguments_.num_results || 5);
           break;
 
         case "search_arxiv":
-          url = searchUrl;
-          options.body = JSON.stringify({
-            query: arguments_.query,
-            site: 'arxiv.org',
-            count: arguments_.num_results || 5
-          });
+          // Use GET request for ArXiv search with site restriction
+          url = `${searchUrl}${encodeURIComponent(arguments_.query)} site:arxiv.org`;
+          options = {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'BeeBot/1.0'
+            }
+          };
+          if (this.jinaApiKey) {
+            options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
+          }
+          options.headers['X-Return-Format'] = 'json';
+          options.headers['X-Max-Results'] = String(arguments_.num_results || 5);
           break;
 
         case "search_image_jina":
-          url = searchUrl;
-          options.body = JSON.stringify({
-            query: arguments_.query,
-            type: 'image',
-            count: arguments_.num_results || 5
-          });
+          // Use GET request for image search
+          url = `${searchUrl}${encodeURIComponent(arguments_.query)} type:image`;
+          options = {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'BeeBot/1.0'
+            }
+          };
+          if (this.jinaApiKey) {
+            options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
+          }
+          options.headers['X-Return-Format'] = 'json';
+          options.headers['X-Max-Results'] = String(arguments_.num_results || 5);
           break;
 
         case "rerank_jina":
@@ -663,24 +690,38 @@ if __name__ == "__main__":
           
         case "search_web_jina":
         case "search_arxiv":
+          // Check if response is HTML content (Jina search returns HTML by default)
+          if (typeof result === 'string') {
+            return `# Search Results\n\nQuery: "${arguments_.query}"\n\nThe search returned HTML content. Here are the raw results:\n\n${result}`;
+          }
+          
+          // Handle JSON response structure
           if (result.data && Array.isArray(result.data)) {
             return result.data.map((item: any, index: number) => 
-              `## Result ${index + 1}: ${item.title || 'Untitled'}\n\n${item.content || item.description || 'No content available'}\n\nURL: ${item.url}\n\n---\n`
+              `## Result ${index + 1}: ${item.title || 'Untitled'}\n\n${item.content || item.description || item.snippet || 'No content available'}\n\nURL: ${item.url}\n\n---\n`
             ).join('\n');
           }
-          // Fallback for different response structure
+          
+          // Handle different response structures
           if (result.results && Array.isArray(result.results)) {
             return result.results.map((item: any, index: number) => 
               `## Result ${index + 1}: ${item.title || item.name || 'Untitled'}\n\n${item.snippet || item.content || item.description || 'No content available'}\n\nURL: ${item.url || item.link}\n\n---\n`
             ).join('\n');
           }
-          // Another fallback for basic array structure
+          
+          // Handle direct array structure
           if (Array.isArray(result)) {
             return result.map((item: any, index: number) => 
               `## Result ${index + 1}: ${item.title || item.name || 'Untitled'}\n\n${item.snippet || item.content || item.description || 'No content available'}\n\nURL: ${item.url || item.link}\n\n---\n`
             ).join('\n');
           }
-          return `Found search results but unable to format properly:\n\n${JSON.stringify(result, null, 2)}`;
+          
+          // Handle usage/metadata response
+          if (result.data && result.data.usage1 && result.data.usage2) {
+            return `# Jina Search API Information\n\nQuery: "${arguments_.query}"\n\nThe API returned usage information instead of search results. This might indicate:\n- The search query format needs adjustment\n- API key authentication required for search results\n- Different endpoint needed for search functionality\n\nAPI Information:\n- Reader URL: ${result.data.usage1}\n- Search URL: ${result.data.usage2}\n- Homepage: ${result.data.homepage}\n- Balance: ${result.data.balanceLeft} credits`;
+          }
+          
+          return `Unable to format search results. Response structure:\n\n${JSON.stringify(result, null, 2)}`;
           
         case "search_image_jina":
           if (result.data && Array.isArray(result.data)) {
