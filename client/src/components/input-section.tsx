@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Lightbulb, Globe, Search, Send, X, Square, Plus, FileText, Camera, Archive } from "lucide-react";
+import { Lightbulb, Globe, Search, Send, X, Square, Plus, FileText, Camera, Archive, Image, BarChart } from "lucide-react";
 
 interface InputSectionProps {
   message: string;
@@ -51,7 +51,9 @@ export default function InputSection({
     { id: 'read-url', label: 'Read URL', icon: FileText, description: 'Extract content from web pages using Jina AI' },
     { id: 'screenshot', label: 'Screenshot', icon: Camera, description: 'Capture webpage screenshots using Jina AI' },
     { id: 'search-jina', label: 'Web Search', icon: Globe, description: 'Search web with Jina AI' },
-    { id: 'search-arxiv', label: 'arXiv Search', icon: Archive, description: 'Search academic papers on arXiv' }
+    { id: 'search-arxiv', label: 'arXiv Search', icon: Archive, description: 'Search academic papers on arXiv' },
+    { id: 'search-image', label: 'Image Search', icon: Image, description: 'Search for images using Jina AI' },
+    { id: 'rerank', label: 'Rerank Results', icon: BarChart, description: 'Rerank documents by relevance using Jina AI' }
   ];
 
   const handleToolSelect = (toolId: string) => {

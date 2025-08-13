@@ -297,7 +297,7 @@ if __name__ == "__main__":
 
   private async initializeJinaTools() {
     try {
-      // Add Jina AI tools directly to available tools
+      // Add comprehensive Jina AI tools directly to available tools
       const jinaTools: MCPTool[] = [
         {
           name: "read_url",
@@ -329,7 +329,7 @@ if __name__ == "__main__":
         },
         {
           name: "search_web_jina",
-          description: "Search the web for current information and news using Jina Reader API",
+          description: "Search the web for current information and news using Jina Search API",
           inputSchema: {
             type: "object",
             properties: {
@@ -350,7 +350,7 @@ if __name__ == "__main__":
         },
         {
           name: "search_arxiv",
-          description: "Search academic papers and preprints on arXiv repository using Jina Reader API",
+          description: "Search academic papers and preprints on arXiv repository using Jina Search API",
           inputSchema: {
             type: "object",
             properties: {
@@ -367,6 +367,54 @@ if __name__ == "__main__":
               }
             },
             required: ["query"]
+          }
+        },
+        {
+          name: "search_image_jina",
+          description: "Search for images across the web using Jina Search API",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "Search query to find images"
+              },
+              num_results: {
+                type: "integer",
+                description: "Number of results to return (1-10)",
+                minimum: 1,
+                maximum: 10,
+                default: 5
+              }
+            },
+            required: ["query"]
+          }
+        },
+        {
+          name: "rerank_jina",
+          description: "Rerank documents by relevance to a query using Jina Reranker API",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "The search query to rank documents against"
+              },
+              documents: {
+                type: "array",
+                description: "Array of documents to rank",
+                items: {
+                  type: "string"
+                }
+              },
+              model: {
+                type: "string",
+                description: "Reranker model to use",
+                enum: ["jina-reranker-v2-base-multilingual", "jina-colbert-v2"],
+                default: "jina-reranker-v2-base-multilingual"
+              }
+            },
+            required: ["query", "documents"]
           }
         }
       ];
@@ -483,7 +531,7 @@ if __name__ == "__main__":
   private async callTool(name: string, arguments_: any): Promise<string> {
     try {
       // Handle Jina AI tools
-      const jinaTools = ["read_url", "capture_screenshot_url", "search_web_jina", "search_arxiv"];
+      const jinaTools = ["read_url", "capture_screenshot_url", "search_web_jina", "search_arxiv", "search_image_jina", "rerank_jina"];
       if (jinaTools.includes(name)) {
         return await this.callJinaTool(name, arguments_);
       }
@@ -512,46 +560,78 @@ if __name__ == "__main__":
 
   private async callJinaTool(name: string, arguments_: any): Promise<string> {
     try {
-      const baseUrl = "https://r.jina.ai";
-      const searchUrl = "https://s.jina.ai";
+      // Get your Jina AI API key for free: https://jina.ai/?sui=apikey
+      const readerUrl = "https://r.jina.ai/";
+      const searchUrl = "https://s.jina.ai/";
       
       let url: string;
       let options: any = {
-        method: 'GET',
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           'Accept': 'application/json',
           'User-Agent': 'BeeBot/1.0'
         }
       };
 
-      // Add Jina API key if available
+      // Add Jina API key if available (optional but recommended for better performance)
       if (this.jinaApiKey) {
         options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
       }
 
       switch (name) {
         case "read_url":
-          url = `${baseUrl}/${encodeURIComponent(arguments_.url)}`;
+          url = readerUrl;
+          options.body = JSON.stringify({
+            url: arguments_.url
+          });
+          // Add optional headers for better content extraction
+          options.headers['X-With-Generated-Alt'] = 'true';
+          options.headers['X-With-Links-Summary'] = 'true';
+          options.headers['X-With-Images-Summary'] = 'true';
           break;
 
         case "capture_screenshot_url":
-          url = `${baseUrl}/${encodeURIComponent(arguments_.url)}`;
-          options.headers['X-With-Images-Screenshot'] = 'true';
+          url = readerUrl;
+          options.body = JSON.stringify({
+            url: arguments_.url
+          });
+          options.headers['X-Return-Format'] = 'screenshot';
           break;
 
         case "search_web_jina":
-          url = `${searchUrl}/${encodeURIComponent(arguments_.query)}`;
-          if (arguments_.num_results) {
-            url += `?count=${arguments_.num_results}`;
-          }
+          url = searchUrl;
+          options.body = JSON.stringify({
+            query: arguments_.query,
+            count: arguments_.num_results || 5
+          });
           break;
 
         case "search_arxiv":
-          url = `${searchUrl}/${encodeURIComponent(arguments_.query)}`;
-          url += `?site=arxiv.org`;
-          if (arguments_.num_results) {
-            url += `&count=${arguments_.num_results}`;
-          }
+          url = searchUrl;
+          options.body = JSON.stringify({
+            query: arguments_.query,
+            site: 'arxiv.org',
+            count: arguments_.num_results || 5
+          });
+          break;
+
+        case "search_image_jina":
+          url = searchUrl;
+          options.body = JSON.stringify({
+            query: arguments_.query,
+            type: 'image',
+            count: arguments_.num_results || 5
+          });
+          break;
+
+        case "rerank_jina":
+          url = "https://api.jina.ai/v1/rerank";
+          options.body = JSON.stringify({
+            model: arguments_.model || "jina-reranker-v2-base-multilingual",
+            query: arguments_.query,
+            documents: arguments_.documents
+          });
           break;
 
         default:
@@ -561,11 +641,57 @@ if __name__ == "__main__":
       const response = await fetch(url, options);
       
       if (!response.ok) {
-        throw new Error(`Jina API error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(`Jina API error: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
-      const result = await response.text();
-      return result;
+      const result = await response.json();
+      
+      // Format the response based on tool type
+      switch (name) {
+        case "read_url":
+          if (result.data) {
+            return `# ${result.data.title}\n\n${result.data.content}\n\n${result.data.links ? '## Links\n' + Object.entries(result.data.links).map(([text, url]) => `- [${text}](${url})`).join('\n') : ''}`;
+          }
+          break;
+          
+        case "capture_screenshot_url":
+          if (result.data) {
+            return `Screenshot captured successfully from: ${arguments_.url}\n\nTitle: ${result.data.title}\nURL: ${result.data.url}\n\nScreenshot data available in response.`;
+          }
+          break;
+          
+        case "search_web_jina":
+        case "search_arxiv":
+          if (result.data && Array.isArray(result.data)) {
+            return result.data.map((item: any, index: number) => 
+              `## Result ${index + 1}: ${item.title}\n\n${item.content}\n\nURL: ${item.url}\n\n---\n`
+            ).join('\n');
+          }
+          break;
+          
+        case "search_image_jina":
+          if (result.data && Array.isArray(result.data)) {
+            return result.data.map((item: any, index: number) => 
+              `## Image Result ${index + 1}: ${item.title || 'Untitled'}\n\n${item.description || item.content || 'No description available'}\n\nImage URL: ${item.url}\nSource: ${item.source || item.site}\n\n---\n`
+            ).join('\n');
+          }
+          break;
+          
+        case "rerank_jina":
+          if (result.results && Array.isArray(result.results)) {
+            const rankedResults = result.results
+              .sort((a: any, b: any) => b.relevance_score - a.relevance_score)
+              .map((item: any, index: number) => 
+                `## Ranked Result ${index + 1} (Score: ${item.relevance_score.toFixed(4)})\n\n${arguments_.documents[item.index]}\n\n---\n`
+              ).join('\n');
+            return `# Reranked Results\n\nQuery: "${arguments_.query}"\nModel: ${arguments_.model || "jina-reranker-v2-base-multilingual"}\n\n${rankedResults}`;
+          }
+          break;
+      }
+
+      // Fallback to raw JSON if format not recognized
+      return JSON.stringify(result, null, 2);
 
     } catch (error) {
       return `Error calling Jina tool ${name}: ${error instanceof Error ? error.message : String(error)}`;
@@ -624,6 +750,35 @@ if __name__ == "__main__":
             yield { content: toolResult };
             yield { finished: true };
             return;
+          } else if (selectedTool === "search-image") {
+            yield {
+              content: `🖼️ Searching for images of "${lastMessage.content}" using Jina AI...\n\n`,
+            };
+            const toolResult = await this.callTool("search_image_jina", {
+              query: lastMessage.content,
+            });
+            yield { content: toolResult };
+            yield { finished: true };
+            return;
+          } else if (selectedTool === "rerank") {
+            yield {
+              content: `📊 Rerank tool selected. Please provide a query and documents to rank.\n\nFormat: query|document1|document2|...\n\n`,
+            };
+            // For rerank, we need to parse the input differently
+            const parts = (lastMessage.content || '').split('|');
+            if (parts.length < 3) {
+              yield { content: "Invalid format for rerank. Please use: query|document1|document2|..." };
+              yield { finished: true };
+              return;
+            }
+            const [query, ...documents] = parts;
+            const toolResult = await this.callTool("rerank_jina", {
+              query: query.trim(),
+              documents: documents.map(doc => doc.trim()),
+            });
+            yield { content: toolResult };
+            yield { finished: true };
+            return;
           }
         }
       }
@@ -641,6 +796,16 @@ if __name__ == "__main__":
           case "screenshot":
             toolsToUse = this.availableTools.filter(
               (tool) => tool.name === "capture_screenshot_url",
+            );
+            break;
+          case "search-image":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "search_image_jina",
+            );
+            break;
+          case "rerank":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "rerank_jina",
             );
             break;
           case "search-jina":

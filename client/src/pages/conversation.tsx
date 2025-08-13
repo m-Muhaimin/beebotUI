@@ -599,9 +599,7 @@ export default function ConversationPage() {
                     msg.role === "user"
                       ? "px-4 sm:px-6 py-3 sm:py-4 bg-brand-blue text-white"
                       : "px-4 sm:px-6 py-3 sm:py-4"
-                  }
-                  ${isSpecialContent ? "special-paragraph" : "normal-paragraph"}
-                  `}
+                  }`}
                 >
                   <MarkdownRenderer content={msg.content} />
                 </div>
