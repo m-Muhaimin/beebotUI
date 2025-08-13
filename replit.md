@@ -4,6 +4,11 @@ BeeBot is an AI assistant platform built as a modern full-stack web application 
 
 ## Recent Changes (August 2025)
 
+- **Color Scheme Standardization (August 13, 2025)**: Fixed inappropriate hard-coded color classes throughout the UI by replacing them with semantic CSS variables:
+  - Replaced hard-coded Tailwind color classes (slate-600, blue-600, etc.) with semantic variables (primary, muted-foreground, etc.)
+  - Updated conversation page, input section, markdown renderer, and welcome screen components
+  - Ensured proper dark/light theme support and consistent color usage across all components
+  - Maintained proper contrast ratios and visual hierarchy throughout the interface
 - **Complete Migration to Replit Environment**: Successfully migrated from Replit Agent to standard Replit environment with full functionality (Completed August 13, 2025)
 - **Jina AI Integration & Tool Replacement**: Completely replaced previous tools with Jina AI MCP tools for advanced web content processing (August 13, 2025):
   - Replaced tool buttons with elegant dropdown containing plus icon (no text)

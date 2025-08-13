@@ -4,36 +4,53 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(210, 20%, 98%);
+  /* Base colors with proper contrast */
+  --background: hsl(0, 0%, 100%);
   --foreground: hsl(222.2, 84%, 4.9%);
   --card: hsl(0, 0%, 100%);
   --card-foreground: hsl(222.2, 84%, 4.9%);
   --popover: hsl(0, 0%, 100%);
   --popover-foreground: hsl(222.2, 84%, 4.9%);
+  
+  /* Primary brand colors */
   --primary: hsl(221.2, 83.2%, 53.3%);
-  --primary-foreground: hsl(210, 40%, 98%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  
+  /* Secondary colors with better contrast */
   --secondary: hsl(210, 40%, 96%);
   --secondary-foreground: hsl(222.2, 84%, 4.9%);
+  
+  /* Muted colors for subtle text */
   --muted: hsl(210, 40%, 96%);
   --muted-foreground: hsl(215.4, 16.3%, 46.9%);
+  
+  /* Accent colors */
   --accent: hsl(210, 40%, 96%);
   --accent-foreground: hsl(222.2, 84%, 4.9%);
+  
+  /* Destructive colors with proper contrast */
   --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(210, 40%, 98%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  
+  /* Border and input colors */
   --border: hsl(214.3, 31.8%, 91.4%);
   --input: hsl(214.3, 31.8%, 91.4%);
   --ring: hsl(221.2, 83.2%, 53.3%);
+  
+  /* Chart colors */
   --chart-1: hsl(12, 76%, 61%);
   --chart-2: hsl(173, 58%, 39%);
   --chart-3: hsl(197, 37%, 24%);
   --chart-4: hsl(43, 74%, 66%);
   --chart-5: hsl(27, 87%, 67%);
+  
+  /* Typography and layout */
   --radius: 0.75rem;
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
 
-  /* BeeBot specific colors */
+  /* BeeBot specific colors with proper contrast */
   --brand-blue: hsl(221.2, 83.2%, 53.3%);
   --brand-purple: hsl(262.1, 83.3%, 57.8%);
   --slate-50: hsl(210, 40%, 98%);
@@ -44,28 +61,44 @@
   --slate-600: hsl(215.3, 19.3%, 34.5%);
   --slate-700: hsl(215.3, 25%, 26.7%);
   --slate-800: hsl(222.2, 84%, 4.9%);
+  --slate-900: hsl(222.2, 84%, 4.9%);
 }
 
 .dark {
+  /* Dark theme colors with proper contrast */
   --background: hsl(222.2, 84%, 4.9%);
   --foreground: hsl(210, 40%, 98%);
   --card: hsl(222.2, 84%, 4.9%);
   --card-foreground: hsl(210, 40%, 98%);
   --popover: hsl(222.2, 84%, 4.9%);
   --popover-foreground: hsl(210, 40%, 98%);
+  
+  /* Primary colors for dark mode */
   --primary: hsl(217.2, 91.2%, 59.8%);
   --primary-foreground: hsl(222.2, 84%, 4.9%);
+  
+  /* Secondary colors for dark mode */
   --secondary: hsl(217.2, 32.6%, 17.5%);
   --secondary-foreground: hsl(210, 40%, 98%);
+  
+  /* Muted colors for dark mode */
   --muted: hsl(217.2, 32.6%, 17.5%);
   --muted-foreground: hsl(215, 20.2%, 65.1%);
+  
+  /* Accent colors for dark mode */
   --accent: hsl(217.2, 32.6%, 17.5%);
   --accent-foreground: hsl(210, 40%, 98%);
+  
+  /* Destructive colors for dark mode */
   --destructive: hsl(0, 62.8%, 30.6%);
   --destructive-foreground: hsl(210, 40%, 98%);
+  
+  /* Border and input colors for dark mode */
   --border: hsl(217.2, 32.6%, 17.5%);
   --input: hsl(217.2, 32.6%, 17.5%);
-  --ring: hsl(224.3, 76.3%, 94.1%);
+  --ring: hsl(217.2, 91.2%, 59.8%);
+  
+  /* Chart colors for dark mode */
   --chart-1: hsl(220, 70%, 50%);
   --chart-2: hsl(160, 60%, 45%);
   --chart-3: hsl(30, 80%, 55%);
@@ -87,13 +120,9 @@
     @apply bg-background text-foreground;
   }
 
-  /* Ensure white text in dark mode */
+  /* Ensure proper text colors in dark mode */
   .dark {
-    color: white;
-  }
-
-  .dark * {
-    color: inherit;
+    color: hsl(210, 40%, 98%);
   }
 }
 
@@ -170,8 +199,4 @@
 .brand-gradient-custom {
   background: linear-gradient(135deg, var(--brand-blue), var(--brand-purple));
   padding: 5px;
-}
-
-.user-res-card {
-  color: #fff;
 }
