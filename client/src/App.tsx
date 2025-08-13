@@ -46,7 +46,7 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="beebot-ui-theme">
+      <ThemeProvider>
         <TooltipProvider>
           <Toaster />
           <Router />

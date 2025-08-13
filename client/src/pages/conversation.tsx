@@ -430,7 +430,7 @@ export default function ConversationPage() {
           onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           variant="ghost"
           size="sm"
-          className="text-gray-500 hover:text-blue-600 p-2 lg:hidden fixed top-4 left-4 z-50 bg-white border border-slate-200 rounded-full shadow-sm"
+          className="text-muted-foreground hover:text-primary p-2 lg:hidden fixed top-4 left-4 z-50 bg-background border border-border rounded-full shadow-sm"
           data-testid="button-toggle-sidebar-mobile"
         >
           {isSidebarCollapsed ? (
@@ -441,8 +441,8 @@ export default function ConversationPage() {
         </Button>
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-slate-600">Loading conversation...</p>
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading conversation...</p>
           </div>
         </main>
       </div>
@@ -462,7 +462,7 @@ export default function ConversationPage() {
           onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           variant="ghost"
           size="sm"
-          className="text-gray-500 hover:text-blue-600 p-2 lg:hidden fixed top-4 left-4 z-50 bg-white border border-slate-200 rounded-full shadow-sm"
+          className="text-muted-foreground hover:text-primary p-2 lg:hidden fixed top-4 left-4 z-50 bg-background border border-border rounded-full shadow-sm"
           data-testid="button-toggle-sidebar-mobile"
         >
           {isSidebarCollapsed ? (
@@ -473,7 +473,7 @@ export default function ConversationPage() {
         </Button>
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-slate-600 mb-4">Conversation not found</p>
+            <p className="text-muted-foreground mb-4">Conversation not found</p>
             <Button onClick={() => setLocation("/")}>Go Home</Button>
           </div>
         </main>
@@ -493,17 +493,17 @@ export default function ConversationPage() {
       />
       <main className="flex-1 flex flex-col min-w-0">
         {/* Header - Responsive */}
-        <header className="bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6">
+        <header className="bg-background dark:bg-background border-b border-border px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
               <div className="min-w-0">
                 <h1
-                  className="font-semibold text-slate-800 text-sm sm:text-[16px] truncate"
+                  className="font-semibold text-foreground dark:text-foreground text-sm sm:text-[16px] truncate"
                   data-testid="conversation-title"
                 >
                   {conversation.title}
                 </h1>
-                <p className="text-slate-500 text-xs sm:text-[13px]">
+                <p className="text-muted-foreground text-xs sm:text-[13px]">
                   Started{" "}
                   {new Date(conversation.createdAt).toLocaleDateString()}
                 </p>
@@ -514,7 +514,7 @@ export default function ConversationPage() {
                 onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                 variant="ghost"
                 size="sm"
-                className="text-gray-500 hover:text-blue-600 p-2 lg:hidden fixed top-4 left-4 z-50 bg-white border border-slate-200 rounded-full shadow-sm"
+                className="text-muted-foreground hover:text-primary p-2 lg:hidden fixed top-4 left-4 z-50 bg-background border border-border rounded-full shadow-sm"
                 data-testid="button-toggle-sidebar-mobile"
               >
                 {isSidebarCollapsed ? (
@@ -531,7 +531,7 @@ export default function ConversationPage() {
                 className={`${
                   conversation.isBookmarked
                     ? "text-yellow-600 border-yellow-200 bg-yellow-50 hover:bg-yellow-100"
-                    : "text-slate-600 border-slate-200 hover:bg-slate-50"
+                    : "text-muted-foreground border-border hover:bg-muted"
                 } transition-colors`}
                 data-testid="button-bookmark-conversation"
               >
@@ -549,7 +549,7 @@ export default function ConversationPage() {
                 size="sm"
                 onClick={handleDeleteConversation}
                 disabled={deleteConversationMutation.isPending}
-                className="text-red-600 border-red-200 hover:bg-red-50 hidden sm:flex"
+                className="text-destructive border-destructive/30 hover:bg-destructive/10 hidden sm:flex"
                 data-testid="button-delete-conversation"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
@@ -560,13 +560,13 @@ export default function ConversationPage() {
                 size="sm"
                 onClick={handleDeleteConversation}
                 disabled={deleteConversationMutation.isPending}
-                className="text-red-600 border-red-200 hover:bg-red-50 sm:hidden p-2"
+                className="text-destructive border-destructive/30 hover:bg-destructive/10 sm:hidden p-2"
                 data-testid="button-delete-conversation-mobile"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
               <Button
-                className="bg-slate-800 hover:bg-slate-700 text-white"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 onClick={() => setLocation("/")}
                 data-testid="button-new-chat"
                 size="sm"
@@ -590,22 +590,22 @@ export default function ConversationPage() {
                 data-testid={`message-${msg.role}-${msg.id}`}
               >
                 {msg.role === "assistant" && (
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#1f61f0]">
-                    <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-primary">
+                    <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
                   </div>
                 )}
                 <div
-                  className={`max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#ffffff] bg-[#8493ba38] ${
+                  className={`max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl ${
                     msg.role === "user"
-                      ? "px-4 sm:px-6 py-3 sm:py-4 bg-brand-blue text-white"
-                      : "px-4 sm:px-6 py-3 sm:py-4"
+                      ? "px-4 sm:px-6 py-3 sm:py-4 bg-primary text-primary-foreground"
+                      : "px-4 sm:px-6 py-3 sm:py-4 bg-muted text-foreground"
                   }`}
                 >
                   <MarkdownRenderer content={msg.content} />
                 </div>
                 {msg.role === "user" && (
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0 text-white user-res-card">
-                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-muted-foreground rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-background" />
                   </div>
                 )}
               </div>
@@ -617,14 +617,14 @@ export default function ConversationPage() {
                 className="flex items-start space-x-3 sm:space-x-4"
                 data-testid="streaming-message"
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[#1f61f0] rounded-full flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
                 </div>
-                <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl bg-[#8493ba38] text-[#424242]">
+                <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl bg-muted text-foreground">
                   <MarkdownRenderer content={streamingMessage} />
                   <div className="flex items-center space-x-2 mt-2">
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#1f61f0] rounded-full animate-pulse" />
-                    <p className="text-xs text-slate-500">Typing...</p>
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full animate-pulse" />
+                    <p className="text-xs text-muted-foreground">Typing...</p>
                   </div>
                 </div>
               </div>
@@ -637,23 +637,21 @@ export default function ConversationPage() {
                 className="flex items-start space-x-3 sm:space-x-4"
                 data-testid="loading-message"
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#1f61f0]">
-                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-primary">
+                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
                 </div>
 
                 {/* Loading dots - Responsive */}
-                <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-[#424242] bg-[#8493ba38]">
-                  {" "}
-                  {/* Add bg-[#8493ba38] if you want to show the background */}
+                <div className="max-w-xs sm:max-w-2xl lg:max-w-3xl p-3 sm:p-4 rounded-xl text-foreground bg-muted">
                   <div className="flex items-center space-x-1.5">
-                    <div className="w-1.3 h-1.3 sm:w-1.3 sm:h-1.3 bg-[#f4f4f4] rounded-full animate-bounce" />
+                    <div className="w-1.3 h-1.3 sm:w-1.3 sm:h-1.3 bg-muted-foreground rounded-full animate-bounce" />
                     <div
-                      className="w-1 h-1 sm:w-1 sm:h-1 bg-[#1f61f0] rounded-full animate-bounce"
+                      className="w-1 h-1 sm:w-1 sm:h-1 bg-primary rounded-full animate-bounce"
                       style={{ animationDelay: "0.1s" }}
                     />
 
                     <div
-                      className="w-1 h-1 sm:w-1 sm:h-1 bg-[#1f61f0] rounded-full animate-bounce"
+                      className="w-1 h-1 sm:w-1 sm:h-1 bg-primary rounded-full animate-bounce"
                       style={{ animationDelay: "0.2s" }}
                     />
                     {/*<span className="text-xs sm:text-sm text-slate-600 ml-2">

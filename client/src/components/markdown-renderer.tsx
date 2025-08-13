@@ -35,16 +35,16 @@ export function MarkdownRenderer({
         const resultContent = match[2].trim();
 
         groupedContent += `
-          <div class="result-group mb-6 p-4 border border-slate-200 rounded-lg bg-slate-50/30">
-            <div class="result-header mb-3 pb-2 border-b border-slate-200">
-              <h3 class="text-lg font-semibold text-blue-700 flex items-center">
-                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full mr-3">
+          <div class="result-group mb-6 p-4 border border-border rounded-lg bg-card dark:bg-card">
+            <div class="result-header mb-3 pb-2 border-b border-border">
+              <h3 class="text-lg font-semibold text-primary flex items-center">
+                <span class="bg-primary/10 text-primary text-sm font-medium px-2.5 py-0.5 rounded-full mr-3">
                   ${index + 1}
                 </span>
                 ${resultTitle}
               </h3>
             </div>
-            <div class="result-content">
+            <div class="result-content text-foreground">
               ${parseMarkdown(resultContent)}
             </div>
           </div>
@@ -65,49 +65,49 @@ export function MarkdownRenderer({
         // Headers
         .replace(
           /^### (.*$)/gm,
-          '<h3 class="text-lg font-semibold mb-3 mt-4 text-slate-800">$1</h3>',
+          '<h3 class="text-lg font-semibold mb-3 mt-4 text-foreground dark:text-foreground">$1</h3>',
         )
         .replace(
           /^## (.*$)/gm,
-          '<h2 class="text-xl font-semibold mb-3 mt-5 text-slate-800">$1</h2>',
+          '<h2 class="text-xl font-semibold mb-3 mt-5 text-foreground dark:text-foreground">$1</h2>',
         )
         .replace(
           /^# (.*$)/gm,
-          '<h1 class="text-2xl font-bold mb-4 mt-6 text-slate-800">$1</h1>',
+          '<h1 class="text-2xl font-bold mb-4 mt-6 text-foreground dark:text-foreground">$1</h1>',
         )
 
         // Bold text
         .replace(
           /\*\*(.*?)\*\*/g,
-          '<strong class="font-semibold text-slate-800">$1</strong>',
+          '<strong class="font-semibold text-foreground dark:text-foreground">$1</strong>',
         )
 
         // Italic text
-        .replace(/\*(.*?)\*/g, '<em class="italic text-slate-700">$1</em>')
+        .replace(/\*(.*?)\*/g, '<em class="italic text-muted-foreground dark:text-muted-foreground">$1</em>')
 
         // Code blocks
         .replace(
           /```([\s\S]*?)```/g,
-          '<pre class="bg-slate-100 border border-slate-200 rounded-lg p-4 my-4 overflow-x-auto"><code class="text-sm text-slate-800 font-mono">$1</code></pre>',
+          '<pre class="bg-muted border border-border rounded-lg p-4 my-4 overflow-x-auto dark:bg-muted dark:border-border"><code class="text-sm text-foreground font-mono dark:text-foreground">$1</code></pre>',
         )
 
         // Inline code
         .replace(
           /`(.*?)`/g,
-          '<code class="bg-slate-100 text-slate-800 px-2 py-1 rounded text-sm font-mono">$1</code>',
+          '<code class="bg-muted text-foreground px-2 py-1 rounded text-sm font-mono dark:bg-muted dark:text-foreground">$1</code>',
         )
 
         // Bullet points
-        .replace(/^- (.*$)/gm, '<li class="ml-4 mb-1 text-slate-700">• $1</li>')
+        .replace(/^- (.*$)/gm, '<li class="ml-4 mb-1 text-foreground dark:text-foreground">• $1</li>')
 
         // Numbered lists
         .replace(
           /^(\d+)\. (.*$)/gm,
-          '<li class="ml-4 mb-1 text-slate-700">$1. $2</li>',
+          '<li class="ml-4 mb-1 text-foreground dark:text-foreground">$1. $2</li>',
         )
 
         // Line breaks
-        .replace(/\n\n/g, '</p><p class="mb-3 text-slate-700 leading-relaxed">')
+        .replace(/\n\n/g, '</p><p class="mb-3 text-foreground leading-relaxed dark:text-foreground">')
         .replace(/\n/g, "<br />")
     );
   };
@@ -122,7 +122,7 @@ export function MarkdownRenderer({
     processedContent.startsWith("<pre") ||
     processedContent.startsWith("<div")
       ? processedContent
-      : `<p class="mb-2 leading-relaxed">${processedContent}</p>`;
+      : `<p class="mb-2 leading-relaxed text-foreground dark:text-foreground">${processedContent}</p>`;
 
   return (
     <div

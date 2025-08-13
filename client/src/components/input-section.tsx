@@ -64,7 +64,7 @@ export default function InputSection({
   };
 
   return (
-    <div className="bg-white border-t border-slate-200 p-6 pt-[16px] pb-[16px]" data-testid="input-section">
+    <div className="bg-background dark:bg-background border-t border-border p-6 pt-[16px] pb-[16px]" data-testid="input-section">
       <div className="max-w-4xl mx-auto">
         <div className="relative">
           <Textarea
@@ -73,7 +73,7 @@ export default function InputSection({
             rows={3}
             placeholder="Initiate a query or send a command to the AI..."
             disabled={disabled}
-            className="flex min-h-[80px] bg-background px-3 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm w-full py-4 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent resize-none text-slate-800 placeholder-slate-500 disabled:opacity-50 disabled:cursor-not-allowed pt-[30px] pb-[30px] pl-[20px] pr-[20px] mt-[0px] mb-[0px]"
+            className="flex min-h-[80px] bg-background dark:bg-background px-3 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm w-full py-4 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-foreground dark:text-foreground placeholder:text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed pt-[30px] pb-[30px] pl-[20px] pr-[20px] mt-[0px] mb-[0px]"
             data-testid="textarea-message"
           />
           
@@ -85,7 +85,7 @@ export default function InputSection({
                   variant="ghost"
                   size="sm"
                   disabled={disabled}
-                  className="h-8 w-8 p-0 rounded-md bg-[#d1deeb59] hover:bg-[#d1deeb80] text-slate-500 hover:text-slate-700 transition-colors"
+                  className="h-8 w-8 p-0 rounded-md bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors"
                   data-testid="tool-dropdown-trigger"
                 >
                   <Plus className="w-4 h-4" />
@@ -100,17 +100,17 @@ export default function InputSection({
                       key={tool.id}
                       onClick={() => handleToolSelect(tool.id)}
                       className={`flex items-start gap-3 px-3 py-2 cursor-pointer ${
-                        isSelected ? 'bg-blue-50 text-blue-700' : ''
+                        isSelected ? 'bg-primary/10 text-primary' : ''
                       }`}
                       data-testid={`tool-${tool.id}`}
                     >
-                      <Icon className={`w-4 h-4 mt-0.5 ${isSelected ? 'text-blue-600' : 'text-slate-500'}`} />
+                      <Icon className={`w-4 h-4 mt-0.5 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
                       <div className="flex-1">
-                        <div className={`text-sm font-medium ${isSelected ? 'text-blue-700' : 'text-slate-700'}`}>
+                        <div className={`text-sm font-medium ${isSelected ? 'text-primary' : 'text-foreground'}`}>
                           {tool.label}
-                          {isSelected && <span className="ml-2 text-blue-500">✓</span>}
+                          {isSelected && <span className="ml-2 text-primary">✓</span>}
                         </div>
-                        <div className="text-xs text-slate-500 mt-0.5">{tool.description}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{tool.description}</div>
                       </div>
                     </DropdownMenuItem>
                   );
@@ -124,14 +124,14 @@ export default function InputSection({
             disabled={(!isStreaming && (disabled || !message.trim())) || (isStreaming && !onStopStreaming)}
             className={`inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 absolute right-3 bottom-3 w-8 h-8 p-0 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed pl-[25px] pr-[25px] pt-[20px] pb-[20px] ${
               isStreaming 
-                ? "bg-red-500 hover:bg-red-600 text-white" 
-                : "bg-brand-blue hover:bg-blue-600 text-white"
+                ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground" 
+                : "bg-primary hover:bg-primary/90 text-primary-foreground"
             }`}
             aria-label={isStreaming ? "Stop generation" : "Send message"}
             data-testid={isStreaming ? "button-stop" : "button-send"}
           >
             {disabled && !isStreaming ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
             ) : isStreaming ? (
               <Square className="w-4 h-4" />
             ) : (
@@ -142,8 +142,8 @@ export default function InputSection({
 
         {/* Keyboard Shortcut Hint */}
         <div className="flex justify-end mt-[3px] mb-[3px] pt-[5px] pb-[5px]">
-          <div className="text-xs text-slate-500">
-            Press <kbd className="px-2 py-1 bg-slate-100 rounded text-slate-600">⌘</kbd> + <kbd className="px-2 py-1 bg-slate-100 rounded text-slate-600">Enter</kbd> to send
+          <div className="text-xs text-muted-foreground">
+            Press <kbd className="px-2 py-1 bg-muted rounded text-muted-foreground">⌘</kbd> + <kbd className="px-2 py-1 bg-muted rounded text-muted-foreground">Enter</kbd> to send
           </div>
         </div>
       </div>
