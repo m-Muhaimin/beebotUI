@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 import { spawn, ChildProcess } from "child_process";
 import { randomUUID } from "crypto";
 import { promises as fs } from "fs";
+import { EventSource } from "eventsource";
 
 interface ChatMessage {
   role: "user" | "assistant" | "system" | "tool";
@@ -37,6 +38,7 @@ export class MCPChatClient extends EventEmitter {
   private model: string;
   private weatherServer: ChildProcess | null = null;
   private searchServer: ChildProcess | null = null;
+  private jinaApiKey: string | null = null;
   private availableTools: MCPTool[] = [];
   private pendingRequests: Map<
     string,
@@ -52,9 +54,11 @@ export class MCPChatClient extends EventEmitter {
     this.apiKey = apiKey;
     this.apiUrl = apiUrl;
     this.model = model;
+    this.jinaApiKey = process.env.JINA_API_KEY || null;
 
     this.initializeWeatherServer();
-    this.initializeSearchServer();
+    this.initializeJinaTools();
+    // Note: Removed old search server initialization - using Jina instead
   }
 
   private async initializeWeatherServer() {
@@ -288,25 +292,139 @@ if __name__ == "__main__":
     }
   }
 
-  private async initializeSearchServer() {
+  // REMOVED: Old search server - now using Jina AI tools directly
+  // private async initializeSearchServer() { ... }
+
+  private async initializeJinaTools() {
     try {
-      // Wait a bit for the Python packages to be available
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Add comprehensive Jina AI tools directly to available tools
+      const jinaTools: MCPTool[] = [
+        {
+          name: "read_url",
+          description: "Extract clean, structured content from web pages as markdown using Jina Reader API",
+          inputSchema: {
+            type: "object",
+            properties: {
+              url: {
+                type: "string",
+                description: "The URL to read and extract content from"
+              }
+            },
+            required: ["url"]
+          }
+        },
+        {
+          name: "capture_screenshot_url",
+          description: "Capture high-quality screenshots of web pages using Jina Reader API",
+          inputSchema: {
+            type: "object",
+            properties: {
+              url: {
+                type: "string", 
+                description: "The URL to capture a screenshot of"
+              }
+            },
+            required: ["url"]
+          }
+        },
+        {
+          name: "search_web_jina",
+          description: "Search the web for current information and news using Jina Search API",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "Search query to find information on the web"
+              },
+              num_results: {
+                type: "integer",
+                description: "Number of results to return (1-10)",
+                minimum: 1,
+                maximum: 10,
+                default: 5
+              }
+            },
+            required: ["query"]
+          }
+        },
+        {
+          name: "search_arxiv",
+          description: "Search academic papers and preprints on arXiv repository using Jina Search API",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "Search query for academic papers"
+              },
+              num_results: {
+                type: "integer", 
+                description: "Number of results to return (1-10)",
+                minimum: 1,
+                maximum: 10,
+                default: 5
+              }
+            },
+            required: ["query"]
+          }
+        },
+        {
+          name: "search_image_jina",
+          description: "Search for images across the web using Jina Search API",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "Search query to find images"
+              },
+              num_results: {
+                type: "integer",
+                description: "Number of results to return (1-10)",
+                minimum: 1,
+                maximum: 10,
+                default: 5
+              }
+            },
+            required: ["query"]
+          }
+        },
+        {
+          name: "rerank_jina",
+          description: "Rerank documents by relevance to a query using Jina Reranker API",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "The search query to rank documents against"
+              },
+              documents: {
+                type: "array",
+                description: "Array of documents to rank",
+                items: {
+                  type: "string"
+                }
+              },
+              model: {
+                type: "string",
+                description: "Reranker model to use",
+                enum: ["jina-reranker-v2-base-multilingual", "jina-colbert-v2"],
+                default: "jina-reranker-v2-base-multilingual"
+              }
+            },
+            required: ["query", "documents"]
+          }
+        }
+      ];
 
-      // Start the search server process
-      this.searchServer = spawn("python3", ["search_server.py"], {
-        stdio: ["pipe", "pipe", "pipe"],
-      });
+      // Add Jina tools to available tools
+      this.availableTools.push(...jinaTools);
 
-      // Set up communication handlers for search server
-      this.setupSearchServerCommunication();
-
-      // Initialize search tools list
-      setTimeout(() => this.listTools(), 3000);
-
-      console.log("Search MCP server initialized successfully");
+      console.log("Jina AI tools initialized successfully");
     } catch (error) {
-      console.error("Failed to initialize search server:", error);
+      console.error("Failed to initialize Jina tools:", error);
     }
   }
 
@@ -344,39 +462,8 @@ if __name__ == "__main__":
     });
   }
 
-  private setupSearchServerCommunication() {
-    if (!this.searchServer) return;
-
-    this.searchServer.stdout?.on("data", (data) => {
-      const lines = data
-        .toString()
-        .split("\n")
-        .filter((line: string) => line.trim());
-
-      for (const line of lines) {
-        try {
-          const message = JSON.parse(line);
-
-          if (message.id && this.pendingRequests.has(message.id)) {
-            const { resolve, reject } = this.pendingRequests.get(message.id)!;
-            this.pendingRequests.delete(message.id);
-
-            if (message.error) {
-              reject(new Error(message.error.message || "MCP Error"));
-            } else {
-              resolve(message.result);
-            }
-          }
-        } catch (error) {
-          // Ignore parsing errors
-        }
-      }
-    });
-
-    this.searchServer.stderr?.on("data", (data) => {
-      console.error("Search server error:", data.toString());
-    });
-  }
+  // REMOVED: Old search server communication - now using Jina AI tools directly
+  // private setupSearchServerCommunication() { ... }
 
   private async sendMCPRequest(
     method: string,
@@ -421,32 +508,36 @@ if __name__ == "__main__":
 
   private async listTools(): Promise<void> {
     try {
-      // Get tools from both servers
-      const [weatherResponse, searchResponse] = await Promise.allSettled([
+      // Get tools from weather server only (keep weather functionality)
+      const [weatherResponse] = await Promise.allSettled([
         this.sendMCPRequest("tools/list", {}, "weather"),
-        this.sendMCPRequest("tools/list", {}, "search"),
       ]);
 
+      // Reset available tools to only include weather tools (if available) plus Jina tools
       this.availableTools = [];
 
       if (weatherResponse.status === "fulfilled") {
         this.availableTools.push(...(weatherResponse.value.tools || []));
       }
 
-      if (searchResponse.status === "fulfilled") {
-        this.availableTools.push(...(searchResponse.value.tools || []));
-      }
+      // Jina tools are already added in initializeJinaTools(), no need to add again
+      console.log("Available tools loaded:", this.availableTools.map(t => t.name));
     } catch (error) {
       console.error("Failed to list MCP tools:", error);
-      this.availableTools = [];
+      // Keep Jina tools even if weather server fails
     }
   }
 
   private async callTool(name: string, arguments_: any): Promise<string> {
     try {
-      // Determine which server to use based on tool name
-      const isSearchTool = ["web_search", "deep_research"].includes(name);
-      const serverType = isSearchTool ? "search" : "weather";
+      // Handle Jina AI tools
+      const jinaTools = ["read_url", "capture_screenshot_url", "search_web_jina", "search_arxiv", "search_image_jina", "rerank_jina"];
+      if (jinaTools.includes(name)) {
+        return await this.callJinaTool(name, arguments_);
+      }
+
+      // All remaining tools should be weather tools
+      const serverType = "weather";
 
       const response = await this.sendMCPRequest(
         "tools/call",
@@ -467,6 +558,210 @@ if __name__ == "__main__":
     }
   }
 
+  private async callJinaTool(name: string, arguments_: any): Promise<string> {
+    try {
+      // Get your Jina AI API key for free: https://jina.ai/?sui=apikey
+      const readerUrl = "https://r.jina.ai/";
+      const searchUrl = "https://s.jina.ai/";
+      
+      let url: string;
+      let options: any = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'BeeBot/1.0'
+        }
+      };
+
+      // Add Jina API key if available (optional but recommended for better performance)
+      if (this.jinaApiKey) {
+        options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
+      }
+
+      switch (name) {
+        case "read_url":
+          url = readerUrl;
+          options.body = JSON.stringify({
+            url: arguments_.url
+          });
+          // Add optional headers for better content extraction
+          options.headers['X-With-Generated-Alt'] = 'true';
+          options.headers['X-With-Links-Summary'] = 'true';
+          options.headers['X-With-Images-Summary'] = 'true';
+          break;
+
+        case "capture_screenshot_url":
+          url = readerUrl;
+          options.body = JSON.stringify({
+            url: arguments_.url
+          });
+          options.headers['X-Return-Format'] = 'screenshot';
+          break;
+
+        case "search_web_jina":
+          // Use GET request for search with query parameter
+          url = `${searchUrl}${encodeURIComponent(arguments_.query)}`;
+          options = {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'BeeBot/1.0',
+              'X-Return-Format': 'json',
+              'X-Max-Results': String(arguments_.num_results || 5)
+            }
+          };
+          // Jina API key is required for search functionality
+          if (this.jinaApiKey) {
+            options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
+          } else {
+            throw new Error('Jina API key is required for search functionality. Please provide your Jina API key.');
+          }
+          break;
+
+        case "search_arxiv":
+          // Use GET request for ArXiv search with site restriction
+          url = `${searchUrl}${encodeURIComponent(arguments_.query + ' site:arxiv.org')}`;
+          options = {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'BeeBot/1.0',
+              'X-Return-Format': 'json',
+              'X-Max-Results': String(arguments_.num_results || 5)
+            }
+          };
+          if (this.jinaApiKey) {
+            options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
+          } else {
+            throw new Error('Jina API key is required for ArXiv search functionality. Please provide your Jina API key.');
+          }
+          break;
+
+        case "search_image_jina":
+          // Use GET request for image search
+          url = `${searchUrl}${encodeURIComponent(arguments_.query + ' type:image')}`;
+          options = {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'BeeBot/1.0',
+              'X-Return-Format': 'json',
+              'X-Max-Results': String(arguments_.num_results || 5)
+            }
+          };
+          if (this.jinaApiKey) {
+            options.headers['Authorization'] = `Bearer ${this.jinaApiKey}`;
+          } else {
+            throw new Error('Jina API key is required for image search functionality. Please provide your Jina API key.');
+          }
+          break;
+
+        case "rerank_jina":
+          url = "https://api.jina.ai/v1/rerank";
+          options.body = JSON.stringify({
+            model: arguments_.model || "jina-reranker-v2-base-multilingual",
+            query: arguments_.query,
+            documents: arguments_.documents
+          });
+          break;
+
+        default:
+          throw new Error(`Unknown Jina tool: ${name}`);
+      }
+
+      const response = await fetch(url, options);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Jina API error: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+
+      const result = await response.json();
+      
+      // Format the response based on tool type
+      switch (name) {
+        case "read_url":
+          if (result.data) {
+            return `# ${result.data.title}\n\n${result.data.content}\n\n${result.data.links ? '## Links\n' + Object.entries(result.data.links).map(([text, url]) => `- [${text}](${url})`).join('\n') : ''}`;
+          }
+          break;
+          
+        case "capture_screenshot_url":
+          if (result.data) {
+            return `Screenshot captured successfully from: ${arguments_.url}\n\nTitle: ${result.data.title}\nURL: ${result.data.url}\n\nScreenshot data available in response.`;
+          }
+          break;
+          
+        case "search_web_jina":
+        case "search_arxiv":
+          // Check if response is HTML content (Jina search returns HTML by default)
+          if (typeof result === 'string') {
+            return `# Search Results\n\nQuery: "${arguments_.query}"\n\nThe search returned HTML content. Here are the raw results:\n\n${result}`;
+          }
+          
+          // Handle JSON response structure
+          if (result.data && Array.isArray(result.data)) {
+            return result.data.map((item: any, index: number) => 
+              `## Result ${index + 1}: ${item.title || 'Untitled'}\n\n${item.content || item.description || item.snippet || 'No content available'}\n\nURL: ${item.url}\n\n---\n`
+            ).join('\n');
+          }
+          
+          // Handle different response structures
+          if (result.results && Array.isArray(result.results)) {
+            return result.results.map((item: any, index: number) => 
+              `## Result ${index + 1}: ${item.title || item.name || 'Untitled'}\n\n${item.snippet || item.content || item.description || 'No content available'}\n\nURL: ${item.url || item.link}\n\n---\n`
+            ).join('\n');
+          }
+          
+          // Handle direct array structure
+          if (Array.isArray(result)) {
+            return result.map((item: any, index: number) => 
+              `## Result ${index + 1}: ${item.title || item.name || 'Untitled'}\n\n${item.snippet || item.content || item.description || 'No content available'}\n\nURL: ${item.url || item.link}\n\n---\n`
+            ).join('\n');
+          }
+          
+          // Handle authentication error response
+          if (result.code === 401 || (result.name && result.name.includes('Authentication'))) {
+            return `# Authentication Required\n\nQuery: "${arguments_.query}"\n\nJina API key is required for search functionality. The API returned:\n\nError: ${result.message || result.readableMessage || 'Authentication failed'}\n\nTo use search features, please:\n1. Get your free API key from https://jina.ai\n2. Add it to your environment variables as JINA_API_KEY`;
+          }
+          
+          // Handle usage/metadata response
+          if (result.data && result.data.usage1 && result.data.usage2) {
+            return `# Jina Search Setup Information\n\nQuery: "${arguments_.query}"\n\nThe API returned configuration information. Please ensure your API key is properly configured.\n\nAPI Information:\n- Reader URL: ${result.data.usage1}\n- Search URL: ${result.data.usage2}\n- Homepage: ${result.data.homepage}\n- Credits Balance: ${result.data.balanceLeft}`;
+          }
+          
+          return `Unable to format search results. Response structure:\n\n${JSON.stringify(result, null, 2)}`;
+          
+        case "search_image_jina":
+          if (result.data && Array.isArray(result.data)) {
+            return result.data.map((item: any, index: number) => 
+              `## Image Result ${index + 1}: ${item.title || 'Untitled'}\n\n${item.description || item.content || 'No description available'}\n\nImage URL: ${item.url}\nSource: ${item.source || item.site}\n\n---\n`
+            ).join('\n');
+          }
+          break;
+          
+        case "rerank_jina":
+          if (result.results && Array.isArray(result.results)) {
+            const rankedResults = result.results
+              .sort((a: any, b: any) => b.relevance_score - a.relevance_score)
+              .map((item: any, index: number) => 
+                `## Ranked Result ${index + 1} (Score: ${item.relevance_score.toFixed(4)})\n\n${arguments_.documents[item.index]}\n\n---\n`
+              ).join('\n');
+            return `# Reranked Results\n\nQuery: "${arguments_.query}"\nModel: ${arguments_.model || "jina-reranker-v2-base-multilingual"}\n\n${rankedResults}`;
+          }
+          break;
+      }
+
+      // Fallback to raw JSON if format not recognized
+      console.log("Jina API response format not recognized:", JSON.stringify(result, null, 2));
+      return `Received response from Jina API but unable to format it properly. Raw response:\n\n${JSON.stringify(result, null, 2)}`;
+
+    } catch (error) {
+      return `Error calling Jina tool ${name}: ${error instanceof Error ? error.message : String(error)}`;
+    }
+  }
+
   async *chatStream(
     messages: ChatMessage[],
     selectedTool?: string | null,
@@ -479,26 +774,103 @@ if __name__ == "__main__":
         if (lastMessage && lastMessage.role === "user") {
           // Directly call the selected tool with the user's query
 
-          if (selectedTool === "web-search") {
+          if (selectedTool === "read-url") {
             yield {
-              content: `Searching the web on "${lastMessage.content}"...\n\n`,
+              content: `📄 Reading content from "${lastMessage.content}"...\n\n`,
             };
-
-            // Run actual search
-            const toolResult = await this.callTool("web_search", {
-              query: lastMessage.content,
+            const toolResult = await this.callJinaTool("read_url", {
+              url: lastMessage.content,
             });
-            yield { content: toolResult };
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
             yield { finished: true };
             return;
-          } else if (selectedTool === "deep-research") {
+          } else if (selectedTool === "screenshot") {
             yield {
-              content: `🔬 Conducting deep research on "${lastMessage.content}"...\n\n`,
+              content: `📸 Capturing screenshot of "${lastMessage.content}"...\n\n`,
             };
-            const toolResult = await this.callTool("deep_research", {
-              topic: lastMessage.content,
+            const toolResult = await this.callJinaTool("capture_screenshot_url", {
+              url: lastMessage.content,
             });
-            yield { content: toolResult };
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
+            yield { finished: true };
+            return;
+          } else if (selectedTool === "search-jina") {
+            yield {
+              content: `🌐 Searching the web for "${lastMessage.content}" using Jina AI...\n\n`,
+            };
+            const toolResult = await this.callJinaTool("search_web_jina", {
+              query: lastMessage.content,
+            });
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
+            yield { finished: true };
+            return;
+          } else if (selectedTool === "search-arxiv") {
+            yield {
+              content: `🔬 Searching arXiv papers for "${lastMessage.content}"...\n\n`,
+            };
+            const toolResult = await this.callJinaTool("search_arxiv", {
+              query: lastMessage.content,
+            });
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
+            yield { finished: true };
+            return;
+          } else if (selectedTool === "search-image") {
+            yield {
+              content: `🖼️ Searching for images of "${lastMessage.content}" using Jina AI...\n\n`,
+            };
+            const toolResult = await this.callJinaTool("search_image_jina", {
+              query: lastMessage.content,
+            });
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
+            yield { finished: true };
+            return;
+          } else if (selectedTool === "rerank") {
+            yield {
+              content: `📊 Rerank tool selected. Please provide a query and documents to rank.\n\nFormat: query|document1|document2|...\n\n`,
+            };
+            // For rerank, we need to parse the input differently
+            const parts = (lastMessage.content || '').split('|');
+            if (parts.length < 3) {
+              yield { content: "Invalid format for rerank. Please use: query|document1|document2|..." };
+              yield { finished: true };
+              return;
+            }
+            const [query, ...documents] = parts;
+            const toolResult = await this.callJinaTool("rerank_jina", {
+              query: query.trim(),
+              documents: documents.map(doc => doc.trim()),
+            });
+            // Stream the result in chunks for better user experience
+            const chunks = toolResult.match(/.{1,100}/g) || [toolResult];
+            for (const chunk of chunks) {
+              yield { content: chunk };
+              await new Promise(resolve => setTimeout(resolve, 50)); // Small delay for streaming effect
+            }
             yield { finished: true };
             return;
           }
@@ -510,14 +882,34 @@ if __name__ == "__main__":
 
       if (selectedTool) {
         switch (selectedTool) {
-          case "web-search":
+          case "read-url":
             toolsToUse = this.availableTools.filter(
-              (tool) => tool.name === "web_search",
+              (tool) => tool.name === "read_url",
             );
             break;
-          case "deep-research":
+          case "screenshot":
             toolsToUse = this.availableTools.filter(
-              (tool) => tool.name === "deep_research",
+              (tool) => tool.name === "capture_screenshot_url",
+            );
+            break;
+          case "search-image":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "search_image_jina",
+            );
+            break;
+          case "rerank":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "rerank_jina",
+            );
+            break;
+          case "search-jina":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "search_web_jina",
+            );
+            break;
+          case "search-arxiv":
+            toolsToUse = this.availableTools.filter(
+              (tool) => tool.name === "search_arxiv",
             );
             break;
           case "reasoning":
@@ -645,21 +1037,31 @@ if __name__ == "__main__":
                     yield {
                       content: `\n\n⚠️ Getting weather alerts for ${toolArgs.state}...\n\n`,
                     };
-                  } else if (toolName === "web_search") {
+                  } else if (toolName === "read_url") {
                     yield {
-                      content: `\n\n🔍 Searching the web for "${toolArgs.query}"...\n\n`,
+                      content: `\n\n📄 Reading content from ${toolArgs.url}...\n\n`,
                     };
-                  } else if (toolName === "deep_research") {
+                  } else if (toolName === "capture_screenshot_url") {
                     yield {
-                      content: `\n\n🔬 Conducting deep research on "${toolArgs.query}"...\n\n`,
+                      content: `\n\n📸 Capturing screenshot of ${toolArgs.url}...\n\n`,
+                    };
+                  } else if (toolName === "search_web_jina") {
+                    yield {
+                      content: `\n\n🌐 Searching the web for "${toolArgs.query}" using Jina AI...\n\n`,
+                    };
+                  } else if (toolName === "search_arxiv") {
+                    yield {
+                      content: `\n\n🔬 Searching arXiv papers for "${toolArgs.query}"...\n\n`,
                     };
                   }
 
                   const toolResult = await this.callTool(toolName, toolArgs);
 
                   if (
-                    toolName === "web_search" ||
-                    toolName === "deep_research"
+                    toolName === "search_web_jina" ||
+                    toolName === "search_arxiv" ||
+                    toolName === "read_url" ||
+                    toolName === "capture_screenshot_url"
                   ) {
                     yield { content: `${toolResult}\n\n` };
                     pendingToolResults.push(toolResult);
